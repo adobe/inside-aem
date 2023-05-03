@@ -58,7 +58,7 @@ header nav a:any-link {
 }
 
 header nav li a:any-link {
-  color: rgb(44, 44, 44);
+  color: grey;
 }
 
 header nav a:hover {
@@ -209,7 +209,7 @@ header nav .nav-sections ul > li > ul > li {
     position: relative;
     padding-right: 16px;
     cursor: pointer;
-    color: rgb(44, 44, 44);
+    color: grey;
   }
 
   header nav .nav-sections .nav-drop::after {
