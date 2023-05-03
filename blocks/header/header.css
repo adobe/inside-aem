@@ -54,7 +54,15 @@ header nav p {
 }
 
 header nav a:any-link {
-  color: currentcolor;
+  color: #fa0f00;
+}
+
+header nav li a:any-link {
+  color: rgb(44, 44, 44);
+}
+
+header nav a:hover {
+  text-decoration: none;
 }
 
 /* hamburger */
@@ -201,6 +209,7 @@ header nav .nav-sections ul > li > ul > li {
     position: relative;
     padding-right: 16px;
     cursor: pointer;
+    color: rgb(44, 44, 44);
   }
 
   header nav .nav-sections .nav-drop::after {
