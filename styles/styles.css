@@ -20,7 +20,7 @@
   --text-color: #000;
 
   /* fonts */
-  --body-font-family: 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+  --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
   --heading-font-family: var(--body-font-family);
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
@@ -141,7 +141,7 @@ a.button:any-link, button {
   padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   color: var(--background-color);
   background-color: var(--link-color);
