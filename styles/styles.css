@@ -10,14 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
+/* Size adjust to better match Adobe Clean */
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 95%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Trebuchet MS';
+  size-adjust: 87%;
+  src: local('Trebuchet MS'),
+       local('TrebuchetMS');
+       font-weight: 400;
+}
+
  :root {
   /* colors */
+  --color-white: #FFF;
+  --color-gray-100: #F8F8F8;
+  --color-gray-200: #E8E8E8;
+  --color-gray-300: #D4D4D4;
+  --color-gray-400: #B6B6B6;
+  --color-gray-500: #909090;
+  --color-gray-600: #686868;
+  --color-gray-700: #444;
+  --color-gray-800: #242424;
+  --color-black: #000;
+  --color-brand-title: #000B1D;
+  --color-info-accent: #5C5CE0;
+  --color-info-accent-hover: #4646C6;
+  --color-info-accent-down: #3D3DB4;
+  --color-info-accent-light: #DEDEF9;
+  --text-color: #2c2c2c;
   --link-color: #035fe6;
   --link-hover-color: #136ff6;
   --background-color: #fff;
   --overlay-background-color: #eee;
   --highlight-background-color: #ccc;
-  --text-color: #000;
 
   /* fonts */
   --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
@@ -25,25 +57,59 @@
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
   /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 18px;
-  --body-font-size-xs: 16px;
+  --body-background-color: var(--color-white);
+  --body-alt-background-color: var(--color-gray-600);
+  --body-font-weight: 300;
+  --body-color: var(--color-black);
+  --body-line-height: 1.5;
+  --body-font-size-xxl: 1.75rem; /* 28px */
+  --body-font-size-xl: 1.375rem; /* 22px */
+  --body-font-size-l: 1.25rem; /* 20px */
+  --body-font-size-m: 1.125rem; /* 18px */
+  --body-font-size-s: 1rem; /* 16px */
+  --body-font-size-xs: 0.875rem; /* 14px */
+  --body-font-size-xxs: 0.75rem; /* 12px */
 
   /* heading sizes */
-  --heading-font-size-xxl: 48px;
-  --heading-font-size-xl: 40px;
-  --heading-font-size-l: 32px;
-  --heading-font-size-m: 24px;
-  --heading-font-size-s: 20px;
-  --heading-font-size-xs: 18px;
+  --heading-font-weight: 700;
+  --heading-color: var(--color-gray-800);
+  --heading-line-height: 1.25;
+  --heading-font-size-xxxl: 5rem; /* 80px */
+  --heading-font-size-xxl: 2.75rem; /* 44px */
+  --heading-font-size-xl: 2.25rem; /* 36px */
+  --heading-font-size-l: 1.75rem; /* 28px */
+  --heading-font-size-m: 1.5rem; /* 24px */
+  --heading-font-size-s: 1.25rem; /* 20px */
+  --heading-font-size-xs: 1.125rem; /* 18px */
 
   /* nav height */
   --nav-height: 64px;
 
+  /* details */
+  --detail-font-weight: 700;
+  --detail-color: var(--color-gray-600);
+  --detail-line-height: 1.25;
+  --detail-font-size-l: 1.25rem; /* 20px */
+  --detail-font-size-m: 1rem; /* 16px */
+  --detail-font-size-s: 0.75rem; /* 12px */
+
+  /* Spacing */
+  --spacing-xxs: 8px;
+  --spacing-xs: 16px;
+  --spacing-s: 24px;
+  --spacing-m: 32px;
+  --spacing-l: 48px;
+  --spacing-xl: 56px;
+  --spacing-xxl: 80px;
+
+  /* grid sizes */
+  --grid-container-width: 83.4%;
+  --grid-column-width: calc(var(--grid-container-width) / 12);
 }
 
 @media (min-width: 900px) {
   :root {
+    --heading-font-size-xxxl: 3.75rem; /* 60px */
     --heading-font-size-xxl: 60px;
     --heading-font-size-xl: 48px;
     --heading-font-size-l: 36px;
@@ -53,13 +119,26 @@
   }
 }
 
+@media (min-width: 1200px) {
+  :root {
+    --heading-font-size-xxxl: 2.75rem; /* 44px */
+  }
+}
+
+@media (max-width: 1440px) {
+  :root {
+    --grid-container-width: 1200px;
+  }
+}
+
 body {
-  font-size: var(--body-font-size-m);
-  margin: 0;
+  background-color: var(--body-background-color);
   font-family: var(--body-font-family);
-  line-height: 1.6;
-  color: var(--text-color);
-  background-color: var(--background-color);
+  font-size: var(--body-font-size-m);
+  color: var(--body-color);
+  margin: 0;
+  padding: 0;
+  line-height: var(--body-line-height);
   display: none;
 }
 
@@ -68,7 +147,13 @@ body.appear {
 }
 
 header {
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
   height: var(--nav-height);
+  background-color: var(--color-white);
+  z-index: 3;
 }
 
 h1, h2, h3,
@@ -133,27 +218,26 @@ a:hover {
 
 /* buttons */
 a.button:any-link, button {
-  font-family: var(--body-font-family);
-  display: inline-block;
-  box-sizing: border-box;
   text-decoration: none;
+  border-radius: 2rem;
   border: 2px solid transparent;
-  padding: 5px 30px;
+  padding: 6px 1rem;
   text-align: center;
+  font-size: var(--body-font-size-s);
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  color: var(--background-color);
-  background-color: var(--link-color);
+  color: var(--color-white);
+  background-color: var(--color-info-accent);
   margin: 16px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-radius: 30px;
+  display: inline-block;
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
-  background-color: var(--link-hover-color);
+  background-color: var(--color-info-accent-hover);
   cursor: pointer;
 }
 
@@ -162,10 +246,76 @@ button:disabled, button:disabled:hover {
   cursor: unset;
 }
 
+a.button.primary:any-link {
+  background-color: var(--color-gray-700);
+}
+
+a.button.primary:hover, a.button.primary:focus {
+  background-color: var(--color-gray-800);
+}
+
 a.button.secondary, button.secondary {
   background-color: unset;
   border: 2px solid currentcolor;
   color: var(--text-color)
+}
+
+.icon svg {
+  height: 100%;
+  width: 100%;
+}
+
+a.button > svg {
+  float: left;
+  display: inline;
+  width: 20px;
+  height: 20px;
+  margin: 8px 8px 8px 0;
+  fill: currentcolor;
+  color: currentcolor;
+}
+
+a.button > svg > use {
+  fill: currentcolor;
+  color: currentcolor;
+}
+
+main {
+  font-size: var(--body-font-size-m);
+  line-height: var(--body-line-height);
+  margin: 64px 0 0;
+  font-weight: var(--body-font-weight);
+}
+
+main p:not(:last-of-type) {
+  margin-bottom: 32px;
+}
+
+main h1, main h2, main h3, main h4, main h5, main h6 {
+  font-weight: var(--heading-font-weight);
+  line-height: var(--heading-line-height);
+  margin-top: 48px;
+  margin-bottom: 16px;
+}
+
+main h1 {
+  font-size: var(--heading-font-size-xl);
+}
+
+main h2 {
+  font-size: var(--heading-font-size-l);
+}
+
+main h3 {
+  font-size: var(--heading-font-size-m);
+}
+
+main h4 {
+  font-size: var(--heading-font-size-s);
+}
+
+main h5, main h6 {
+  font-size: var(--heading-font-size-xs);
 }
 
 main input {
@@ -215,19 +365,117 @@ main img {
   width: 24px;
 }
 
-.icon svg {
-  height: 100%;
-  width: 100%;
-}
-
 main .section {
   padding: 64px 16px;
 }
 
+
+main a:any-link {
+  color: var(--body-color);
+  line-height: var(--body-line-height);
+}
+
+main a.cta-link {
+  color: var(--color-info-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+main a.cta-link::after {
+  content: " >";
+}
+
+main a.cta-link:hover {
+  color: var(--color-info-accent-hover);
+}
+
+main a.cta-link:active,
+main a.cta-link:focus {
+  color: var(--color-info-accent-down);
+}
+
+main img,
+main video {
+  max-width: 100%;
+}
+
+/* section wrapper */
+
+main .section-wrapper {
+  margin-top: 64px;
+}
+
+main .section-wrapper:first-of-type {
+  padding-top: 0;
+  margin-top: 128px;
+}
+
+main .section-wrapper:last-of-type {
+  margin-bottom: 0;
+}
+
 @media (min-width: 600px) {
+  main {
+    font-size: var(--body-font-size-l);
+  }
+
+  main h2 {
+    font-size: var(--heading-font-size-l);
+  }
+
+  main h3 {
+    font-size: var(--heading-font-size-l);
+  }
+
+  main h4 {
+    font-size: var(--heading-font-size-m);
+  }
+
   main .section {
     padding: 64px 32px;
   }
+
+  main .section-wrapper > div {
+    max-width: unset;
+  }
+
+  main .featured-article-container div h1 {
+    text-align: left;
+    max-width: 800px;
+  }
+}
+
+main .featured-article-container > div {
+  padding: 0;
+}
+
+main .section-wrapper > div {
+  margin: auto;
+  padding: 0 2rem;
+}
+
+main .section-wrapper > div:empty {
+  padding: 0;
+}
+
+@media (min-width: 700px) {
+  main .section-wrapper > div {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  main .section-wrapper > div > :not(div) {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+main .section-wrapper p.button-container {
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 0;
 }
 
 @media (min-width: 900px) {
@@ -240,4 +488,26 @@ main .section {
 /* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+main .embed a {
+  word-break: break-all;
+}
+
+main .featured-article {
+  min-height: 320px;
+  margin-bottom: 24px;
+}
+
+main .featured-article-container div h1 {
+  padding: 0 1.6rem;
+  text-align: center;
+}
+
+main .article-feed {
+  min-height: 900px;
+}
+
+main .block[data-block-status='loading'], main .block[data-block-status='initialized'] {
+  visibility: hidden;
 }
