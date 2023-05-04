@@ -5,7 +5,8 @@ import {
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
-  if (recommendedArticlesEl.classList.contains('small')) {
+  /* TODO: Add Recommended articles */
+  /* if (recommendedArticlesEl.classList.contains('small')) {
     recommendedArticlesEl.parentNode.querySelectorAll('a').forEach((aEl) => {
       aEl.classList.add('button', 'primary', 'small', 'light');
     });
@@ -34,7 +35,7 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   }
   if (articleCardsContainer.childElementCount === 0) {
     recommendedArticlesEl.parentNode.parentNode.remove();
-  }
+  } */
 }
 
 export default function decorate(blockEl) {

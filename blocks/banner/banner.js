@@ -1,7 +1,7 @@
 import {
   createOptimizedPicture,
   normalizeHeadings,
-} from '../../scripts/scripts.js';
+} from '../../scripts/lib-franklin.js';
 
 export default function decorate(block) {
   const bannerContents = document.createElement('div');
