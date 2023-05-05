@@ -110,12 +110,12 @@
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxxl: 3.75rem; /* 60px */
-    --heading-font-size-xxl: 60px;
+    /*--heading-font-size-xxl: 60px;
     --heading-font-size-xl: 48px;
     --heading-font-size-l: 36px;
     --heading-font-size-m: 30px;
     --heading-font-size-s: 24px;
-    --heading-font-size-xs: 22px;
+    --heading-font-size-xs: 22px;*/
   }
 }
 
@@ -401,16 +401,16 @@ main video {
 
 /* section wrapper */
 
-main .section-wrapper {
+main .section {
   margin-top: 64px;
 }
 
-main .section-wrapper:first-of-type {
+main .section:first-of-type {
   padding-top: 0;
   margin-top: 128px;
 }
 
-main .section-wrapper:last-of-type {
+main .section:last-of-type {
   margin-bottom: 0;
 }
 
@@ -435,7 +435,7 @@ main .section-wrapper:last-of-type {
     padding: 64px 32px;
   }
 
-  main .section-wrapper > div {
+  main .section > div {
     max-width: unset;
   }
 
@@ -449,30 +449,30 @@ main .featured-article-container > div {
   padding: 0;
 }
 
-main .section-wrapper > div {
+main .section > div {
   margin: auto;
   padding: 0 2rem;
 }
 
-main .section-wrapper > div:empty {
+main .section > div:empty {
   padding: 0;
 }
 
 @media (min-width: 700px) {
-  main .section-wrapper > div {
+  main .section > div {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
   }
 
-  main .section-wrapper > div > :not(div) {
+  main .section > div > :not(div) {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
   }
 }
 
-main .section-wrapper p.button-container {
+main .section p.button-container {
   text-align: center;
   margin-top: 16px;
   margin-bottom: 0;
