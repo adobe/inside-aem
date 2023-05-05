@@ -38,7 +38,7 @@ function buildHeroBlock(main) {
  */
 function buildAutoBlocks(main) {
   try {
-    //buildHeroBlock(main);
+    // buildHeroBlock(main);
     if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
       buildArticleHeader(main);
       addArticleToHistory();
@@ -95,7 +95,31 @@ export function addFavIcon(href) {
   }
 }
 
-let taxonomy;
+/**
+ * fetches blog article index.
+ * @returns {object} index with data and path lookup
+ */
+export async function fetchBlogArticleIndex() {
+  const pageSize = 500;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+  return (index);
+}
 
 /**
  * returns an image caption of a picture elements
@@ -117,6 +141,114 @@ function addArticleToHistory() {
   const history = JSON.parse(localStorage.getItem(key) || '[]');
   history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
   localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
+}
+
+let taxonomy;
+
+/**
+ * For the given list of topics, returns the corresponding computed taxonomy:
+ * - category: main topic
+ * - topics: tags as an array
+ * - visibleTopics: list of visible topics, including parents
+ * - allTopics: list of all topics, including parents
+ * @param {Array} topics List of topics
+ * @returns {Object} Taxonomy object
+ */
+function computeTaxonomyFromTopics(topics, path) {
+  // no topics: default to a randomly choosen category
+  const category = topics?.length > 0 ? topics[0] : 'news';
+
+  if (taxonomy) {
+    const allTopics = [];
+    const visibleTopics = [];
+    // if taxonomy loaded, we can compute more
+    topics.forEach((tag) => {
+      const tax = taxonomy.get(tag);
+      if (tax) {
+        if (!allTopics.includes(tag) && !tax.skipMeta) {
+          allTopics.push(tag);
+          if (tax.isUFT) visibleTopics.push(tag);
+          const parents = taxonomy.getParents(tag);
+          if (parents) {
+            parents.forEach((parent) => {
+              const ptax = taxonomy.get(parent);
+              if (!allTopics.includes(parent)) {
+                allTopics.push(parent);
+                if (ptax.isUFT) visibleTopics.push(parent);
+              }
+            });
+          }
+        }
+      } else {
+        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
+      }
+    });
+    return {
+      category, topics, visibleTopics, allTopics,
+    };
+  }
+  return {
+    category, topics,
+  };
+}
+
+// eslint-disable-next-line no-unused-vars
+async function loadTaxonomy() {
+  const mod = await import('./taxonomy.js');
+  taxonomy = await mod.default(getLanguage());
+  if (taxonomy) {
+    // taxonomy loaded, post loading adjustments
+    // fix the links which have been created before the taxonomy has been loaded
+    // (pre lcp or in lcp block).
+    document.querySelectorAll('[data-topic-link]').forEach((a) => {
+      const topic = a.dataset.topicLink;
+      const tax = taxonomy.get(topic);
+      if (tax) {
+        a.href = tax.link;
+      } else {
+        // eslint-disable-next-line no-console
+        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        a.href = '#';
+      }
+      delete a.dataset.topicLink;
+    });
+
+    // adjust meta article:tag
+
+    const currentTags = getMetadata('article:tag', true);
+    const articleTax = computeTaxonomyFromTopics(currentTags);
+
+    const allTopics = articleTax.allTopics || [];
+    allTopics.forEach((topic) => {
+      if (!currentTags.includes(topic)) {
+        // computed topic (parent...) is not in meta -> add it
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('property', 'article:tag');
+        newMetaTag.setAttribute('content', topic);
+        document.head.append(newMetaTag);
+      }
+    });
+
+    currentTags.forEach((tag) => {
+      const tax = taxonomy.get(tag);
+      if (tax && tax.skipMeta) {
+        // if skipMeta, remove from meta "article:tag"
+        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+        if (meta) {
+          meta.remove();
+        }
+        // but add as meta with name
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('name', tag);
+        newMetaTag.setAttribute('content', 'true');
+        document.head.append(newMetaTag);
+      }
+    });
+  }
+}
+
+export function getTaxonomy() {
+  return taxonomy;
 }
 
 /**
@@ -144,6 +276,70 @@ export function getLinkForTopic(topic, path) {
   }
 
   return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
+}
+
+/**
+ * Loads (i.e. sets on object) the taxonmoy properties for the given article.
+ * @param {Object} article The article to enhance with the taxonomy data
+ */
+function loadArticleTaxonomy(article) {
+  if (!article.allTopics) {
+    // for now, we can only compute the category
+    const { tags, path } = article;
+
+    if (tags) {
+      const topics = tags
+        .replace(/[["\]]/gm, '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t && t !== '');
+
+      const articleTax = computeTaxonomyFromTopics(topics, path);
+
+      article.category = articleTax.category;
+
+      // topics = tags as an array
+      article.topics = topics;
+
+      // visibleTopics = visible topics including parents
+      article.visibleTopics = articleTax.allVisibleTopics;
+
+      // allTopics = all topics including parents
+      article.allTopics = articleTax.allTopics;
+    } else {
+      article.category = 'News';
+      article.topics = [];
+      article.visibleTopics = [];
+      article.allTopics = [];
+    }
+  }
+}
+
+/**
+ * Get the taxonomy of the given article. Object can be composed of:
+ * - category: main topic
+ * - topics: tags as an array
+ * - visibleTopics: list of visible topics, including parents
+ * - allTopics: list of all topics, including parents
+ * Note: to get the full object, taxonomy must be loaded
+ * @param {Object} article The article
+ * @returns The taxonomy object
+ */
+export function getArticleTaxonomy(article) {
+  if (!article.allTopics) {
+    loadArticleTaxonomy(article);
+  }
+
+  const {
+    category,
+    topics,
+    visibleTopics,
+    allTopics,
+  } = article;
+
+  return {
+    category, topics, visibleTopics, allTopics,
+  };
 }
 
 /**
@@ -428,6 +624,14 @@ async function loadLazy(doc) {
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
 }
+
+export function stamp(message) {
+  if (window.name.includes('performance')) {
+    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+  }
+}
+
+stamp('start');
 
 /**
  * Loads everything that happens a lot later,

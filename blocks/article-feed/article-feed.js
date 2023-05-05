@@ -1,12 +1,15 @@
 import {
   readBlockConfig,
+  fetchPlaceholders,
+  sampleRUM,
+} from '../../scripts/lib-franklin.js';
+
+import {
   buildArticleCard,
   fetchBlogArticleIndex,
-  fetchPlaceholders,
   getArticleTaxonomy,
   getTaxonomy,
   stamp,
-  sampleRUM,
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {
@@ -328,8 +331,12 @@ async function filterArticles(config, feed, limit, offset) {
   }
 }
 
-async function decorateArticleFeed(articleFeedEl, config, offset = 0,
-  feed = { data: [], complete: false, cursor: 0 }) {
+async function decorateArticleFeed(
+  articleFeedEl,
+  config,
+  offset = 0,
+  feed = { data: [], complete: false, cursor: 0 },
+) {
   let articleCards = articleFeedEl.querySelector('.article-cards');
   if (!articleCards) {
     articleCards = document.createElement('div');
@@ -431,8 +438,10 @@ async function decorateFeedFilter(articleFeedEl, config) {
   const clearBtn = document.createElement('a');
   clearBtn.classList.add('button', 'small', 'clear');
   clearBtn.textContent = placeholders['clear-all'];
-  clearBtn.addEventListener('click',
-    (e) => clearFilters(e, articleFeedEl, config));
+  clearBtn.addEventListener(
+    'click',
+    (e) => clearFilters(e, articleFeedEl, config),
+  );
 
   selectedWrapper.append(selectedText, selectedCategories, clearBtn);
   selectedContainer.append(selectedWrapper);

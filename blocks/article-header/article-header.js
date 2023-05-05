@@ -8,13 +8,19 @@ import {
 } from '../block-helpers.js';
 
 import {
-  createOptimizedPicture,
-  getMetadata
-} from '../../scripts/lib-franklin.js'
+  /*createOptimizedPicture,*/
+  getMetadata,
+} from '../../scripts/lib-franklin.js';
 
-async function populateAuthorInfo(authorLink, /*imgContainer,*/ url, name, eager = false) {
+async function populateAuthorInfo(authorLink, /* imgContainer, */ url, name, eager = false) {
   const resp = await fetch(`${url}.plain.html`);
   if (resp.ok) {
+    // to remove
+    authorLink = null;
+    url = null;
+    name = null;
+    eager = false;
+    /* TODO
     const text = await resp.text();
     const placeholder = document.createElement('div');
     placeholder.innerHTML = text;
@@ -38,6 +44,7 @@ async function populateAuthorInfo(authorLink, /*imgContainer,*/ url, name, eager
         imgContainer.style.backgroundImage = 'none';
       }
     }
+    */
   } else {
     const p = document.createElement('p');
     p.innerHTML = authorLink.innerHTML;
@@ -162,8 +169,8 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
   authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
-  bylineContainer.prepend(authorImg);*/
-  populateAuthorInfo(authorLink, /*authorImg,*/ authorURL, authorName, eager);
+  bylineContainer.prepend(authorImg); */
+  populateAuthorInfo(authorLink, /* authorImg, */ authorURL, authorName, eager);
   // sharing
   const shareBlock = await buildSharing();
   bylineContainer.append(shareBlock);
