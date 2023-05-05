@@ -1,6 +1,7 @@
 import {
   sampleRUM,
   buildBlock,
+  createOptimizedPicture,
   loadHeader,
   loadFooter,
   decorateButtons,
@@ -37,16 +38,69 @@ function buildHeroBlock(main) {
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
+  removeStylingFromImages(main);
   try {
     // buildHeroBlock(main);
     if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
       buildArticleHeader(main);
       addArticleToHistory();
     }
+    if (window.location.pathname.includes('/topics/')) {
+      buildTagHeader(main);
+      if (!main.querySelector('.article-feed')) {
+        buildArticleFeed(main, 'tags');
+      }
+    }/*
+    if (window.location.pathname.includes('/authors/')) {
+      buildAuthorHeader(mainEl);
+      buildSocialLinks(mainEl);
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(mainEl, 'author');
+      }
+    }*/
+    buildImageBlocks(main);
+    buildNewsletterModal(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
   }
+}
+
+/**
+ * removes formatting from images.
+ * @param {Element} mainEl The container element
+ */
+function removeStylingFromImages(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastElementChild.remove();
+  });
+}
+
+/**
+ * builds images blocks from default content.
+ * @param {Element} mainEl The container element
+ */
+function buildImageBlocks(mainEl) {
+  // select all non-featured, default (non-images block) images
+  const imgEls = [...mainEl.querySelectorAll(':scope > div > p > picture')];
+  let lastImagesBlock;
+  imgEls.forEach((imgEl) => {
+    const parentEl = imgEl.parentNode;
+    const imagesBlockEl = buildBlock('images', {
+      elems: [imgEl.cloneNode(true), getImageCaption(imgEl)],
+    });
+    if (parentEl.parentNode) {
+      parentEl.replaceWith(imagesBlockEl);
+      lastImagesBlock = imagesBlockEl;
+    } else {
+      // same parent, add image to last images block
+      lastImagesBlock.firstElementChild.append(imagesBlockEl.firstElementChild.firstElementChild);
+    }
+  });
 }
 
 /**
@@ -180,7 +234,7 @@ function computeTaxonomyFromTopics(topics, path) {
           }
         }
       } else {
-        debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
+        console.debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
@@ -216,6 +270,8 @@ async function loadTaxonomy() {
     // adjust meta article:tag
 
     const currentTags = getMetadata('article:tag', true);
+    console.log(currentTags)
+    /*
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -228,7 +284,8 @@ async function loadTaxonomy() {
         document.head.append(newMetaTag);
       }
     });
-
+*/
+    /*
     currentTags.forEach((tag) => {
       const tax = taxonomy.get(tag);
       if (tax && tax.skipMeta) {
@@ -243,7 +300,7 @@ async function loadTaxonomy() {
         newMetaTag.setAttribute('content', 'true');
         document.head.append(newMetaTag);
       }
-    });
+    }); */
   }
 }
 
@@ -369,6 +426,39 @@ function buildArticleHeader(mainEl) {
   mainEl.prepend(div);
 }
 
+function buildTagHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+
+  if (div) {
+    const heading = div.querySelector(':scope > h1, div > h2');
+    const picture = div.querySelector(':scope > p > picture');
+
+    if (picture) {
+      const tagHeaderBlockEl = buildBlock('tag-header', [
+        [heading],
+        [{ elems: [picture.closest('p')] }],
+      ]);
+      div.prepend(tagHeaderBlockEl);
+    }
+  }
+}
+
+function buildSocialLinks(mainEl) {
+  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
+  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
+    const socialLinkList = socialPar.nextElementSibling.outerHTML;
+    socialPar.nextElementSibling.remove();
+    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
+  }
+}
+
+function buildNewsletterModal(mainEl) {
+  const $div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  $div.append($newsletterModal);
+  mainEl.append($div);
+}
+
 const LANG = {
   EN: 'en',
   DE: 'de',
@@ -482,6 +572,40 @@ export function buildFigure(blockEl) {
     }
   });
   return figEl;
+}
+
+/**
+ * Formats the article date for the card using the date locale
+ * matching the content displayed.
+ * @param {number} date The date to format
+ * @returns {string} The formatted card date
+ */
+export function formatLocalCardDate(date) {
+  let jsDate = date;
+  if (!date.includes('-')) {
+    // number case, coming from Excel
+    // 1/1/1900 is day 1 in Excel, so:
+    // - add this
+    // - add days between 1/1/1900 and 1/1/1970
+    // - add one more day for Excel's leap year bug
+    jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  } else {
+    // Safari won't accept '-' as a date separator
+    jsDate = date.replace(/-/g, '/');
+  }
+  const dateLocale = getDateLocale();
+
+  let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+  if (dateLocale === 'en-US') {
+    // stylize US date format with dashes instead of slashes
+    dateString = dateString.replace(/\//g, '-');
+  }
+  return dateString;
 }
 
 /**
@@ -617,6 +741,8 @@ async function loadLazy(doc) {
 
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
+
+  await loadTaxonomy();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);

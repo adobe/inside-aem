@@ -451,8 +451,8 @@ async function decorateFeedFilter(articleFeedEl, config) {
 export default function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
-  if (config.filters) {
+  /* TODO if (config.filters) {
     decorateFeedFilter(block, config);
-  }
+  }*/
   decorateArticleFeed(block, config);
 }
