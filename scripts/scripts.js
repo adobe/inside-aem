@@ -261,7 +261,7 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        console.debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
@@ -327,7 +327,7 @@ export function getLinkForTopic(topic, path) {
       catLink = tax.link;
     } else {
       // eslint-disable-next-line no-console
-      debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
+      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -671,7 +671,7 @@ async function getMetadataJson(path) {
   try {
     resp = await fetch(`${path.split('.')[0]}?noredirect`);
   } catch {
-    debug(`Could not retrieve metadata for ${path}`);
+    console.debug(`Could not retrieve metadata for ${path}`);
   }
 
   if (resp && resp.ok) {
