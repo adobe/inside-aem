@@ -66,6 +66,63 @@ function buildAutoBlocks(main) {
   }
 }
 
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextElementSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let appendTo;
+  els.forEach((el) => {
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
+    }
+  });
+  if (section.childElementCount === 0) {
+    section.remove();
+  }
+  if (blockSection.childElementCount === 0) {
+    blockSection.remove();
+  }
+  if (postBlockSection.childElementCount === 0) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
+    }
+  });
+}
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
+  });
+}
+
+/**
+ * Build figcaption element
+ * @param {Element} pEl The original element to be placed in figcaption.
+ * @returns figCaptionEl Generated figcaption
+ */
+export function buildCaption(pEl) {
+  const figCaptionEl = document.createElement('figcaption');
+  pEl.classList.add('caption');
+  figCaptionEl.append(pEl);
+  return figCaptionEl;
+}
+
 /**
  * removes formatting from images.
  * @param {Element} mainEl The container element
