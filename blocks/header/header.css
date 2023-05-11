@@ -281,4 +281,21 @@ header nav .nav-sections ul > li > ul > li {
 /* tools */
 header nav .nav-tools {
   grid-area: tools;
+  display: flex;
+}
+
+.nav-search button {
+  background: none;
+}
+
+.nav-search button:hover {
+  fill: #2b9af3;
+}
+
+.nav-logo {
+  display: flex;
+}
+
+.nav-logo svg {
+  width: 25px;
 }
