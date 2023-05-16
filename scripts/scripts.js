@@ -136,10 +136,10 @@ async function loadEager(doc) {
  * Adds the favicon.
  * @param {string} href The favicon URL
  */
+
 export function addFavIcon(href) {
   const link = document.createElement('link');
   link.rel = 'icon';
-  link.type = 'image/svg+xml';
   link.href = href;
   const existingLink = document.querySelector('head link[rel="icon"]');
   if (existingLink) {
