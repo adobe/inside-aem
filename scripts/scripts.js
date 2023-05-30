@@ -212,7 +212,7 @@ function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
 
-  if (taxonomy) {
+  if (taxonomy && topics) {
     const allTopics = [];
     const visibleTopics = [];
     // if taxonomy loaded, we can compute more
@@ -270,8 +270,7 @@ async function loadTaxonomy() {
     // adjust meta article:tag
 
     const currentTags = getMetadata('article:tag', true);
-    console.log(currentTags)
-    /*
+    
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -284,23 +283,23 @@ async function loadTaxonomy() {
         document.head.append(newMetaTag);
       }
     });
-*/
-    /*
-    currentTags.forEach((tag) => {
-      const tax = taxonomy.get(tag);
-      if (tax && tax.skipMeta) {
-        // if skipMeta, remove from meta "article:tag"
-        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
-        if (meta) {
-          meta.remove();
+    if( currentTags ) {
+      currentTags.forEach((tag) => {
+        const tax = taxonomy.get(tag);
+        if (tax && tax.skipMeta) {
+          // if skipMeta, remove from meta "article:tag"
+          const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+          if (meta) {
+            meta.remove();
+          }
+          // but add as meta with name
+          const newMetaTag = document.createElement('meta');
+          newMetaTag.setAttribute('name', tag);
+          newMetaTag.setAttribute('content', 'true');
+          document.head.append(newMetaTag);
         }
-        // but add as meta with name
-        const newMetaTag = document.createElement('meta');
-        newMetaTag.setAttribute('name', tag);
-        newMetaTag.setAttribute('content', 'true');
-        document.head.append(newMetaTag);
-      }
-    }); */
+      });
+    } 
   }
 }
 
