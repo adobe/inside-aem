@@ -57,7 +57,7 @@ function buildAutoBlocks(main) {
       if (!document.querySelector('.article-feed')) {
         buildArticleFeed(mainEl, 'author');
       }
-    }*/
+    } */
     buildImageBlocks(main);
     buildNewsletterModal(main);
   } catch (error) {
@@ -270,7 +270,7 @@ async function loadTaxonomy() {
     // adjust meta article:tag
 
     const currentTags = getMetadata('article:tag', true);
-    
+
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -283,7 +283,7 @@ async function loadTaxonomy() {
         document.head.append(newMetaTag);
       }
     });
-    if( currentTags ) {
+    if (currentTags) {
       currentTags.forEach((tag) => {
         const tax = taxonomy.get(tag);
         if (tax && tax.skipMeta) {
@@ -299,7 +299,7 @@ async function loadTaxonomy() {
           document.head.append(newMetaTag);
         }
       });
-    } 
+    }
   }
 }
 
