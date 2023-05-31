@@ -531,6 +531,18 @@ export function getRootPath() {
 }
 
 /**
+ * Build figcaption element
+ * @param {Element} pEl The original element to be placed in figcaption.
+ * @returns figCaptionEl Generated figcaption
+ */
+export function buildCaption(pEl) {
+  const figCaptionEl = document.createElement('figcaption');
+  pEl.classList.add('caption');
+  figCaptionEl.append(pEl);
+  return figCaptionEl;
+}
+
+/**
  * Build figure element
  * @param {Element} blockEl The original element to be placed in figure.
  * @returns figEl Generated figure
