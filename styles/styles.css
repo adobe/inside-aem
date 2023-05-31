@@ -110,12 +110,13 @@
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxxl: 3.75rem; /* 60px */
-    /*--heading-font-size-xxl: 60px;
+
+    /* --heading-font-size-xxl: 60px;
     --heading-font-size-xl: 48px;
     --heading-font-size-l: 36px;
     --heading-font-size-m: 30px;
     --heading-font-size-s: 24px;
-    --heading-font-size-xs: 22px;*/
+    --heading-font-size-xs: 22px; */
   }
 }
 

@@ -7,6 +7,7 @@ import {
   decorateButtons,
   decorateIcons,
   decorateSections,
+  decorateBlock,
   decorateBlocks,
   decorateTemplateAndTheme,
   waitForLCP,
@@ -34,39 +35,6 @@ function buildHeroBlock(main) {
 }
 
 /**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
-function buildAutoBlocks(main) {
-  removeStylingFromImages(main);
-  try {
-    // buildHeroBlock(main);
-    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
-      buildArticleHeader(main);
-      addArticleToHistory();
-    }
-    if (window.location.pathname.includes('/topics/')) {
-      buildTagHeader(main);
-      if (!main.querySelector('.article-feed')) {
-        buildArticleFeed(main, 'tags');
-      }
-    }/*
-    if (window.location.pathname.includes('/authors/')) {
-      buildAuthorHeader(mainEl);
-      buildSocialLinks(mainEl);
-      if (!document.querySelector('.article-feed')) {
-        buildArticleFeed(mainEl, 'author');
-      }
-    } */
-    buildImageBlocks(main);
-    buildNewsletterModal(main);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Auto Blocking failed', error);
-  }
-}
-
-/**
  * removes formatting from images.
  * @param {Element} mainEl The container element
  */
@@ -78,6 +46,195 @@ function removeStylingFromImages(mainEl) {
     parentEl.prepend(imgEl);
     parentEl.lastElementChild.remove();
   });
+}
+
+let language;
+let taxonomy;
+
+const LANG = {
+  EN: 'en',
+  DE: 'de',
+  FR: 'fr',
+  KO: 'ko',
+  ES: 'es',
+  IT: 'it',
+  JP: 'jp',
+  BR: 'br',
+};
+
+const LANG_LOCALE = {
+  en: 'en_US',
+  de: 'de_DE',
+  fr: 'fr_FR',
+  ko: 'ko_KR',
+  es: 'es_ES',
+  it: 'it_IT',
+  jp: 'ja_JP',
+  br: 'pt_BR',
+};
+
+export function getLanguage() {
+  if (language) return language;
+  language = LANG.EN;
+  const segs = window.location.pathname.split('/');
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
+    }
+  }
+  return language;
+}
+
+/**
+ * Returns the language dependent root path
+ * @returns {string} The computed root path
+ */
+export function getRootPath() {
+  const loc = getLanguage();
+  return `/${loc}`;
+}
+
+/**
+ * Returns a link tag with the proper href for the given topic.
+ * If the taxonomy is not yet available, the tag is decorated with the topicLink
+ * data attribute so that the link can be fixed later.
+ * @param {string} topic The topic name
+ * @returns {string} A link tag as a string
+ */
+export function getLinkForTopic(topic, path) {
+  // temporary title substitutions
+  const titleSubs = {
+    'Transformation digitale': 'Transformation numérique',
+  };
+  let catLink;
+  if (taxonomy) {
+    const tax = taxonomy.get(topic);
+    if (tax) {
+      catLink = tax.link;
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
+      catLink = '#';
+    }
+  }
+
+  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
+}
+
+/**
+ * returns an image caption of a picture elements
+ * @param {Element} picture picture element
+ */
+function getImageCaption(picture) {
+  const parentEl = picture.parentNode;
+  const parentSiblingEl = parentEl.nextElementSibling;
+  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+}
+
+export function getLocale() {
+  const lang = getLanguage();
+  return LANG_LOCALE[lang];
+}
+
+/**
+ * Add Article to article history for personalization
+ */
+function addArticleToHistory() {
+  const locale = getLocale();
+  const key = `blog-${locale}-history`;
+  const history = JSON.parse(localStorage.getItem(key) || '[]');
+  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
+  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
+}
+
+/**
+ * builds article header block from meta and default content.
+ * @param {Element} mainEl The container element
+ */
+function buildArticleHeader(mainEl) {
+  const div = document.createElement('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const tags = getMetadata('article:tag', true);
+  const category = tags.length > 0 ? tags[0] : '';
+  const author = getMetadata('author');
+  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
+  const publicationDate = getMetadata('publication-date');
+
+  const categoryTag = getLinkForTopic(category);
+
+  const articleHeaderBlockEl = buildBlock('article-header', [
+    [`<p>${categoryTag}</p>`],
+    [h1],
+    [`<p><a href="${authorURL}">${author}</a></p>
+      <p>${publicationDate}</p>`],
+    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
+  ]);
+  div.append(articleHeaderBlockEl);
+  mainEl.prepend(div);
+}
+
+function buildTagHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+
+  if (div) {
+    const heading = div.querySelector(':scope > h1, div > h2');
+    const picture = div.querySelector(':scope > p > picture');
+
+    if (picture) {
+      const tagHeaderBlockEl = buildBlock('tag-header', [
+        [heading],
+        [{ elems: [picture.closest('p')] }],
+      ]);
+      div.prepend(tagHeaderBlockEl);
+    }
+  }
+}
+
+function buildSocialLinks(mainEl) {
+  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
+  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
+    const socialLinkList = socialPar.nextElementSibling.outerHTML;
+    socialPar.nextElementSibling.remove();
+    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
+  }
+}
+
+function buildNewsletterModal(mainEl) {
+  const $div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  $div.append($newsletterModal);
+  mainEl.append($div);
+}
+
+function buildArticleFeed(mainEl, type) {
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1, h2').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    [type, title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
+function buildAuthorHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+  const heading = mainEl.querySelector('h1, h2');
+  const bio = heading.nextElementSibling;
+  const picture = mainEl.querySelector('picture');
+  const elArr = [[heading]];
+  if (picture) {
+    elArr.push([{ elems: [picture.closest('p')] }]);
+  }
+  if (bio && bio.nodeName === 'P') {
+    elArr.push([bio]);
+  }
+  const authorHeaderBlockEl = buildBlock('author-header', elArr);
+  div.prepend(authorHeaderBlockEl);
 }
 
 /**
@@ -104,6 +261,76 @@ function buildImageBlocks(mainEl) {
 }
 
 /**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} main The container element
+ */
+function buildAutoBlocks(main) {
+  removeStylingFromImages(main);
+  try {
+    buildHeroBlock(main);
+    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
+      buildArticleHeader(main);
+      addArticleToHistory();
+    }
+    if (window.location.pathname.includes('/topics/')) {
+      buildTagHeader(main);
+      if (!main.querySelector('.article-feed')) {
+        buildArticleFeed(main, 'tags');
+      }
+    }
+    if (window.location.pathname.includes('/authors/')) {
+      buildAuthorHeader(main);
+      buildSocialLinks(main);
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(main, 'author');
+      }
+    }
+    buildImageBlocks(main);
+    buildNewsletterModal(main);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
+}
+
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextElementSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let appendTo;
+  els.forEach((el) => {
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
+    }
+  });
+  if (section.childElementCount === 0) {
+    section.remove();
+  }
+  if (blockSection.childElementCount === 0) {
+    blockSection.remove();
+  }
+  if (postBlockSection.childElementCount === 0) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -113,6 +340,7 @@ export function decorateMain(main) {
   decorateButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
+  splitSections();
   decorateSections(main);
   decorateBlocks(main);
 }
@@ -176,30 +404,6 @@ export async function fetchBlogArticleIndex() {
 }
 
 /**
- * returns an image caption of a picture elements
- * @param {Element} picture picture element
- */
-function getImageCaption(picture) {
-  const parentEl = picture.parentNode;
-  const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
-}
-
-/**
- * Add Article to article history for personalization
- */
-
-function addArticleToHistory() {
-  const locale = getLocale();
-  const key = `blog-${locale}-history`;
-  const history = JSON.parse(localStorage.getItem(key) || '[]');
-  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
-  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
-}
-
-let taxonomy;
-
-/**
  * For the given list of topics, returns the corresponding computed taxonomy:
  * - category: main topic
  * - topics: tags as an array
@@ -211,7 +415,6 @@ let taxonomy;
 function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
-
   if (taxonomy && topics) {
     const allTopics = [];
     const visibleTopics = [];
@@ -234,6 +437,7 @@ function computeTaxonomyFromTopics(topics, path) {
           }
         }
       } else {
+        // eslint-disable-next-line no-console
         console.debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
@@ -268,9 +472,10 @@ async function loadTaxonomy() {
     });
 
     // adjust meta article:tag
-
+    /*
     const currentTags = getMetadata('article:tag', true);
 
+    console.log("1: " + currentTags);
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -299,39 +504,12 @@ async function loadTaxonomy() {
           document.head.append(newMetaTag);
         }
       });
-    }
+    } */
   }
 }
 
 export function getTaxonomy() {
   return taxonomy;
-}
-
-/**
- * Returns a link tag with the proper href for the given topic.
- * If the taxonomy is not yet available, the tag is decorated with the topicLink
- * data attribute so that the link can be fixed later.
- * @param {string} topic The topic name
- * @returns {string} A link tag as a string
- */
-export function getLinkForTopic(topic, path) {
-  // temporary title substitutions
-  const titleSubs = {
-    'Transformation digitale': 'Transformation numérique',
-  };
-  let catLink;
-  if (taxonomy) {
-    const tax = taxonomy.get(topic);
-    if (tax) {
-      catLink = tax.link;
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
-      catLink = '#';
-    }
-  }
-
-  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
 }
 
 /**
@@ -398,109 +576,25 @@ export function getArticleTaxonomy(article) {
   };
 }
 
-/**
- * builds article header block from meta and default content.
- * @param {Element} mainEl The container element
- */
-function buildArticleHeader(mainEl) {
-  const div = document.createElement('div');
-  const h1 = mainEl.querySelector('h1');
-  const picture = mainEl.querySelector('picture');
-  const tags = getMetadata('article:tag', true);
-  const category = tags.length > 0 ? tags[0] : '';
-  const author = getMetadata('author');
-  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
-  const publicationDate = getMetadata('publication-date');
+// eslint-disable-next-line no-unused-vars
+function buildTagsBlock(mainEl) {
+  const topics = getMetadata('article:tag', true);
+  if (taxonomy && topics.length > 0) {
+    const articleTax = computeTaxonomyFromTopics(topics);
+    const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
 
-  const categoryTag = getLinkForTopic(category);
-
-  const articleHeaderBlockEl = buildBlock('article-header', [
-    [`<p>${categoryTag}</p>`],
-    [h1],
-    [`<p><a href="${authorURL}">${author}</a></p>
-      <p>${publicationDate}</p>`],
-    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
-  ]);
-  div.append(articleHeaderBlockEl);
-  mainEl.prepend(div);
-}
-
-function buildTagHeader(mainEl) {
-  const div = mainEl.querySelector('div');
-
-  if (div) {
-    const heading = div.querySelector(':scope > h1, div > h2');
-    const picture = div.querySelector(':scope > p > picture');
-
-    if (picture) {
-      const tagHeaderBlockEl = buildBlock('tag-header', [
-        [heading],
-        [{ elems: [picture.closest('p')] }],
-      ]);
-      div.prepend(tagHeaderBlockEl);
+    const tagsBlock = buildBlock('tags', [
+      [`<p>${tagsForBlock.join('')}</p>`],
+    ]);
+    const recBlock = mainEl.querySelector('.recommended-articles-container');
+    if (recBlock) {
+      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstElementChild) {
+      // insert in div of the last element
+      mainEl.lastElementChild.firstElementChild.append(tagsBlock);
     }
+    decorateBlock(tagsBlock);
   }
-}
-
-function buildSocialLinks(mainEl) {
-  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
-  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
-    const socialLinkList = socialPar.nextElementSibling.outerHTML;
-    socialPar.nextElementSibling.remove();
-    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
-  }
-}
-
-function buildNewsletterModal(mainEl) {
-  const $div = document.createElement('div');
-  const $newsletterModal = buildBlock('newsletter-modal', []);
-  $div.append($newsletterModal);
-  mainEl.append($div);
-}
-
-const LANG = {
-  EN: 'en',
-  DE: 'de',
-  FR: 'fr',
-  KO: 'ko',
-  ES: 'es',
-  IT: 'it',
-  JP: 'jp',
-  BR: 'br',
-};
-
-const LANG_LOCALE = {
-  en: 'en_US',
-  de: 'de_DE',
-  fr: 'fr_FR',
-  ko: 'ko_KR',
-  es: 'es_ES',
-  it: 'it_IT',
-  jp: 'ja_JP',
-  br: 'pt_BR',
-};
-
-let language;
-
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
-  }
-  return language;
-}
-
-export function getLocale() {
-  const lang = getLanguage();
-  return LANG_LOCALE[lang];
 }
 
 function getDateLocale() {
@@ -519,15 +613,6 @@ function getDateLocale() {
     dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
   }
   return dateLocale;
-}
-
-/**
- * Returns the language dependent root path
- * @returns {string} The computed root path
- */
-export function getRootPath() {
-  const loc = getLanguage();
-  return `/${loc}`;
 }
 
 /**
@@ -658,7 +743,6 @@ export function buildArticleCard(article, type = 'article', eager = false) {
  * fetches the string variables.
  * @returns {object} localized variables
  */
-
 export async function fetchPlaceholders() {
   if (!window.placeholders) {
     const resp = await fetch(`${getRootPath()}/placeholders.json`);
@@ -682,6 +766,7 @@ async function getMetadataJson(path) {
   try {
     resp = await fetch(`${path.split('.')[0]}?noredirect`);
   } catch {
+    // eslint-disable-next-line no-console
     console.debug(`Could not retrieve metadata for ${path}`);
   }
 
@@ -755,6 +840,9 @@ async function loadLazy(doc) {
 
   await loadTaxonomy();
 
+  /* taxonomy dependent */
+  // buildTagsBlock(main); // TODO
+
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
   sampleRUM('lazy');
@@ -764,7 +852,8 @@ async function loadLazy(doc) {
 
 export function stamp(message) {
   if (window.name.includes('performance')) {
-    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+    // eslint-disable-next-line no-console
+    console.debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }
 }
 
