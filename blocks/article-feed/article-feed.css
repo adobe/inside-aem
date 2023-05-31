@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 main .article-feed-container > div {
   max-width: unset;
 }
@@ -153,7 +155,6 @@ main .article-feed .load-more {
   position: fixed;
   display: flex;
   flex-direction: column;
-  left: 0;
   top: calc((100% - 435px) / 2);
   left: 5%;
   width: 90%;
@@ -335,7 +336,6 @@ main .article-feed .load-more {
   left: 0;
   background: rgb(255 255 255 / 75%);
   backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
   z-index: 1;
 }
 
@@ -352,7 +352,6 @@ main .article-feed .load-more {
   border-radius: 50%;
   width: 1.6rem;
   height: 1.6rem;
-  animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
 

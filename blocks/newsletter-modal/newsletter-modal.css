@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity,selector-no-vendor-prefix */
+
 body.newsletter-no-scroll {
     overflow: hidden;
 }

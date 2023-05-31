@@ -366,11 +366,6 @@ main img {
   width: 24px;
 }
 
-main .section {
-  padding: 64px 16px;
-}
-
-
 main a:any-link {
   color: var(--body-color);
   line-height: var(--body-line-height);
