@@ -34,13 +34,90 @@ function buildHeroBlock(main) {
 }
 
 /**
+ * removes formatting from images.
+ * @param {Element} mainEl The container element
+ */
+function removeStylingFromImages(mainEl) {
+  // remove styling from images, if any
+  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
+  styledImgEls.forEach((imgEl) => {
+    const parentEl = imgEl.closest('p');
+    parentEl.prepend(imgEl);
+    parentEl.lastElementChild.remove();
+  });
+}
+
+/**
+ * Returns the language dependent root path
+ * @returns {string} The computed root path
+ */
+export function getRootPath() {
+  const loc = getLanguage();
+  return `/${loc}`;
+}
+
+/**
+ * Returns a link tag with the proper href for the given topic.
+ * If the taxonomy is not yet available, the tag is decorated with the topicLink
+ * data attribute so that the link can be fixed later.
+ * @param {string} topic The topic name
+ * @returns {string} A link tag as a string
+ */
+export function getLinkForTopic(topic, path) {
+  // temporary title substitutions
+  const titleSubs = {
+    'Transformation digitale': 'Transformation numérique',
+  };
+  let catLink;
+  if (taxonomy) {
+    const tax = taxonomy.get(topic);
+    if (tax) {
+      catLink = tax.link;
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
+      catLink = '#';
+    }
+  }
+
+  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
+}
+
+/**
+ * builds article header block from meta and default content.
+ * @param {Element} mainEl The container element
+ */
+function buildArticleHeader(mainEl) {
+  const div = document.createElement('div');
+  const h1 = mainEl.querySelector('h1');
+  const picture = mainEl.querySelector('picture');
+  const tags = getMetadata('article:tag', true);
+  const category = tags.length > 0 ? tags[0] : '';
+  const author = getMetadata('author');
+  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
+  const publicationDate = getMetadata('publication-date');
+
+  const categoryTag = getLinkForTopic(category);
+
+  const articleHeaderBlockEl = buildBlock('article-header', [
+    [`<p>${categoryTag}</p>`],
+    [h1],
+    [`<p><a href="${authorURL}">${author}</a></p>
+      <p>${publicationDate}</p>`],
+    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
+  ]);
+  div.append(articleHeaderBlockEl);
+  mainEl.prepend(div);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   removeStylingFromImages(main);
   try {
-    // buildHeroBlock(main);
+    buildHeroBlock(main);
     if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
       buildArticleHeader(main);
       addArticleToHistory();
@@ -64,20 +141,6 @@ function buildAutoBlocks(main) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
   }
-}
-
-/**
- * removes formatting from images.
- * @param {Element} mainEl The container element
- */
-function removeStylingFromImages(mainEl) {
-  // remove styling from images, if any
-  const styledImgEls = [...mainEl.querySelectorAll('strong picture'), ...mainEl.querySelectorAll('em picture')];
-  styledImgEls.forEach((imgEl) => {
-    const parentEl = imgEl.closest('p');
-    parentEl.prepend(imgEl);
-    parentEl.lastElementChild.remove();
-  });
 }
 
 /**
@@ -113,6 +176,7 @@ export function decorateMain(main) {
   decorateButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
+  splitSections();
   decorateSections(main);
   decorateBlocks(main);
 }
@@ -211,7 +275,6 @@ let taxonomy;
 function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
-
   if (taxonomy && topics) {
     const allTopics = [];
     const visibleTopics = [];
@@ -268,9 +331,10 @@ async function loadTaxonomy() {
     });
 
     // adjust meta article:tag
-
+/*
     const currentTags = getMetadata('article:tag', true);
 
+    console.log("1: " + currentTags);
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -299,39 +363,12 @@ async function loadTaxonomy() {
           document.head.append(newMetaTag);
         }
       });
-    }
+    }*/
   }
 }
 
 export function getTaxonomy() {
   return taxonomy;
-}
-
-/**
- * Returns a link tag with the proper href for the given topic.
- * If the taxonomy is not yet available, the tag is decorated with the topicLink
- * data attribute so that the link can be fixed later.
- * @param {string} topic The topic name
- * @returns {string} A link tag as a string
- */
-export function getLinkForTopic(topic, path) {
-  // temporary title substitutions
-  const titleSubs = {
-    'Transformation digitale': 'Transformation numérique',
-  };
-  let catLink;
-  if (taxonomy) {
-    const tax = taxonomy.get(topic);
-    if (tax) {
-      catLink = tax.link;
-    } else {
-      // eslint-disable-next-line no-console
-      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
-      catLink = '#';
-    }
-  }
-
-  return `<a href="${catLink || ''}" ${!catLink ? `data-topic-link="${topic}"` : ''}>${titleSubs[topic] || topic}</a>`;
 }
 
 /**
@@ -398,33 +435,6 @@ export function getArticleTaxonomy(article) {
   };
 }
 
-/**
- * builds article header block from meta and default content.
- * @param {Element} mainEl The container element
- */
-function buildArticleHeader(mainEl) {
-  const div = document.createElement('div');
-  const h1 = mainEl.querySelector('h1');
-  const picture = mainEl.querySelector('picture');
-  const tags = getMetadata('article:tag', true);
-  const category = tags.length > 0 ? tags[0] : '';
-  const author = getMetadata('author');
-  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
-  const publicationDate = getMetadata('publication-date');
-
-  const categoryTag = getLinkForTopic(category);
-
-  const articleHeaderBlockEl = buildBlock('article-header', [
-    [`<p>${categoryTag}</p>`],
-    [h1],
-    [`<p><a href="${authorURL}">${author}</a></p>
-      <p>${publicationDate}</p>`],
-    [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
-  ]);
-  div.append(articleHeaderBlockEl);
-  mainEl.prepend(div);
-}
-
 function buildTagHeader(mainEl) {
   const div = mainEl.querySelector('div');
 
@@ -456,6 +466,38 @@ function buildNewsletterModal(mainEl) {
   const $newsletterModal = buildBlock('newsletter-modal', []);
   $div.append($newsletterModal);
   mainEl.append($div);
+}
+
+
+function buildArticleFeed(mainEl, type) {
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1, h2').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    [type, title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
+function buildTagsBlock(mainEl) {
+  const topics = getMetadata('article:tag', true);
+  if (taxonomy && topics.length > 0) {
+    /*
+    const articleTax = computeTaxonomyFromTopics(topics);
+    const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
+*/
+    const tagsBlock = buildBlock('tags', [
+      [`<p>${tagsForBlock.join('')}</p>`],
+    ]);
+    const recBlock = mainEl.querySelector('.recommended-articles-container');
+    if (recBlock) {
+      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+    } else if (mainEl.lastElementChild.firstElementChild) {
+      // insert in div of the last element
+      mainEl.lastElementChild.firstElementChild.append(tagsBlock);
+    }
+    decorateBlock(tagsBlock);
+  }
 }
 
 const LANG = {
@@ -521,13 +563,49 @@ function getDateLocale() {
   return dateLocale;
 }
 
-/**
- * Returns the language dependent root path
- * @returns {string} The computed root path
- */
-export function getRootPath() {
-  const loc = getLanguage();
-  return `/${loc}`;
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextElementSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let appendTo;
+  els.forEach((el) => {
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
+    }
+  });
+  if (section.childElementCount === 0) {
+    section.remove();
+  }
+  if (blockSection.childElementCount === 0) {
+    blockSection.remove();
+  }
+  if (postBlockSection.childElementCount === 0) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
+    }
+  });
+}
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
+  });
 }
 
 /**
@@ -658,7 +736,6 @@ export function buildArticleCard(article, type = 'article', eager = false) {
  * fetches the string variables.
  * @returns {object} localized variables
  */
-
 export async function fetchPlaceholders() {
   if (!window.placeholders) {
     const resp = await fetch(`${getRootPath()}/placeholders.json`);
@@ -754,6 +831,9 @@ async function loadLazy(doc) {
   loadFooter(doc.querySelector('footer'));
 
   await loadTaxonomy();
+
+  /* taxonomy dependent */
+  //buildTagsBlock(main);
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
