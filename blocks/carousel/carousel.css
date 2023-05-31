@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 main .section-wrapper.carousel-container > div {
   max-width: 1010px;
 }
