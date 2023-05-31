@@ -134,7 +134,7 @@ function validateDate(date) {
   }
 }
 
-export default async function decorateArticleHeader(blockEl, blockName, document, eager) {
+export default async function decorateArticleHeader(blockEl, blockName, eager) {
   const childrenEls = Array.from(blockEl.children);
   // category
   const categoryContainer = childrenEls[0];
