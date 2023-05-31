@@ -7,6 +7,7 @@ import {
   decorateButtons,
   decorateIcons,
   decorateSections,
+  decorateBlock,
   decorateBlocks,
   decorateTemplateAndTheme,
   waitForLCP,
@@ -47,6 +48,47 @@ function removeStylingFromImages(mainEl) {
   });
 }
 
+let language;
+let taxonomy;
+
+const LANG = {
+  EN: 'en',
+  DE: 'de',
+  FR: 'fr',
+  KO: 'ko',
+  ES: 'es',
+  IT: 'it',
+  JP: 'jp',
+  BR: 'br',
+};
+
+const LANG_LOCALE = {
+  en: 'en_US',
+  de: 'de_DE',
+  fr: 'fr_FR',
+  ko: 'ko_KR',
+  es: 'es_ES',
+  it: 'it_IT',
+  jp: 'ja_JP',
+  br: 'pt_BR',
+};
+
+export function getLanguage() {
+  if (language) return language;
+  language = LANG.EN;
+  const segs = window.location.pathname.split('/');
+  if (segs && segs.length > 0) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [, value] of Object.entries(LANG)) {
+      if (value === segs[1]) {
+        language = value;
+        break;
+      }
+    }
+  }
+  return language;
+}
+
 /**
  * Returns the language dependent root path
  * @returns {string} The computed root path
@@ -84,6 +126,32 @@ export function getLinkForTopic(topic, path) {
 }
 
 /**
+ * returns an image caption of a picture elements
+ * @param {Element} picture picture element
+ */
+function getImageCaption(picture) {
+  const parentEl = picture.parentNode;
+  const parentSiblingEl = parentEl.nextElementSibling;
+  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
+}
+
+export function getLocale() {
+  const lang = getLanguage();
+  return LANG_LOCALE[lang];
+}
+
+/**
+ * Add Article to article history for personalization
+ */
+function addArticleToHistory() {
+  const locale = getLocale();
+  const key = `blog-${locale}-history`;
+  const history = JSON.parse(localStorage.getItem(key) || '[]');
+  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
+  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
+}
+
+/**
  * builds article header block from meta and default content.
  * @param {Element} mainEl The container element
  */
@@ -110,37 +178,63 @@ function buildArticleHeader(mainEl) {
   mainEl.prepend(div);
 }
 
-/**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
-function buildAutoBlocks(main) {
-  removeStylingFromImages(main);
-  try {
-    buildHeroBlock(main);
-    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
-      buildArticleHeader(main);
-      addArticleToHistory();
+function buildTagHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+
+  if (div) {
+    const heading = div.querySelector(':scope > h1, div > h2');
+    const picture = div.querySelector(':scope > p > picture');
+
+    if (picture) {
+      const tagHeaderBlockEl = buildBlock('tag-header', [
+        [heading],
+        [{ elems: [picture.closest('p')] }],
+      ]);
+      div.prepend(tagHeaderBlockEl);
     }
-    if (window.location.pathname.includes('/topics/')) {
-      buildTagHeader(main);
-      if (!main.querySelector('.article-feed')) {
-        buildArticleFeed(main, 'tags');
-      }
-    }/*
-    if (window.location.pathname.includes('/authors/')) {
-      buildAuthorHeader(mainEl);
-      buildSocialLinks(mainEl);
-      if (!document.querySelector('.article-feed')) {
-        buildArticleFeed(mainEl, 'author');
-      }
-    } */
-    buildImageBlocks(main);
-    buildNewsletterModal(main);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Auto Blocking failed', error);
   }
+}
+
+function buildSocialLinks(mainEl) {
+  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
+  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
+    const socialLinkList = socialPar.nextElementSibling.outerHTML;
+    socialPar.nextElementSibling.remove();
+    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
+  }
+}
+
+function buildNewsletterModal(mainEl) {
+  const $div = document.createElement('div');
+  const $newsletterModal = buildBlock('newsletter-modal', []);
+  $div.append($newsletterModal);
+  mainEl.append($div);
+}
+
+function buildArticleFeed(mainEl, type) {
+  const div = document.createElement('div');
+  const title = mainEl.querySelector('h1, h2').textContent.trim();
+  const articleFeedEl = buildBlock('article-feed', [
+    [type, title],
+  ]);
+  div.append(articleFeedEl);
+  mainEl.append(div);
+}
+
+function buildAuthorHeader(mainEl) {
+  const div = mainEl.querySelector('div');
+  const heading = mainEl.querySelector('h1, h2');
+  const bio = heading.nextElementSibling;
+  const picture = mainEl.querySelector('picture');
+  const elArr = [[heading]];
+  if (picture) {
+    elArr.push([{ elems: [picture.closest('p')] }]);
+  }
+  if (bio && bio.nodeName === 'P') {
+    elArr.push([bio]);
+  }
+  const authorHeaderBlockEl = buildBlock('author-header', elArr);
+  div.prepend(authorHeaderBlockEl);
 }
 
 /**
@@ -162,6 +256,76 @@ function buildImageBlocks(mainEl) {
     } else {
       // same parent, add image to last images block
       lastImagesBlock.firstElementChild.append(imagesBlockEl.firstElementChild.firstElementChild);
+    }
+  });
+}
+
+/**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} main The container element
+ */
+function buildAutoBlocks(main) {
+  removeStylingFromImages(main);
+  try {
+    buildHeroBlock(main);
+    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
+      buildArticleHeader(main);
+      addArticleToHistory();
+    }
+    if (window.location.pathname.includes('/topics/')) {
+      buildTagHeader(main);
+      if (!main.querySelector('.article-feed')) {
+        buildArticleFeed(main, 'tags');
+      }
+    }
+    if (window.location.pathname.includes('/authors/')) {
+      buildAuthorHeader(main);
+      buildSocialLinks(main);
+      if (!document.querySelector('.article-feed')) {
+        buildArticleFeed(main, 'author');
+      }
+    }
+    buildImageBlocks(main);
+    buildNewsletterModal(main);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
+}
+
+function unwrapBlock(block) {
+  const section = block.parentNode;
+  const els = [...section.children];
+  const blockSection = document.createElement('div');
+  const postBlockSection = document.createElement('div');
+  const nextSection = section.nextElementSibling;
+  section.parentNode.insertBefore(blockSection, nextSection);
+  section.parentNode.insertBefore(postBlockSection, nextSection);
+
+  let appendTo;
+  els.forEach((el) => {
+    if (el === block) appendTo = blockSection;
+    if (appendTo) {
+      appendTo.appendChild(el);
+      appendTo = postBlockSection;
+    }
+  });
+  if (section.childElementCount === 0) {
+    section.remove();
+  }
+  if (blockSection.childElementCount === 0) {
+    blockSection.remove();
+  }
+  if (postBlockSection.childElementCount === 0) {
+    postBlockSection.remove();
+  }
+}
+
+function splitSections() {
+  document.querySelectorAll('main > div > div').forEach((block) => {
+    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
+    if (blocksToSplit.includes(block.className)) {
+      unwrapBlock(block);
     }
   });
 }
@@ -240,30 +404,6 @@ export async function fetchBlogArticleIndex() {
 }
 
 /**
- * returns an image caption of a picture elements
- * @param {Element} picture picture element
- */
-function getImageCaption(picture) {
-  const parentEl = picture.parentNode;
-  const parentSiblingEl = parentEl.nextElementSibling;
-  return (parentSiblingEl && parentSiblingEl.firstChild.nodeName === 'EM' ? parentSiblingEl : undefined);
-}
-
-/**
- * Add Article to article history for personalization
- */
-
-function addArticleToHistory() {
-  const locale = getLocale();
-  const key = `blog-${locale}-history`;
-  const history = JSON.parse(localStorage.getItem(key) || '[]');
-  history.unshift({ path: window.location.pathname, tags: getMetadata('article:tag') });
-  localStorage.setItem(key, JSON.stringify(history.slice(0, 5)));
-}
-
-let taxonomy;
-
-/**
  * For the given list of topics, returns the corresponding computed taxonomy:
  * - category: main topic
  * - topics: tags as an array
@@ -297,6 +437,7 @@ function computeTaxonomyFromTopics(topics, path) {
           }
         }
       } else {
+        // eslint-disable-next-line no-console
         console.debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
@@ -331,7 +472,7 @@ async function loadTaxonomy() {
     });
 
     // adjust meta article:tag
-/*
+    /*
     const currentTags = getMetadata('article:tag', true);
 
     console.log("1: " + currentTags);
@@ -363,7 +504,7 @@ async function loadTaxonomy() {
           document.head.append(newMetaTag);
         }
       });
-    }*/
+    } */
   }
 }
 
@@ -435,57 +576,13 @@ export function getArticleTaxonomy(article) {
   };
 }
 
-function buildTagHeader(mainEl) {
-  const div = mainEl.querySelector('div');
-
-  if (div) {
-    const heading = div.querySelector(':scope > h1, div > h2');
-    const picture = div.querySelector(':scope > p > picture');
-
-    if (picture) {
-      const tagHeaderBlockEl = buildBlock('tag-header', [
-        [heading],
-        [{ elems: [picture.closest('p')] }],
-      ]);
-      div.prepend(tagHeaderBlockEl);
-    }
-  }
-}
-
-function buildSocialLinks(mainEl) {
-  const socialPar = [...mainEl.querySelectorAll('p')].find((p) => p.textContent.trim() === 'Social:');
-  if (socialPar && socialPar.nextElementSibling === socialPar.parentNode.querySelector('ul')) {
-    const socialLinkList = socialPar.nextElementSibling.outerHTML;
-    socialPar.nextElementSibling.remove();
-    socialPar.replaceWith(buildBlock('social-links', [[socialLinkList]]));
-  }
-}
-
-function buildNewsletterModal(mainEl) {
-  const $div = document.createElement('div');
-  const $newsletterModal = buildBlock('newsletter-modal', []);
-  $div.append($newsletterModal);
-  mainEl.append($div);
-}
-
-
-function buildArticleFeed(mainEl, type) {
-  const div = document.createElement('div');
-  const title = mainEl.querySelector('h1, h2').textContent.trim();
-  const articleFeedEl = buildBlock('article-feed', [
-    [type, title],
-  ]);
-  div.append(articleFeedEl);
-  mainEl.append(div);
-}
-
+// eslint-disable-next-line no-unused-vars
 function buildTagsBlock(mainEl) {
   const topics = getMetadata('article:tag', true);
   if (taxonomy && topics.length > 0) {
-    /*
     const articleTax = computeTaxonomyFromTopics(topics);
     const tagsForBlock = articleTax.visibleTopics.map((topic) => getLinkForTopic(topic));
-*/
+
     const tagsBlock = buildBlock('tags', [
       [`<p>${tagsForBlock.join('')}</p>`],
     ]);
@@ -498,51 +595,6 @@ function buildTagsBlock(mainEl) {
     }
     decorateBlock(tagsBlock);
   }
-}
-
-const LANG = {
-  EN: 'en',
-  DE: 'de',
-  FR: 'fr',
-  KO: 'ko',
-  ES: 'es',
-  IT: 'it',
-  JP: 'jp',
-  BR: 'br',
-};
-
-const LANG_LOCALE = {
-  en: 'en_US',
-  de: 'de_DE',
-  fr: 'fr_FR',
-  ko: 'ko_KR',
-  es: 'es_ES',
-  it: 'it_IT',
-  jp: 'ja_JP',
-  br: 'pt_BR',
-};
-
-let language;
-
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
-  }
-  return language;
-}
-
-export function getLocale() {
-  const lang = getLanguage();
-  return LANG_LOCALE[lang];
 }
 
 function getDateLocale() {
@@ -561,51 +613,6 @@ function getDateLocale() {
     dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
   }
   return dateLocale;
-}
-
-function unwrapBlock(block) {
-  const section = block.parentNode;
-  const els = [...section.children];
-  const blockSection = document.createElement('div');
-  const postBlockSection = document.createElement('div');
-  const nextSection = section.nextElementSibling;
-  section.parentNode.insertBefore(blockSection, nextSection);
-  section.parentNode.insertBefore(postBlockSection, nextSection);
-
-  let appendTo;
-  els.forEach((el) => {
-    if (el === block) appendTo = blockSection;
-    if (appendTo) {
-      appendTo.appendChild(el);
-      appendTo = postBlockSection;
-    }
-  });
-  if (section.childElementCount === 0) {
-    section.remove();
-  }
-  if (blockSection.childElementCount === 0) {
-    blockSection.remove();
-  }
-  if (postBlockSection.childElementCount === 0) {
-    postBlockSection.remove();
-  }
-}
-
-function splitSections() {
-  document.querySelectorAll('main > div > div').forEach((block) => {
-    const blocksToSplit = ['article-header', 'article-feed', 'recommended-articles', 'video', 'carousel'];
-    if (blocksToSplit.includes(block.className)) {
-      unwrapBlock(block);
-    }
-  });
-}
-
-function removeEmptySections() {
-  document.querySelectorAll('main > div').forEach((div) => {
-    if (div.innerHTML.trim() === '') {
-      div.remove();
-    }
-  });
 }
 
 /**
@@ -759,6 +766,7 @@ async function getMetadataJson(path) {
   try {
     resp = await fetch(`${path.split('.')[0]}?noredirect`);
   } catch {
+    // eslint-disable-next-line no-console
     console.debug(`Could not retrieve metadata for ${path}`);
   }
 
@@ -833,7 +841,7 @@ async function loadLazy(doc) {
   await loadTaxonomy();
 
   /* taxonomy dependent */
-  //buildTagsBlock(main);
+  // buildTagsBlock(main); // TODO
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
@@ -844,7 +852,8 @@ async function loadLazy(doc) {
 
 export function stamp(message) {
   if (window.name.includes('performance')) {
-    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+    // eslint-disable-next-line no-console
+    console.debug(`${new Date() - performance.timing.navigationStart}:${message}`);
   }
 }
 
