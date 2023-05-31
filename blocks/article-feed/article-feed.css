@@ -78,16 +78,16 @@ main .article-feed .load-more {
   cursor: pointer;
 }
 
-.filter-button[aria-expanded=true] {
+.filter-button[aria-expanded="true"] {
   outline: 2px solid var(--color-info-accent);
   background: var(--color-gray-100);
 }
 
-.filter-button[aria-expanded=true] + .filter-dropdown {
+.filter-button[aria-expanded="true"] + .filter-dropdown {
   visibility: visible;
 }
 
-.filter-button[aria-expanded=false] + .filter-dropdown {
+.filter-button[aria-expanded="false"] + .filter-dropdown {
   visibility: hidden;
 }
 
@@ -153,7 +153,6 @@ main .article-feed .load-more {
   position: fixed;
   display: flex;
   flex-direction: column;
-  top: 0;
   left: 0;
   top: calc((100% - 435px) / 2);
   left: 5%;
@@ -247,7 +246,7 @@ main .article-feed .load-more {
 
 .selected-filter {
   display: inline-block;
-  padding: 0px 6px 3px 6px;
+  padding: 0 6px 3px;
   border: 1px solid var(--color-gray-600);
   border-radius: 4px;
   color: var(--color-gray-600);
@@ -334,8 +333,8 @@ main .article-feed .load-more {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(255, 255, 255, 0.75);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgb(255 255 255 / 75%);
+  backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   z-index: 1;
 }
@@ -353,13 +352,13 @@ main .article-feed .load-more {
   border-radius: 50%;
   width: 1.6rem;
   height: 1.6rem;
-  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
 
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin {

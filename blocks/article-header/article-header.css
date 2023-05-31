@@ -211,6 +211,7 @@ main .article-byline .article-byline-sharing a#copy-to-clipboard .copied-to-clip
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }

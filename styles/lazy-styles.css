@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* below the fold CSS goes here */
 
 /* fonts */
@@ -69,11 +70,11 @@
 }
 
 .tk-adobe-clean {
-    font-family: "adobe-clean", "Trebuchet MS", sans-serif;
+    font-family: adobe-clean, "Trebuchet MS", sans-serif;
 }
 
 .tk-adobe-clean-serif {
-    font-family: "adobe-clean-serif", "Times New Roman", Times, serif;
+    font-family: adobe-clean-serif, "Times New Roman", Times, serif;
 }
 
 main div.article-header-container+div a:any-link:not([class]),
@@ -118,6 +119,7 @@ main div.video-container+div a:focus:not([class]) {
         margin-right: 32px;
         margin-bottom: 32px;
     }
+
     .article-card:nth-of-type(2n),
     .article-card:last-of-type {
         margin-right: 0;
@@ -128,9 +130,11 @@ main div.video-container+div a:focus:not([class]) {
     .article-card {
         width: calc(100% / 3 - 22px);
     }
+
     .article-card:nth-of-type(2n) {
         margin-right: 32px;
     }
+
     .article-card:nth-of-type(3n),
     .article-card:last-of-type {
         margin-right: 0;
