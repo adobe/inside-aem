@@ -862,15 +862,6 @@ async function loadLazy(doc) {
   sampleRUM.observe(main.querySelectorAll('picture > img'));
 }
 
-export function stamp(message) {
-  if (window.name.includes('performance')) {
-    // eslint-disable-next-line no-console
-    console.debug(`${new Date() - performance.timing.navigationStart}:${message}`);
-  }
-}
-
-stamp('start');
-
 /**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
@@ -883,7 +874,7 @@ function loadDelayed() {
 
 async function loadPage() {
   await loadEager(document);
-  await loadLazy(document);
+  loadLazy(document);
   loadDelayed();
 }
 
