@@ -474,17 +474,15 @@ async function loadTaxonomy() {
         a.href = tax.link;
       } else {
         // eslint-disable-next-line no-console
-        console.debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        console.log(`Trying to get a link for an unknown topic: ${topic} (current page)`);
         a.href = '#';
       }
       delete a.dataset.topicLink;
     });
 
     // adjust meta article:tag
-    /*
-    const currentTags = getMetadata('article:tag', true);
 
-    console.log("1: " + currentTags);
+    const currentTags = getMetadata('article:tag', true);
     const articleTax = computeTaxonomyFromTopics(currentTags);
 
     const allTopics = articleTax.allTopics || [];
@@ -497,23 +495,22 @@ async function loadTaxonomy() {
         document.head.append(newMetaTag);
       }
     });
-    if (currentTags) {
-      currentTags.forEach((tag) => {
-        const tax = taxonomy.get(tag);
-        if (tax && tax.skipMeta) {
-          // if skipMeta, remove from meta "article:tag"
-          const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
-          if (meta) {
-            meta.remove();
-          }
-          // but add as meta with name
-          const newMetaTag = document.createElement('meta');
-          newMetaTag.setAttribute('name', tag);
-          newMetaTag.setAttribute('content', 'true');
-          document.head.append(newMetaTag);
+
+    currentTags.forEach((tag) => {
+      const tax = taxonomy.get(tag);
+      if (tax && tax.skipMeta) {
+        // if skipMeta, remove from meta "article:tag"
+        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+        if (meta) {
+          meta.remove();
         }
-      });
-    } */
+        // but add as meta with name
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('name', tag);
+        newMetaTag.setAttribute('content', 'true');
+        document.head.append(newMetaTag);
+      }
+    });
   }
 }
 
@@ -853,7 +850,7 @@ async function loadLazy(doc) {
   await loadTaxonomy();
 
   /* taxonomy dependent */
-  // buildTagsBlock(main); // TODO
+  buildTagsBlock(main); // TODO
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
