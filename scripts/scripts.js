@@ -829,6 +829,10 @@ export async function getBlogArticle(path) {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+
+  // post LCP actions go here
+  sampleRUM('lcp');
+
   await loadBlocks(main);
 
   const { hash } = window.location;
