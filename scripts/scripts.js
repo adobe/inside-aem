@@ -879,3 +879,15 @@ async function loadPage() {
 }
 
 loadPage();
+
+/*
+ * lighthouse performance instrumentation helper
+ * (needs a refactor)
+ */
+
+export function stamp(message) {
+  if (window.name.includes('performance')) {
+    // eslint-disable-next-line no-console
+    console.debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+  }
+}
