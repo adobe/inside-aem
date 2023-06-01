@@ -330,6 +330,14 @@ function splitSections() {
   });
 }
 
+function removeEmptySections() {
+  document.querySelectorAll('main > div').forEach((div) => {
+    if (div.innerHTML.trim() === '') {
+      div.remove();
+    }
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -341,6 +349,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   splitSections();
+  removeEmptySections();
   decorateSections(main);
   decorateBlocks(main);
 }
@@ -829,13 +838,16 @@ export async function getBlogArticle(path) {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  await loadBlocks(main);
+
+  // post LCP actions go here
+  sampleRUM('lcp');
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
   loadHeader(doc.querySelector('header'));
+  await loadBlocks(main);
   loadFooter(doc.querySelector('footer'));
 
   await loadTaxonomy();
@@ -850,15 +862,6 @@ async function loadLazy(doc) {
   sampleRUM.observe(main.querySelectorAll('picture > img'));
 }
 
-export function stamp(message) {
-  if (window.name.includes('performance')) {
-    // eslint-disable-next-line no-console
-    console.debug(`${new Date() - performance.timing.navigationStart}:${message}`);
-  }
-}
-
-stamp('start');
-
 /**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
@@ -871,7 +874,7 @@ function loadDelayed() {
 
 async function loadPage() {
   await loadEager(document);
-  await loadLazy(document);
+  loadLazy(document);
   loadDelayed();
 }
 
