@@ -833,13 +833,12 @@ async function loadLazy(doc) {
   // post LCP actions go here
   sampleRUM('lcp');
 
-  await loadBlocks(main);
-
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
   loadHeader(doc.querySelector('header'));
+  await loadBlocks(main);
   loadFooter(doc.querySelector('footer'));
 
   await loadTaxonomy();
