@@ -842,12 +842,14 @@ async function loadLazy(doc) {
   // post LCP actions go here
   sampleRUM('lcp');
 
+  await loadBlocks(main);
+
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
   loadHeader(doc.querySelector('header'));
-  await loadBlocks(main);
+  //await loadBlocks(main);
   loadFooter(doc.querySelector('footer'));
 
   await loadTaxonomy();
@@ -874,8 +876,19 @@ function loadDelayed() {
 
 async function loadPage() {
   await loadEager(document);
-  loadLazy(document);
+  await loadLazy(document);
   loadDelayed();
 }
 
 loadPage();
+
+/*
+ * lighthouse performance instrumentation helper
+ * (needs a refactor)
+ */
+
+export function stamp(message) {
+  if (window.name.includes('performance')) {
+    debug(`${new Date() - performance.timing.navigationStart}:${message}`);
+  }
+}
