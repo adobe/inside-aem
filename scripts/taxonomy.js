@@ -26,6 +26,7 @@ const CATEGORIES = 'categories';
 const PRODUCTS = 'products';
 const INDUSTRIES = 'industries';
 const INTERNALS = 'internals';
+const AEMPLA = 'aempla';
 
 /**
  * Filters a string to become a filename of a url
@@ -171,6 +172,7 @@ export default async (lang, url) => {
         INDUSTRIES,
         INTERNALS,
         PRODUCTS,
+        AEMPLA,
         NO_INTERLINKS,
 
         lookup(topic) {
