@@ -355,64 +355,6 @@ export function decorateMain(main) {
 }
 
 /**
- * Loads everything needed to get to LCP.
- * @param {Element} doc The container element
- */
-async function loadEager(doc) {
-  document.documentElement.lang = 'en';
-  decorateTemplateAndTheme();
-  const main = doc.querySelector('main');
-  if (main) {
-    decorateMain(main);
-    document.body.classList.add('appear');
-    await waitForLCP(LCP_BLOCKS);
-  }
-}
-
-/**
- * Adds the favicon.
- * @param {string} href The favicon URL
- */
-
-export function addFavIcon(href) {
-  const link = document.createElement('link');
-  link.rel = 'icon';
-  link.href = href;
-  const existingLink = document.querySelector('head link[rel="icon"]');
-  if (existingLink) {
-    existingLink.parentElement.replaceChild(link, existingLink);
-  } else {
-    document.getElementsByTagName('head')[0].appendChild(link);
-  }
-}
-
-/**
- * fetches blog article index.
- * @returns {object} index with data and path lookup
- */
-export async function fetchBlogArticleIndex() {
-  const pageSize = 500;
-  window.blogIndex = window.blogIndex || {
-    data: [],
-    byPath: {},
-    offset: 0,
-    complete: false,
-  };
-  if (window.blogIndex.complete) return (window.blogIndex);
-  const index = window.blogIndex;
-  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
-  const json = await resp.json();
-  const complete = (json.limit + json.offset) === json.total;
-  json.data.forEach((post) => {
-    index.data.push(post);
-    index.byPath[post.path.split('.')[0]] = post;
-  });
-  index.complete = complete;
-  index.offset = json.offset + pageSize;
-  return (index);
-}
-
-/**
  * For the given list of topics, returns the corresponding computed taxonomy:
  * - category: main topic
  * - topics: tags as an array
@@ -516,6 +458,68 @@ async function loadTaxonomy() {
 
 export function getTaxonomy() {
   return taxonomy;
+}
+
+/**
+ * Loads everything needed to get to LCP.
+ * @param {Element} doc The container element
+ */
+async function loadEager(doc) {
+  document.documentElement.lang = 'en';
+  decorateTemplateAndTheme();
+  const main = doc.querySelector('main');
+  if (main) {
+    decorateMain(main);
+    document.body.classList.add('appear');
+    await waitForLCP(LCP_BLOCKS);
+  }
+
+  // application is very dependant on taxonomy being present, moving to loadEager
+  // to make sure that the taxonomy is loaded
+  await loadTaxonomy();
+}
+
+/**
+ * Adds the favicon.
+ * @param {string} href The favicon URL
+ */
+
+export function addFavIcon(href) {
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.href = href;
+  const existingLink = document.querySelector('head link[rel="icon"]');
+  if (existingLink) {
+    existingLink.parentElement.replaceChild(link, existingLink);
+  } else {
+    document.getElementsByTagName('head')[0].appendChild(link);
+  }
+}
+
+/**
+ * fetches blog article index.
+ * @returns {object} index with data and path lookup
+ */
+export async function fetchBlogArticleIndex() {
+  const pageSize = 500;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const resp = await fetch(`${getRootPath()}/query-index.json?limit=${pageSize}&offset=${index.offset}`);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+  return (index);
 }
 
 /**
@@ -847,8 +851,6 @@ async function loadLazy(doc) {
   await loadBlocks(main);
   loadFooter(doc.querySelector('footer'));
 
-  await loadTaxonomy();
-
   /* taxonomy dependent */
   buildTagsBlock(main); // TODO
 
@@ -871,7 +873,7 @@ function loadDelayed() {
 
 async function loadPage() {
   await loadEager(document);
-  loadLazy(document);
+  await loadLazy(document);
   loadDelayed();
 }
 
