@@ -1,12 +1,12 @@
 import {
   readBlockConfig,
-  fetchPlaceholders,
   sampleRUM,
 } from '../../scripts/lib-franklin.js';
 
 import {
   buildArticleCard,
   fetchBlogArticleIndex,
+  fetchPlaceholders,
   getArticleTaxonomy,
   getTaxonomy,
   stamp,
@@ -413,12 +413,12 @@ async function decorateFeedFilter(articleFeedEl, config) {
 
   const filterText = document.createElement('p');
   filterText.classList.add('filter-text');
+
   filterText.textContent = placeholders.filters;
 
-  const productsDropdown = buildFilter('products', taxonomy, placeholders, articleFeedEl, config);
-  const industriesDropdown = buildFilter('industries', taxonomy, placeholders, articleFeedEl, config);
+  const productsDropdown = buildFilter('AEMPLA', taxonomy, placeholders, articleFeedEl, config);
 
-  filterWrapper.append(filterText, productsDropdown, industriesDropdown);
+  filterWrapper.append(filterText, productsDropdown);
   filterContainer.append(filterWrapper);
 
   parent.parentElement.insertBefore(filterContainer, parent);
