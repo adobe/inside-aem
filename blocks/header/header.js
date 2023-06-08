@@ -122,6 +122,21 @@ export default async function decorate(block) {
         });
       });
     }
+    
+    const navTools = nav.querySelector('.nav-tools');
+    if (navTools) {
+      navTools.innerHTML = `
+      <div class="nav-search">
+        <button type="button" aria-controls="nav" aria-label="Open navigation">
+          ${navTools.innerHTML}
+        </button>
+      </div>`;
+      navTools.innerHTML += `
+      <a class="nav-logo" href="https://www.adobe.com/" aria-label="Adobe">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 133.46 118.11"><defs><style>.cls-1{fill:#fa0f00;}</style></defs><polygon class="cls-1" points="84.13 0 133.46 0 133.46 118.11 84.13 0"/><polygon class="cls-1" points="49.37 0 0 0 0 118.11 49.37 0"/><polygon class="cls-1" points="66.75 43.53 98.18 118.11 77.58 118.11 68.18 94.36 45.18 94.36 66.75 43.53"/></svg>
+      </a>
+      `;
+    }
 
     // hamburger for mobile
     const hamburger = document.createElement('div');
