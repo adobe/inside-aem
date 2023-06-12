@@ -397,6 +397,7 @@ async function decorateArticleFeed(
   articleFeedEl.classList.add('appear');
 }
 
+// eslint-disable-next-line no-unused-vars
 async function decorateFeedFilter(articleFeedEl, config) {
   const placeholders = await fetchPlaceholders();
   const taxonomy = getTaxonomy();
@@ -452,7 +453,7 @@ export default function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
   if (config.filters) {
-    decorateFeedFilter(block, config);
+    // decorateFeedFilter(block, config);
   }
   decorateArticleFeed(block, config);
 }
