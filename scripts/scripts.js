@@ -4,6 +4,7 @@ import {
   createOptimizedPicture,
   loadHeader,
   loadFooter,
+  loadBlock,
   decorateButtons,
   decorateIcons,
   decorateSections,
@@ -598,12 +599,13 @@ function buildTagsBlock(mainEl) {
     ]);
     const recBlock = mainEl.querySelector('.recommended-articles-container');
     if (recBlock) {
-      recBlock.previousElementSibling.firstElementChild.append(tagsBlock);
+      recBlock.previousElementSibling.lastElementChild.append(tagsBlock);
     } else if (mainEl.lastElementChild.firstElementChild) {
       // insert in div of the last element
       mainEl.lastElementChild.firstElementChild.append(tagsBlock);
     }
     decorateBlock(tagsBlock);
+    loadBlock(tagsBlock);
   }
 }
 
