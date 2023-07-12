@@ -9,7 +9,6 @@ import {
 
 import {
   createOptimizedPicture,
-  getMetadata,
 } from '../../scripts/lib-franklin.js';
 
 async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
@@ -84,9 +83,6 @@ function copyToClipboard(button) {
 }
 
 async function buildSharing() {
-  const url = encodeURIComponent(window.location.href);
-  const title = encodeURIComponent(document.querySelector('h1').textContent);
-  const description = encodeURIComponent(getMetadata('description'));
   const sharing = document.createElement('div');
   const placeholders = await fetchPlaceholders();
   sharing.classList.add('article-byline-sharing');
