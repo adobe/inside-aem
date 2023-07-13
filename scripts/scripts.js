@@ -768,6 +768,26 @@ export async function fetchPlaceholders() {
 }
 
 /**
+ * loads a script by adding a script tag to the head.
+ * @param {string} url URL of the js file
+ * @param {Function} callback callback on load
+ * @param {string} type type attribute of script tag
+ * @returns {Element} script element
+ */
+
+export function loadScript(url, callback, type) {
+  const head = document.querySelector('head');
+  const script = document.createElement('script');
+  script.setAttribute('src', url);
+  if (type) {
+    script.setAttribute('type', type);
+  }
+  head.append(script);
+  script.onload = callback;
+  return script;
+}
+
+/**
  * forward looking *.metadata.json experiment
  * fetches metadata.json of page
  * @param {path} path to *.metadata.json
@@ -835,6 +855,15 @@ export async function getBlogArticle(path) {
   return null;
 }
 
+export function debug(message, ...args) {
+  //const { hostname } = window.location;
+  //const env = getHelixEnv();
+  //if (env.name !== 'prod' || hostname === 'localhost') {
+    // eslint-disable-next-line no-console
+    console.log(message, ...args);
+  //}
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -849,7 +878,13 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector('header'));
+  /* load gnav */
+  const header = document.querySelector('header');
+  const gnavPath = getMetadata('gnav') || `${getRootPath()}/gnav`;
+  header.setAttribute('data-block-name', 'gnav');
+  header.setAttribute('data-gnav-source', gnavPath);
+  loadBlock(header);
+
   await loadBlocks(main);
   loadFooter(doc.querySelector('footer'));
 
