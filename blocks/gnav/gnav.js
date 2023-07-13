@@ -1,8 +1,8 @@
 import {
   loadScript,
-  /*getHelixEnv,*/
+  /* getHelixEnv, */
   debug,
-  /*makeLinksRelative,*/
+  /* makeLinksRelative, */
   getLocale,
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
@@ -45,21 +45,21 @@ class Gnav {
     }
 
     /* TODO: do we really need IMS integration?  */
-    /*const profile = this.decorateProfile();
+    /* const profile = this.decorateProfile();
     if (profile) {
       nav.append(profile);
-    }*/
+    } */
 
     const logo = this.decorateLogo();
     if (logo) {
       nav.append(logo);
     }
 
-    //makeLinksRelative(nav);
+    // makeLinksRelative(nav);
 
     const wrapper = createTag('div', { class: 'gnav-wrapper' }, nav);
     this.el.append(this.curtain, wrapper);
-  }
+  };
 
   decorateToggle = (nav) => {
     const toggle = createTag('button', { class: 'gnav-toggle', 'aria-label': 'Navigation menu', 'aria-expanded': false });
@@ -82,7 +82,7 @@ class Gnav {
       }
     });
     return toggle;
-  }
+  };
 
   decorateBrand = () => {
     const brandBlock = this.body.querySelector('[class^="gnav-brand"]');
@@ -97,7 +97,7 @@ class Gnav {
       brand.insertAdjacentHTML('afterbegin', BRAND_IMG);
     }
     return brand;
-  }
+  };
 
   decorateLogo = () => {
     const logo = this.body.querySelector('.adobe-logo a');
@@ -106,7 +106,7 @@ class Gnav {
     logo.textContent = '';
     logo.insertAdjacentHTML('afterbegin', BRAND_IMG);
     return logo;
-  }
+  };
 
   decorateMainNav = () => {
     const mainLinks = this.body.querySelectorAll('h2 > a');
@@ -114,7 +114,7 @@ class Gnav {
       return this.buildMainNav(mainLinks);
     }
     return null;
-  }
+  };
 
   buildMainNav = (navLinks) => {
     const mainNav = createTag('div', { class: 'gnav-mainnav' });
@@ -155,7 +155,7 @@ class Gnav {
     });
 
     return mainNav;
-  }
+  };
 
   decorateMenu = (navItem, navLink, menu) => {
     menu.className = 'gnav-navitem-menu';
@@ -182,7 +182,7 @@ class Gnav {
       this.toggleMenu(navItem);
     });
     return menu;
-  }
+  };
 
   decorateSearch = () => {
     const searchBlock = this.body.querySelector('.search');
@@ -209,7 +209,7 @@ class Gnav {
       return searchEl;
     }
     return null;
-  }
+  };
 
   decorateSearchBar = (label, advancedLink) => {
     const searchBar = createTag('aside', { id: 'gnav-search-bar', class: 'gnav-search-bar' });
@@ -224,13 +224,13 @@ class Gnav {
     searchField.append(searchInput, advancedLink);
     searchBar.append(searchField, searchResults);
     return searchBar;
-  }
+  };
 
   loadSearch = async () => {
     if (this.onSearchInput) return;
     const gnavSearch = await import('./gnav-search.js');
     this.onSearchInput = gnavSearch.default;
-  }
+  };
 
   decorateProfile = () => {
     const blockEl = this.body.querySelector('.profile');
@@ -249,7 +249,7 @@ class Gnav {
     loadScript('https://auth.services.adobe.com/imslib/imslib.min.js');
 
     return profileEl;
-  }
+  };
 
   imsReady = async (blockEl, profileEl) => {
     const accessToken = window.adobeIMS.getAccessToken();
@@ -266,8 +266,9 @@ class Gnav {
     } else {
       this.decorateSignIn(blockEl, profileEl);
     }
-  }
+  };
 
+  // eslint-disable-next-line class-methods-use-this
   decorateSignIn = (blockEl, profileEl) => {
     const signIn = blockEl.querySelector('a');
     signIn.classList.add('gnav-signin');
@@ -276,7 +277,7 @@ class Gnav {
       e.preventDefault();
       window.adobeIMS.signIn();
     });
-  }
+  };
 
   /**
    * Toggles menus when clicked directly
@@ -291,7 +292,7 @@ class Gnav {
     if (!sameMenu) {
       this.openMenu(el, isSearch);
     }
-  }
+  };
 
   closeMenu = () => {
     this.state.openMenu.classList.remove(IS_OPEN);
@@ -301,7 +302,7 @@ class Gnav {
     menuToggle.setAttribute('aria-expanded', false);
     this.curtain.classList.remove(IS_OPEN);
     this.state.openMenu = null;
-  }
+  };
 
   openMenu = (el, isSearch) => {
     el.classList.add(IS_OPEN);
@@ -321,7 +322,7 @@ class Gnav {
       el.querySelector('.gnav-search-input').focus();
     }
     this.state.openMenu = el;
-  }
+  };
 
   toggleOnSpace = (e) => {
     if (e.code === 'Space') {
@@ -329,7 +330,7 @@ class Gnav {
       const parentEl = e.target.closest('.has-Menu');
       this.toggleMenu(parentEl);
     }
-  }
+  };
 
   closeOnScroll = () => {
     let scrolled;
@@ -340,7 +341,7 @@ class Gnav {
       scrolled = true;
       document.removeEventListener('scroll', this.closeOnScroll);
     }
-  }
+  };
 
   closeOnDocClick = (e) => {
     const closest = e.target.closest(`.${IS_OPEN}`);
@@ -348,13 +349,13 @@ class Gnav {
     if ((this.state.openMenu && !closest) || isCurtain) {
       this.toggleMenu(this.state.openMenu);
     }
-  }
+  };
 
   closeOnEscape = (e) => {
     if (e.code === 'Escape') {
       this.toggleMenu(this.state.openMenu);
     }
-  }
+  };
 }
 
 async function fetchGnav(url) {
@@ -374,7 +375,7 @@ export default async function init(blockEl) {
         const gnav = new Gnav(gnavDoc.body, blockEl);
         gnav.init();
       } catch {
-        debug('Could not create global navigation.' + url);
+        debug(`Could not create global navigation.${url}`);
       }
     }
   }

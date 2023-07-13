@@ -2,7 +2,6 @@ import {
   sampleRUM,
   buildBlock,
   createOptimizedPicture,
-  loadHeader,
   loadFooter,
   loadBlock,
   decorateButtons,
@@ -856,12 +855,12 @@ export async function getBlogArticle(path) {
 }
 
 export function debug(message, ...args) {
-  //const { hostname } = window.location;
-  //const env = getHelixEnv();
-  //if (env.name !== 'prod' || hostname === 'localhost') {
-    // eslint-disable-next-line no-console
-    console.log(message, ...args);
-  //}
+  // const { hostname } = window.location;
+  // const env = getHelixEnv();
+  // if (env.name !== 'prod' || hostname === 'localhost') {
+  // eslint-disable-next-line no-console
+  console.log(message, ...args);
+  // }
 }
 
 /**

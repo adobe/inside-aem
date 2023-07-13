@@ -1,4 +1,3 @@
-import { getHelixEnv } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
 
 function decorateEmail(email) {
@@ -13,7 +12,7 @@ function decorateEmail(email) {
 }
 
 function decorateProfileLink(href, service) {
-  const env = getHelixEnv();
+  const env = 'prod'; // TODO: getHelixEnv();
   if (env.name === 'prod') return href;
   const url = new URL(href);
   url.hostname = env[service];
@@ -30,7 +29,8 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   const accountLink = blockEl.querySelector('div > div > p:nth-child(2) a');
 
   const profileButton = createTag(
-    'button', {
+    'button',
+    {
       class: 'gnav-profile-button',
       'aria-label': displayName,
       'aria-expanded': false,
