@@ -65,6 +65,7 @@ button.gnav-toggle {
   padding: 0;
   border: none;
   background: none;
+  color: black;
 }
 
 button.gnav-toggle:after {
@@ -284,6 +285,7 @@ button.gnav-toggle:after {
   width: 20px;
   font-size: 24px;
   padding: 1px 0 0 0;
+  color: black;
 }
 
 .gnav-search.is-Open .gnav-search-button svg {
