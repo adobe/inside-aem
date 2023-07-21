@@ -501,7 +501,7 @@ export function addFavIcon(href) {
  * @returns {object} index with data and path lookup
  */
 export async function fetchBlogArticleIndex() {
-  const pageSize = 500;
+  const pageSize = 400;
   window.blogIndex = window.blogIndex || {
     data: [],
     byPath: {},
