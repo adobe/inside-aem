@@ -19,7 +19,12 @@ const loadScript = (url, attrs) => {
 };
 
 // add more delayed functionality here
+// Load Launch properties (adobedtm) -> only for live site and only for main
+if (window.location.host.endsWith('main--inside-aem--adobe.hlx.live')) {
+  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
+}
 
+/*
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
   loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js');
@@ -28,3 +33,4 @@ if (window.location.host.startsWith('localhost')) {
 } else {
   loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
 }
+*/
