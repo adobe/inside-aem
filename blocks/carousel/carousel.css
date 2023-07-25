@@ -399,7 +399,6 @@ main .carousel-lightbox .carousel-dot picture {
   
   main .carousel-slides,
   main .carousel-slide {
-    width: 100%;
     box-sizing: border-box;
   }
 
