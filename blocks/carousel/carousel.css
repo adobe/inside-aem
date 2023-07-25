@@ -74,7 +74,6 @@ main .carousel-slide p {
   font-weight: 600;
   font-size: var(--body-font-size-s);
   box-sizing: border-box;
-  background: linear-gradient(0deg, rgb(0 0 0 / 80%) 0%, rgb(0 0 0 / 0%) 100%);
   color: var(--color-white);
   font-style: italic;
 }
@@ -85,7 +84,7 @@ main .carousel-slide a {
 
 main .carousel-slide img,
 main .carousel-slide picture {
-  width: 50%;
+  width: 75%;
 
   /* width: 100%;
   height: 100%;
