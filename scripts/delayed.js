@@ -48,7 +48,7 @@ function getEnvType(hostname = window.location.hostname) {
 async function loadScript(url, attrs = {}) {
   const script = document.createElement('script');
   script.src = url;
-  script.async = true;
+  //script.async = true;
   // eslint-disable-next-line no-restricted-syntax
   for (const [name, value] of Object.entries(attrs)) {
     script.setAttribute(name, value);
