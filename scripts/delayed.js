@@ -4,6 +4,7 @@ import { sampleRUM } from './lib-franklin.js';
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
+/*
 //const loadScript = (url, attrs) => {
 async function loadScript (url, attrs) {
   //console.log(url);
@@ -29,3 +30,43 @@ if (window.location.host.startsWith('localhost')) {
 } else {
   await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
 }
+
+*/
+
+/*
+  * Returns the environment type based on the hostname.
+*/
+function getEnvType(hostname = window.location.hostname) {
+  const fqdnToEnvType = {
+    'main--inside-aem--adobe.hlx.page': 'preview',
+    'main--inside-aem--adobe.hlx.live': 'live',
+  };
+  return fqdnToEnvType[hostname] || 'dev';
+}
+
+async function loadScript(url, attrs = {}) {
+  const script = document.createElement('script');
+  script.src = url;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [name, value] of Object.entries(attrs)) {
+    script.setAttribute(name, value);
+  }
+  const loadingPromise = new Promise((resolve, reject) => {
+    script.onload = resolve;
+    script.onerror = reject;
+  });
+  document.head.append(script);
+  return loadingPromise;
+}
+
+async function loadAdobeLaunch() {
+  const adobeotmSrc = {
+    dev: 'https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js',
+    preview: 'https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-166628721e50-staging.min.js',
+    live: 'https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js',
+  };
+  await loadScript(adobeotmSrc[getEnvType()]);
+}
+
+await loadAdobeLaunch();
+
