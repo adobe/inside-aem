@@ -40,6 +40,7 @@ function getEnvType(hostname = window.location.hostname) {
   const fqdnToEnvType = {
     'main--inside-aem--adobe.hlx.page': 'preview',
     'main--inside-aem--adobe.hlx.live': 'live',
+    'analytics--inside-aem--adobe.hlx.live': 'live',
   };
   return fqdnToEnvType[hostname] || 'dev';
 }
