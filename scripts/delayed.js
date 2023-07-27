@@ -4,7 +4,10 @@ import { sampleRUM } from './lib-franklin.js';
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
-const loadScript = (url, attrs) => {
+//const loadScript = (url, attrs) => {
+async function loadScript (url, attrs) {
+  //console.log(url);
+  //console.log(attrs);
   const head = document.querySelector('head');
   const script = document.createElement('script');
   script.src = url;
@@ -20,9 +23,9 @@ const loadScript = (url, attrs) => {
 
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js');
 } else if (window.location.host.endsWith('.page')) {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-166628721e50-staging.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-166628721e50-staging.min.js');
 } else {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
 }
