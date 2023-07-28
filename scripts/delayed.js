@@ -17,7 +17,7 @@ const loadScript = (url, attrs) => {
   head.append(script);
   return script;
 };
-
+/*
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
   loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js');
@@ -26,3 +26,4 @@ if (window.location.host.startsWith('localhost')) {
 } else {
   loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
 }
+*/
