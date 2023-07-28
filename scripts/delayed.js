@@ -20,9 +20,9 @@ const loadScript = (url, attrs) => {
 
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-6005424708d4-development.min.js');
+  loadScript('https://assets.adobedtm.com/cd4adbd8cb66/6aa35b5164ee/launch-534da7cdc4a6-development.min.js');
 } else if (window.location.host.endsWith('.page')) {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-166628721e50-staging.min.js');
+  loadScript('https://assets.adobedtm.com/cd4adbd8cb66/6aa35b5164ee/launch-ded48fdb644c-staging.min.js');
 } else {
-  loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
+  loadScript('https://assets.adobedtm.com/cd4adbd8cb66/6aa35b5164ee/launch-355fa8ac70fd.min.js');
 }
