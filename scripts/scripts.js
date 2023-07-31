@@ -804,6 +804,7 @@ export function loadScript(url, callback, type) {
   if (type) {
     script.setAttribute('type', type);
   }
+  script.async = true;
   head.append(script);
   script.onload = callback;
   return script;
