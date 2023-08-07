@@ -31,5 +31,5 @@ if (window.location.host.startsWith('localhost')) {
 } else if (window.location.host.endsWith('.page')) {
   await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-166628721e50-staging.min.js');
 } else {
-  await loadScript('https://assets.adobedtm.com/6a74768abd57/a692f024da9a/launch-3ae9c8b61452.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-9476d77cdb4e.min.js');
 }
