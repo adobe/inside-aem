@@ -27,9 +27,9 @@ async function loadScript(src, parent, attrs) {
 
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
-  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-d6a3331d6f80-development.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-d6a3331d6f80-development.min.js', 'head', { async: true });
 } else if (window.location.host.endsWith('.page')) {
-  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-c00a655544fd-staging.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-c00a655544fd-staging.min.js', 'head', { async: true });
 } else {
-  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-9476d77cdb4e.min.js');
+  await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-9476d77cdb4e.min.js', 'head', { async: true });
 }
