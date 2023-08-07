@@ -24,7 +24,6 @@ async function loadScript(src, parent, attrs) {
   });
 }
 
-
 // Load Launch properties (adobedtm)
 if (window.location.host.startsWith('localhost')) {
   await loadScript('https://assets.adobedtm.com/6a74768abd57/ebbe34171c73/launch-d6a3331d6f80-development.min.js', 'head', { async: true });
