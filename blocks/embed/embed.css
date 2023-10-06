@@ -43,6 +43,7 @@ main .embed.embed-instagram iframe.instagram-media {
     main .embed.embed-instagram {
         max-height: unset; 
     }
+
     main .embed.embed-instagram iframe.instagram-media {
         width: 550px;
         height: 758px;
