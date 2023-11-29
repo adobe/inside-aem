@@ -1,4 +1,5 @@
 /* stylelint-disable no-descending-specificity */
+
 main .article-feed-container > div {
   max-width: unset;
 }
