@@ -1,9 +1,4 @@
 /* stylelint-disable no-descending-specificity */
-main .article-feed-container {
-  margin-top: 5px;
-  padding: 5px;
-}
-
 main .article-feed-container > div {
   max-width: unset;
 }
