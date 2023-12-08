@@ -29,11 +29,55 @@ main .article-feature-image .caption {
   margin-right: 32px;
 }
 
+.fact-box .article-header .article-category,
+.fact-box .article-header .article-title,
+.fact-box .article-feature-image .caption {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.fact-box .article-header .article-category a {
+  padding-left: 0;
+}
+
+.fact-box .article-header .article-byline .article-category a {
+  padding-left: 0;
+}
+
+.fact-box .article-header .article-author-image {
+  height: 60px;
+  width: 60px;
+}
+
+.fact-box .article-byline {
+  display: flex;
+  flex-wrap: nowrap; /* Set to nowrap to prevent wrapping to the next line */
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.fact-box .article-byline .article-byline-info {
+  flex: 1 0 calc(50% - 8px); /* Adjust the calc() value to control the width */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Assuming you want a small margin between the divs */
+.fact-box .article-byline > div {
+  margin-right: 8px;
+  flex: 1;
+}
+
 @media (min-width: 700px) {
   main .article-header .article-category,
   main .article-header .article-title,
   main .article-header .article-byline {
-    max-width: 600px;
+    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
     padding-left: 0;
@@ -84,6 +128,11 @@ main .article-title h1 {
     font-size: var(--heading-font-size-l);
     padding: 0;
   }
+
+  .fact-box .article-header-container .article-header-wrapper {
+    padding-left: 2rem;
+    padding-right: 3rem;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -123,6 +172,10 @@ main .article-byline .article-byline-info {
 @media (min-width: 600px) {
   main .article-byline .article-byline-info {
     flex: 1 1 auto;
+  }
+
+  .fact-box .article-byline .article-byline-info {
+    flex: 1 0 calc(50% - 8px)
   }
 }
 
