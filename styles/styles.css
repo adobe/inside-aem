@@ -288,6 +288,10 @@ main {
   font-weight: var(--body-font-weight);
 }
 
+.fact-box main {
+  margin-top: 60px;
+}
+
 main p:not(:last-of-type) {
   margin-bottom: 32px;
 }
@@ -364,6 +368,25 @@ main img {
   display: inline-block;
   height: 24px;
   width: 24px;
+}
+
+.fact-box .icon {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  vertical-align: super;
+  margin-top: -1em;
+  animation: flash 1s ease-in-out infinite;
+}
+
+@keyframes flash {
+  0%, 50%, 100% {
+      opacity: 1;
+  }
+
+  25%, 75% {
+      opacity: 0;
+  }
 }
 
 main a:any-link {
@@ -540,4 +563,40 @@ main .block[data-block-status='loading'], main .block[data-block-status='initial
 
 main .section.carousel-container {
   margin-top: 0;
+}
+
+#highlight {
+  color: orangered;
+  font-weight: bold;
+  padding: 10px;
+  overflow: hidden;
+}
+
+#highlight-content {
+  font-size: 18px;
+  animation: slide-in 45s ease-out forwards;
+}
+
+@keyframes slide-in {
+  from {
+      transform: translateX(100%);
+  }
+
+  to {
+      transform: translateX(-100%);
+  }
+}
+
+.animate-entry {
+  animation: fade-in 1s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+      opacity: 0;
+  }
+
+  to {
+      opacity: 1;
+  }
 }

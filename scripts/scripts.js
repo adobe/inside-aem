@@ -863,6 +863,48 @@ export function debug(message, ...args) {
   // }
 }
 
+function createHighlightSection() {
+  const bodyHasFactBoxClass = document.body.classList.contains('fact-box');
+  if (bodyHasFactBoxClass) {
+    const highlightContainer = document.createElement('div');
+    highlightContainer.id = 'highlight';
+
+    const highlightContentContainer = document.createElement('div');
+    highlightContentContainer.id = 'highlight-content';
+
+    const h1Headings = document.querySelectorAll('h1');
+    h1Headings.forEach((h1) => {
+      const spanWithSVG = h1.querySelector('span.icon-new svg');
+
+      if (spanWithSVG) {
+        const h1Content = h1.textContent.trim();
+
+        const speakerIconStart = document.createElement('span');
+        speakerIconStart.innerHTML = '&#128266;';
+
+        const rocketIcon = document.createElement('span');
+        rocketIcon.innerHTML = '&#128640;';
+
+        highlightContentContainer.appendChild(speakerIconStart);
+        highlightContentContainer.appendChild(document.createTextNode(' New Post Alert! '));
+        highlightContentContainer.appendChild(rocketIcon);
+        highlightContentContainer.appendChild(document.createTextNode(` Check out the latest addition in the "${h1Content}" section this week. Dive into valuable insights now!`));
+
+        highlightContainer.classList.add('animate-entry');
+      }
+    });
+
+    highlightContainer.appendChild(highlightContentContainer);
+
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+      mainElement.insertBefore(highlightContainer, mainElement.firstChild);
+    } else {
+      document.body.appendChild(highlightContainer);
+    }
+  }
+}
+
 /**
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
@@ -889,6 +931,8 @@ async function loadLazy(doc) {
 
   /* taxonomy dependent */
   buildTagsBlock(main); // TODO
+
+  createHighlightSection();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
