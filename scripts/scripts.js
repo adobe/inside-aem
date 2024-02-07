@@ -24,9 +24,18 @@ const pluginContext = {
   loadCSS,
   loadScript,
   sampleRUM,
-  /*toCamelCase,*/
+  toCamelCase,
   toClassName,
 };
+
+/**
+ * Sanitizes a string for use as a js property name.
+ * @param {string} name The unsanitized string
+ * @returns {string} The camelCased name
+ */
+function toCamelCase(name) {
+  return toClassName(name).replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+}
 
 const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
@@ -525,8 +534,6 @@ async function loadEager(doc) {
     await runEager(document, { audiences: AUDIENCES }, pluginContext);
   }
 
-  await window.hlx.plugins.run('loadEager');
-
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -1005,8 +1012,6 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
-
-  window.hlx.plugins.run('loadLazy');
 
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
