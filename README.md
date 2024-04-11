@@ -4,6 +4,8 @@ Inside AEM website with Edge Delivery, hosting the PLA blog
 ## Environments
 - Preview: https://main--inside-aem--adobe.hlx.page/
 - Live: https://main--inside-aem--adobe.hlx.live/
+- https://re-think.adobe.com/
+- https://culture-tecture.adobe.com/
 
 ## Installation
 
