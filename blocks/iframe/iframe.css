@@ -1,7 +1,10 @@
+main .section > div.iframe-wrapper {
+  max-width: 1000px;
+}
 
 main iframe {
   border: none;
   width: 100%;
-  height: 600px;
+  height: 4000px;
   max-height: calc(100vh - var(--nav-height));
 }
