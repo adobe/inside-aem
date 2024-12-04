@@ -61,9 +61,8 @@ function populateTable(requestData) {
         lhsScoreCell.textContent = 'Loading...';  // Initially show loading text
         lhsScoreCell.setAttribute('data-preview-url', item.previewUrl);  // Store Preview URL for later
         lhsScoreCell.classList.add('lhs-score');
-        lhsScoreCell.onclick = () => loadLhsScore(lhsScoreCell);  // Load score on click
         row.appendChild(lhsScoreCell);
-        
+        loadLhsScore(lhsScoreCell);
         tableBody.appendChild(row);
     });
 }
