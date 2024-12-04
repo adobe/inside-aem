@@ -66,7 +66,7 @@ function handleApproval(requestId, action) {
     // You can implement logic here for approval/rejection, like updating the server
 }
 
-function fetchData() {
+function fetchData(apiUrl) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
