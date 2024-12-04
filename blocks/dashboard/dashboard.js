@@ -103,5 +103,3 @@ function fetchData(apiUrl) {
             console.error('Error fetching data:', error);
         });
 }
-
-function fetchL
