@@ -18,12 +18,12 @@ export default async function decorate(block) {
     fetchData(apiUrl);
 }
 
-function populateTable(data) {
+function populateTable(requestData) {
     const tableBody = document.querySelector('#dataTable tbody');
     tableBody.innerHTML = ''; // Clear any existing rows
     
     // Loop through the API data and insert rows
-    data.forEach(item => {
+    requestData.data.forEach(item => {
         const row = document.createElement('tr');
         
         // Request Id
