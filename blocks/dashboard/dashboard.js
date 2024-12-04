@@ -36,6 +36,7 @@ function populateTable(requestData) {
         const previewLink = document.createElement('a');
         previewLink.href = item.previewUrl;
         previewLink.target = '_blank';
+        previewLink.textContent = item.previewUrl;
         previewUrlCell.appendChild(previewLink);
         row.appendChild(previewUrlCell);
         
