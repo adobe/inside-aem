@@ -1,3 +1,9 @@
+main .section .dashboard-wrapper {
+    padding: unset;
+    margin: unset;
+    max-width: unset;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -28,5 +34,33 @@ button.approve {
 
 button.reject {
     background-color: #f44336;
+    color: white;
+}
+
+.filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-container label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.filter-container select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.filter-container button {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    background-color: #007BFF;
     color: white;
 }
