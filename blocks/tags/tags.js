@@ -1,5 +1,3 @@
-import { sampleRUM } from '../../scripts/lib-franklin.js';
-
 export default function decorateTags(blockEl) {
   const tags = blockEl.querySelectorAll('a');
   const container = blockEl.querySelector('p');
@@ -11,5 +9,4 @@ export default function decorateTags(blockEl) {
     targets.push(tag.textContent);
     return targets;
   }, []).join('; ');
-  sampleRUM('loadtags', { target, source: `.${blockEl.getAttribute('data-block-name')}` });
 }

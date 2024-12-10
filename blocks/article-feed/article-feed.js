@@ -1,6 +1,5 @@
 import {
   readBlockConfig,
-  sampleRUM,
 } from '../../scripts/lib-franklin.js';
 
 import {
@@ -259,7 +258,6 @@ function buildFilter(type, tax, ph, block, config) {
   applyBtn.classList.add('button', 'small', 'apply');
   applyBtn.textContent = ph.apply;
   applyBtn.addEventListener('click', () => {
-    sampleRUM('apply-topic-filter');
     delete config.selectedProducts;
     delete config.selectedIndustries;
     closeCurtain();
