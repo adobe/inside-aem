@@ -20,11 +20,24 @@ th {
     background-color: #f2f2f2;
 }
 
-button {
+.dashboard button {
     padding: 5px 10px;
     cursor: pointer;
     border: none;
-    border-radius: 3px;
+    border-radius: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
+    min-width: 100px;
+}
+
+.dashboard a {
+    color: blue !important;       /* Set the text color to blue */
+    text-decoration: underline !important; /* Add an underline */
+}
+
+.dashboard a:hover {
+    color: darkblue;   /* Change color on hover */
+    text-decoration: underline; 
 }
 
 button.approve {
@@ -37,17 +50,25 @@ button.reject {
     color: white;
 }
 
+button.disabled {
+    cursor: not-allowed;
+    filter: blur(2px);
+    opacity: 0.5; 
+}
+
 .filter-container {
     margin-bottom: 20px;
     display: flex;
     gap: 20px;
     align-items: center;
+    justify-content: center;
 }
 
 .filter-container label {
     display: flex;
     flex-direction: column;
-    font-size: 14px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .filter-container select {
@@ -63,4 +84,26 @@ button.reject {
     border-radius: 3px;
     background-color: #007BFF;
     color: white;
+}
+
+.loading-container {
+    display: inline-block;
+    text-align: center;
+}
+.dots {
+    display: inline-block;
+    width: 1.5em; /* Space for the dots */
+    text-align: left;
+}
+@keyframes dotAnimation {
+    0% { content: ""; }
+    25% { content: "."; }
+    50% { content: ".."; }
+    75% { content: "..."; }
+    100% { content: ""; }
+}
+.dots::after {
+    display: inline-block;
+    animation: dotAnimation 1.5s infinite;
+    content: "";
 }
