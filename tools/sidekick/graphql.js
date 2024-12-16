@@ -1,4 +1,4 @@
-const XYZ = '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';
+const XYZ = localStorage.getItem("gitToken");
 export const REPO_OWNER = 'akasjain-helix';
 export const REPO_NAME = 'hlxdiscussions';
 
