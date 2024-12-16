@@ -32,5 +32,12 @@
     "sinon": "15.0.1",
     "stylelint": "15.2.0",
     "stylelint-config-standard": "30.0.1"
+  },
+  "dependencies": {
+    "@spectrum-css/button": "^13.5.0",
+    "@spectrum-css/icon": "^7.2.0",
+    "@spectrum-css/page": "^8.2.0",
+    "@spectrum-css/tokens": "^14.6.0",
+    "@spectrum-css/typography": "^6.2.0"
   }
 }

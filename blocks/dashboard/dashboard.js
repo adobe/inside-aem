@@ -38,12 +38,13 @@ function fetchFilters(filterUrl) {
 
       // populateDropdown('createdByFilter', createdBySet);
       // eslint-disable-next-line no-use-before-define
-      populateDropdown('stateFilter', stateSet);
+      populateDropdown('filter', stateSet);
     })
     .catch((error) => console.error('Error fetching filters:', error));
 }
 
 export default async function decorate(block) {
+  includeBootstrap();
   document.querySelector('header').remove();
   document.querySelector('footer').remove();
 
@@ -73,7 +74,7 @@ function createFilterContainer(apiUrl) {
 
   // Create "State" filter
   // eslint-disable-next-line no-use-before-define
-  const stateDropdown = createDropdown('State', 'stateFilter');
+  const stateDropdown = createDropdown('State', 'filter');
   container.appendChild(stateDropdown.label);
   container.appendChild(stateDropdown.dropdown);
 
@@ -82,7 +83,7 @@ function createFilterContainer(apiUrl) {
   applyButton.textContent = 'Apply';
   applyButton.addEventListener('click', () => {
     // const createdBy = document.getElementById('createdByFilter').value;
-    const state = document.getElementById('stateFilter').value;
+    const state = document.getElementById('filter').value;
     const queryParams = new URLSearchParams({ state });
     fetchData(apiUrl, queryParams);
   });
@@ -95,25 +96,28 @@ function createFilterContainer(apiUrl) {
 function createDropdown(labelText, id) {
   const label = document.createElement('label');
   label.textContent = `${labelText}: `;
+  label.setAttribute('for', 'label');
 
   const dropdown = document.createElement('select');
   dropdown.id = id;
+  dropdown.classList.add('form-select');
   return { label, dropdown };
 }
 
 // Create table structure
 function createTable() {
   const table = document.createElement('table');
+  table.classList.add('table', 'table-striped', 'table-hover');
   table.id = 'dataTable';
   table.innerHTML = `
-        <thead>
+        <thead class="thead-dark">
             <tr>
-                <th>Live URL</th>
-                <th>Preview URL</th>
-                <th>LHS Score</th>
-                <th>Request Created By</th>
-                <th>State</th>
-                <th>Approval</th>
+                <th scope="col">Live URL</th>
+                <th scope="col">Preview URL</th>
+                <th scope="col">LHS Score</th>
+                <th scope="col">Request Created By</th>
+                <th scope="col">State</th>
+                <th scope="col">Approval</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -151,7 +155,7 @@ function populateTable(requestData) {
   const tableBody = document.querySelector('#dataTable tbody');
   tableBody.innerHTML = ''; // Clear existing rows
 
-  requestData.forEach((item) => {
+  requestData.filter((item) => item.id !== '').forEach((item) => {
     const row = document.createElement('tr');
 
     row.appendChild(createLinkCell(getLiveUrl(item.previewUrl))); // Preview URL
@@ -187,6 +191,8 @@ function createLinkCell(url) {
   link.href = url;
   link.target = '_blank';
   link.textContent = url;
+  link.style.color = 'blue';
+  link.style.textDecoration = 'underline';
   cell.appendChild(link);
   return cell;
 }
@@ -242,8 +248,8 @@ function loadLhsScore(cell) {
 function createApprovalCell(requestId, state) {
   const cell = document.createElement('td');
 
-  const approveButton = createButton('Approve', state, 'approve', () => handleApproval(requestId, 'approved'));
-  const rejectButton = createButton('Reject', state, 'reject', () => handleApproval(requestId, 'rejected'));
+  const approveButton = createButton('Approve', state, 'approve', () => handleApproval(requestId, 'approve'));
+  const rejectButton = createButton('Reject', state, 'reject', () => handleApproval(requestId, 'reject'));
 
   cell.appendChild(approveButton);
   cell.appendChild(rejectButton);
@@ -282,7 +288,7 @@ function handleApproval(requestId, action) {
   const submitUrl = 'http://localhost:3001/requests/submit';
   const data = getPostData(requestId, action);
   const options = {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json', // Tells the server we're sending JSON
     },
@@ -299,7 +305,7 @@ function handleApproval(requestId, action) {
     })
     .then((data) => {
       console.log('Success:', data); // Handle the response data
-      updateState(requestId, data.state[0]);
+      updateState(requestId, data.state);
     })
     .catch((error) => {
       console.error('Error:', error); // Handle errors
@@ -320,4 +326,20 @@ function updateButtons(row, state) {
       button.classList.add('disabled');
     }
   });
+}
+
+function includeBootstrap() {
+    const bootstrapCSS = document.createElement('link');
+    bootstrapCSS.rel = 'stylesheet';
+    bootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css';
+    bootstrapCSS.integrity = 'sha384-o4W2xSttEcqbUetpA4xHW9rDmWzFz30T8+6LryyLkL8zM9huE48uMYwN0V+R9Gj7';
+    bootstrapCSS.crossOrigin = 'anonymous';
+    document.head.appendChild(bootstrapCSS);
+
+    // Include Bootstrap JS Bundle (with Popper.js)
+    const bootstrapJS = document.createElement('script');
+    bootstrapJS.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js';
+    bootstrapJS.integrity = 'sha384-C1KLKihm74WLqU8+BAsTf1LgJPF9So1bm9ItEzI+0LGbnGVg80qlO2+nJ7rswAXj';
+    bootstrapJS.crossOrigin = 'anonymous';
+    document.body.appendChild(bootstrapJS);
 }
