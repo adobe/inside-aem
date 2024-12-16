@@ -600,3 +600,232 @@ main .section.carousel-container {
       opacity: 1;
   }
 }
+
+.comment-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: 10px;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 15px;
+  width: 250px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  display: block;
+  z-index: 1000;
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
+}
+
+/* Ensure the box stays visible within the screen */
+.comment-box {
+  right: auto;
+  transform: translateX(0);
+}
+
+.comment-box[data-align="right"] {
+  transform: translateX(calc(-100% - 10px));
+  left: auto;
+  right: 0;
+}
+
+.comment-box[data-align="left"] {
+  transform: translateX(calc(100% + 10px));
+  left: 100%;
+  right: auto;
+}
+
+.comment-box[data-align="within-screen"] {
+  left: auto;
+  right: auto;
+  transform: translateX(0);
+}
+
+/* Adjust box to prevent overflow */
+.comment-box {
+  left: auto;
+  right: auto;
+  transform: translateX(0);
+  max-width: calc(100vw - 20px);
+}
+
+/* Ensure box never opens to the left */
+.comment-box {
+  transform: none;
+  left: auto;
+  right: 0;
+
+
+  .comment-textarea {
+    /*
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    */
+
+    width: calc(100% - 40px);
+    height: 80px;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    background-color: #fff;
+    box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+
+  }
+
+  .comment-textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  }
+
+  .submit {
+    /*
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: top;
+    background: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http://www.w3.org/2000/svg%22 fill%3D%22%23007bff%22 viewBox%3D%220 0 24 24%22%3E%3Cpath d%3D%22M2 21l21-9-21-9v7l15 2-15 2z%22/%3E%3C/svg%3E') no-repeat center center;
+    background-size: contain;
+    transition: transform 0.2s;
+    */
+
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 75px;
+    right: 0;
+    background: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http://www.w3.org/2000/svg%22 fill%3D%22%23007bff%22 viewBox%3D%220 0 24 24%22%3E%3Cpath d%3D%22M2 21l21-9-21-9v7l15 2-15 2z%22/%3E%3C/svg%3E') no-repeat center center;
+    background-size: contain;
+    transition: transform 0.2s;
+
+  }
+
+  .submit:hover {
+    transform: scale(1.1);
+  }
+
+
+  .comments {
+    /*
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    */
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+
+    .comment {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+
+      /*
+      margin-bottom: 10px;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      */
+
+      .user-box {
+        font-weight: bold;
+        color: #007bff;
+        display: block;
+        margin-bottom: 5px;
+
+      }
+
+      .comment-text-box {
+        margin: 0;
+        color: #333;
+
+      }
+
+      .time-box {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+
+      }
+    }
+
+    .comment:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 5px;
+    transition: background 0.3s;
+
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  }
+
+  .submit {
+    margin-right: 10px;
+  }
+
+  .resolve {
+    background: #28a745;
+  }
+
+  .resolve:hover {
+    background: #218838;
+  }
+
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    color: #444;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .close:hover {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+}
