@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="Description" content="AEM Sidekick Library" />
+    <meta name="robots" content="noindex" />
+    <base href="/" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            background-color: #ededed;
+            height: 100%;
+        }
+
+        helix-sidekick { display: none }
+
+        .accordion {
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+            border-top: 1px solid #ccc;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        #discussion-list {
+          margin: 5px;
+          padding: 5px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+
+          .accordion {
+
+          }
+
+          .panel {
+
+            .comment-list {
+
+                list-style-type: none; /* Remove default bullet points */
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9; /* Light background for contrast */
+                border: 1px solid #ddd; /* Subtle border around the list */
+                border-radius: 5px; /* Rounded corners */
+
+              li {
+                    margin: 10px;
+                    padding: 15px;
+                    background-color: #fff; /* White background for each comment */
+                    border: 1px solid #ddd; /* Border for individual comments */
+                    border-radius: 5px; /* Rounded corners */
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                    position: relative;
+
+                    .user {
+                      font-weight: bold;
+                      font-size: 1.1rem;
+                      color: #007bff; /* Blue for usernames */
+                      margin-bottom: 5px;
+
+                    }
+
+                    .comment-text {
+                      font-size: 1rem;
+                      color: #333; /* Darker text for readability */
+                      line-height: 1.5;
+                      margin-bottom: 10px;
+
+                    }
+
+                    .time {
+                      font-size: 0.85rem;
+                      color: #777; /* Light gray for timestamps */
+                      position: absolute;
+                      bottom: 0px;
+                      right: 15px;
+                    }
+                }
+            }
+          }
+        }
+
+    </style>
+    <title>Sidekick Discussion</title>
+</head>
+
+<body>
+
+<script type="module">
+    import { fetchDiscussions } from './tools/sidekick/fetch.js';
+    import { addCommentById } from './tools/sidekick/addcommentbyid.js';
+    import { resolveDiscussion } from './tools/sidekick/close.js';
+    import { createDiscussion } from './tools/sidekick/create.js';
+
+    function createNewCommentComponent(discussion_id, element, commentsAll) {
+        let commentBox;
+        if (!element.querySelector('.comment-box')) {
+            commentBox = document.createElement('div');
+            commentBox.className = 'comment-box';
+            commentBox.setAttribute('data-discussion-id', discussion_id);
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'comment-textarea';
+            textarea.placeholder = 'Add your comment...';
+
+            const commentsSection = document.createElement('div');
+            commentsSection.className = 'comments';
+            commentsSection.id = 'comments-section';
+            renderFetchedComments(commentsAll, commentsSection);
+
+            const submitButton = createButton('', 'submit', async () => {
+                let commentText = textarea.textContent.trim() || textarea.value.trim();
+                if (!commentText) {
+                    alert("Comment cannot be empty!");
+                    return;
+                }
+                const email = getSignedInUserEmail();
+                if (!email) {
+                    alert('Please sign in to post a comment');
+                    return;
+                }
+
+                let finalComment = `${email}::${commentText}`;
+                const obj = {
+                    user: email,
+                    text: commentText,
+                    time: new Date().toLocaleString()
+                };
+                insertCommentToCommentBox(commentBox, obj);
+
+                addCommentById(discussion_id, finalComment)
+                    .then(() => {
+                        handlePostDiscussion(discussion_id, element, obj);
+                    })
+                    .catch(error => console.error('Error adding comment:', error));
+
+                textarea.value = "";
+                if(commentsSection.children.length == 0) {
+                    resolveButton.style.display = 'block';
+                }
+            });
+
+            const resolveButton = createButton('Resolve discussion', 'resolve', () => {
+
+                handleResolveDiscussion(
+                    discussion_id,
+                    commentBox,
+                    document.querySelector(`.accordion#${discussion_id}`),
+                    document.querySelector(`.panel [data-discussion-id='${discussion_id}']`).parentElement
+                );
+            });
+
+            const closeButton = createButton('X', 'close', () => {
+                commentBox.style.display = 'none';
+                commentBox.remove();
+                const accordionTarget = document.querySelector(`.accordion#${discussion_id}`);
+                togglePanel(accordionTarget, 'none');
+                accordionTarget.classList.remove('active');
+            });
+
+            commentBox.appendChild(textarea);
+            commentBox.appendChild(commentsSection);
+            commentBox.appendChild(submitButton);
+            if(commentsSection.children.length == 0) {
+                resolveButton.style.display = 'none';
+            }
+            commentBox.appendChild(resolveButton);
+            commentBox.appendChild(closeButton);
+            element.appendChild(commentBox);
+        } else {
+            // only add a comment to existing
+            commentBox = element.querySelector('.comment-box');
+
+            // add to panel
+            const comments_list_ul = document.querySelector(`ul[data-discussion-id="${discussion_id}"]`);
+            const numOfComments = comments_list_ul.children.length;
+            const commentElement = document.createElement('li');
+            commentElement.classList.add(`comment-${numOfComments}`);
+
+            const userEl = document.createElement('span');
+            userEl.textContent = commentsAll[0].user;
+            userEl.className = 'user';
+
+            const commentEl = document.createElement('p');
+            commentEl.textContent = commentsAll[0].text;
+            commentEl.className = 'comment-text';
+
+            const timeEl = document.createElement('p');
+            timeEl.textContent = commentsAll[0].time;
+            timeEl.className = 'time';
+
+            commentElement.appendChild(userEl);
+            commentElement.appendChild(commentEl);
+            commentElement.appendChild(timeEl);
+
+            comments_list_ul.insertBefore(commentElement, comments_list_ul.firstChild);
+        }
+        return commentBox;
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        let discussions;
+        try {
+            let data = await fetchDiscussions();
+            discussions = data.repository.discussions.nodes;
+            discussions = discussions.filter(discussion => discussion.title===window.top.location.pathname);
+            console.log('Fetched discussions:', discussions);
+        } catch (error) {
+            console.error('Error fetching discussions:', error);
+        }
+
+        const container = document.createElement('div');
+        container.id = "discussion-list";
+        document.body.appendChild(container);
+        discussions.forEach(discussion => {
+
+            // flatten all comments and replies
+            let comments = [];
+            discussion.comments.nodes.forEach(comment => {
+                comments.push({
+                    user: comment.body.split('::')[0],
+                    text: comment.body.split('::')[1],
+                    time: comment.createdAt
+                });
+                comment.replies.nodes.forEach(reply => {
+                    comments.push({
+                        user: reply.body.split('::')[0],
+                        text: reply.body.split('::')[1],
+                        time: reply.createdAt
+                    });
+                });
+            });
+
+            addDiscussionToPanel(discussion.id, discussion.body, comments);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const addCommentIcon = (element) => {
+            if (!element.querySelector('.comment-icon')) {
+                const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="32px" width="32px" version="1.1" id="Capa_1" viewBox="0 0 58 58" xml:space="preserve">
+                    <g>
+                    \t<path style="fill:#0391FD;" d="M48,19.929v21.141C48,43.793,45.793,46,43.071,46H22L12,57V46H4.929C2.207,46,0,43.793,0,41.071   l0-21.141C0,17.207,2.207,15,4.929,15h38.141C45.793,15,48,17.207,48,19.929z"/>
+                    \t<path style="fill:#0F71D3;" d="M53.071,1H14.929C12.207,1,10,3.207,10,5.93V15h33.071C45.793,15,48,17.207,48,19.93V32h5.071   C55.793,32,58,29.793,58,27.07V5.93C58,3.207,55.793,1,53.071,1z"/>
+                    \t<path style="fill:#FFFFFF;" d="M25,26.015H11c-0.553,0-1-0.448-1-1s0.447-1,1-1h14c0.553,0,1,0.448,1,1S25.553,26.015,25,26.015z"/>
+                    \t<path style="fill:#FFFFFF;" d="M38,32.015H11c-0.553,0-1-0.448-1-1s0.447-1,1-1h27c0.553,0,1,0.448,1,1S38.553,32.015,38,32.015z"/>
+                    \t<path style="fill:#FFFFFF;" d="M38,38.015H11c-0.553,0-1-0.448-1-1s0.447-1,1-1h27c0.553,0,1,0.448,1,1S38.553,38.015,38,38.015z"/>
+                    </g>
+                </svg>
+                `;
+                const icon = document.createElement('div');
+
+                icon.innerHTML = svg;
+                icon.className = 'comment-icon';
+                icon.style.position = 'absolute';
+                icon.style.top = '10px';
+                icon.style.right = '10px';
+                //icon.style.background = '#007bff';
+                //icon.style.color = '#fff';
+                icon.style.padding = '5px';
+                //icon.style.borderRadius = '50%';
+                icon.style.cursor = 'pointer';
+                icon.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+
+                icon.addEventListener('click', () => {
+                    openCommentBox(element);
+                });
+
+                element.appendChild(icon);
+            }
+        };
+
+        const removeCommentIcon = (element) => {
+            const icon = element.querySelector('.comment-icon');
+            if (icon) {
+                element.removeChild(icon);
+            }
+        };
+
+        const openCommentBox = async (element) => {
+            // Create the comment box if it does not exist
+            if (!element.querySelector('.comment-box')) {
+                const commentBox = document.createElement('div');
+                commentBox.className = 'comment-box';
+
+                const textarea = document.createElement('textarea');
+                textarea.className = 'comment-textarea';
+                textarea.placeholder = 'Add your comment...';
+
+                const commentsSection = document.createElement('div');
+                commentsSection.className = 'comments';
+                commentsSection.id = 'comments-section';
+
+                const submitButton = createButton('', 'submit', async () => {
+                    let commentText = textarea.value.trim();
+                    if (!commentText) {
+                        alert("Comment cannot be empty!");
+                        return;
+                    }
+
+                    const email = getSignedInUserEmail();
+                    if (!email) {
+                        alert('Please sign in to post a comment');
+                        return;
+                    }
+
+                    const finalComment = `${email}::${commentText}`;
+                    const obj = {
+                        user: email,
+                        text: commentText,
+                        time: new Date().toLocaleString()
+                    }
+                    insertCommentToCommentBox(commentBox, obj);
+
+                    let discussion_id = commentBox.getAttribute('data-discussion-id') || null;
+
+                    if(discussion_id == null) {
+                        handlePostDiscussion(null, element, obj).then((discussionId) => {
+                            if(discussionId) { // case of new discussion
+                                commentBox.setAttribute('data-discussion-id', discussionId);
+                            }
+                        });
+                    } else {
+                        addCommentById(discussion_id, finalComment)
+                            .then(() => {
+                                handlePostDiscussion(discussion_id, element, obj);
+                            })
+                            .catch(error => console.error('Error adding comment:', error));
+                    }
+                    textarea.value = "";
+                    resolveButton.style.display = 'block';
+                    if(commentsSection.children.length == 0) {
+                        resolveButton.style.display = 'none';
+                    }
+                });
+
+                const resolveButton = createButton('Resolve discussion', 'resolve', () => {
+                    let discussion_id = commentBox.getAttribute('data-discussion-id');
+                    handleResolveDiscussion(
+                        discussion_id,
+                        commentBox,
+                        document.querySelector(`.accordion#${discussion_id}`),
+                        document.querySelector(`.panel [data-discussion-id='${discussion_id}']`).parentElement
+                    );
+                });
+
+                const closeButton = createButton('X', 'close', () => {
+                    commentBox.style.display = 'none';
+                    commentBox.remove();
+                    if(commentBox.getAttribute('data-discussion-id')) {
+                        const discussion_id = commentBox.getAttribute('data-discussion-id');
+                        const accordionTarget = document.querySelector(`.accordion#${discussion_id}`);
+                        togglePanel(accordionTarget, 'none');
+                        accordionTarget.classList.remove('active');
+                    }
+                });
+
+                commentBox.appendChild(textarea);
+                commentBox.appendChild(commentsSection);
+                commentBox.appendChild(submitButton);
+                if (commentsSection.children.length == 0) {
+                    resolveButton.style.display = 'none';
+                }
+                commentBox.appendChild(resolveButton);
+                commentBox.appendChild(closeButton);
+                element.appendChild(commentBox);
+            } else {
+                //
+            }
+        };
+
+        // Add event listeners to all blocks and sections
+        const elements = parent.document.querySelectorAll('.block');
+        elements.forEach(element => {
+            element.style.position = 'relative';
+            element.style.transition = 'background 0.3s';
+            element.style.overflow = 'visible';
+
+
+            element.addEventListener('mouseenter', () => {
+                element.style.background = '#f0f8ff';
+                // if a discussion exists with text in accordion as this buildSelector
+                const selector = buildSelector(element);
+                const accordionBtns = document.querySelectorAll('.accordion');
+                const exists = Array.from(accordionBtns).some(btn => btn.textContent === selector);
+                if (!exists) {
+                    addCommentIcon(element);
+                }
+            });
+
+            element.addEventListener('mouseleave', () => {
+                element.style.background = '';
+                removeCommentIcon(element);
+            });
+        });
+    });
+
+    function createButton(text, className, onClick) {
+        const button = document.createElement('button');
+        button.className = className;
+        button.textContent = text;
+        button.addEventListener('click', onClick);
+        return button;
+    }
+
+    function togglePanel(elem, state) {
+        var panel = elem.nextElementSibling;
+        if(state) {
+            panel.style.display = state;
+            return;
+        }
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function renderFetchedComments(comments, commentsSectionElem) {
+        comments.forEach(comment => {
+            const newComment = document.createElement('div');
+            newComment.className = 'comment';
+            commentsSectionElem.appendChild(newComment);
+
+            const userEl = document.createElement('span');
+            userEl.textContent = comment.querySelector('.user').textContent.trim();
+            userEl.className = 'user-box';
+
+            const commentEl = document.createElement('p');
+            commentEl.textContent = comment.querySelector('.comment-text').textContent.trim();
+            commentEl.className = 'comment-text-box';
+
+            const timeEl = document.createElement('p');
+            timeEl.textContent = comment.querySelector('.time').textContent.trim();
+            timeEl.className = 'time-box';
+
+            newComment.appendChild(userEl);
+            newComment.appendChild(commentEl);
+            newComment.appendChild(timeEl);
+        });
+    }
+
+    function getSignedInUserEmail() {
+        const emailElement = parent.document.querySelector('helix-sidekick').shadowRoot.querySelector('.profile-email');
+        return emailElement ? emailElement.textContent : null;
+    }
+
+    function buildSelector(element) {
+        if (!element) return '';
+        const parts = [];
+        while (element.parentElement) {
+            const tag = element.tagName.toLowerCase();
+            let selector = tag;
+            if (element.id) {
+                selector += `#${element.id}`;
+            } else if (element.classList.length > 0) {
+                selector += `.${Array.from(element.classList).join('.')}`;
+            }
+            parts.unshift(selector);
+            element = element.parentElement;
+        }
+        return parts.join(' > ');
+    }
+
+    function addDiscussionToPanel(discussionId, selector, comments) {
+
+        const button = document.createElement('button');
+        button.className = 'accordion';
+        button.innerHTML = comments.length > 0 ? `<strong>${comments[0].user}</strong> - ${comments[0].text}` : 'Click to see discussion';
+        button.setAttribute('data-selector', selector);
+        button.id = discussionId;
+
+        const panel = document.createElement('div');
+        panel.className = 'panel';
+        const commentList = document.createElement('ul');
+        commentList.className = 'comment-list';
+        commentList.setAttribute('data-discussion-id', discussionId);
+        panel.appendChild(commentList);
+
+        // sort comments by recent comment time appears first
+
+        comments.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        comments.forEach((comment, index) => {
+            const commentElement = document.createElement('li');
+            commentElement.classList.add(`comment-${index}`);
+
+            const userEl = document.createElement('span');
+            userEl.textContent = comment.user;
+            userEl.className = 'user';
+
+            const commentEl = document.createElement('p');
+            commentEl.textContent = comment.text;
+            commentEl.className = 'comment-text';
+
+            const timeEl = document.createElement('p');
+            timeEl.textContent = comment.time;
+            timeEl.className = 'time';
+
+            commentElement.appendChild(userEl);
+            commentElement.appendChild(commentEl);
+            commentElement.appendChild(timeEl);
+
+            commentList.appendChild(commentElement);
+        });
+
+        const container = document.getElementById('discussion-list');
+        container.appendChild(button);
+        container.appendChild(panel);
+
+        button.addEventListener('click', function() {
+            let buttonValue = this.textContent;
+            let selector = this.getAttribute('data-selector');
+            let targetElement = parent.document.querySelector(selector);
+            if (targetElement) {
+                console.log('found target element' + targetElement);
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            if (this.classList.contains('active')) {
+                togglePanel(this);
+                return;
+            }
+            this.classList.toggle('active');
+            const discussion_id = this.id;
+            const comments_list = document.querySelectorAll(`ul[data-discussion-id="${discussion_id}"] li`);
+
+            if (!targetElement.querySelector('.comment-box')) {
+                const comment_component = createNewCommentComponent(discussion_id, targetElement, comments_list);
+                comment_component.style.display = 'block';
+                targetElement.appendChild(comment_component);
+                togglePanel(this);
+            }
+        });
+    }
+
+    function handlePostDiscussion(discussion_id, element, comment) {
+
+        if(discussion_id === null) { // new discussion
+            const elSelector = buildSelector(element);
+            return createDiscussion(window.top.location.pathname, elSelector, `${comment.user}::${comment.text}`)
+                .then(discussionId => {
+                    addDiscussionToPanel(discussionId, elSelector, [comment]);
+                    return discussionId;
+                });
+        } else {
+            createNewCommentComponent(discussion_id, element, [comment]);
+        }
+    }
+
+    function handleResolveDiscussion(discussionId, commentBox, button, panel) {
+
+        commentBox.style.display = 'none';
+        commentBox.remove();
+
+        const email = getSignedInUserEmail();
+        if (!email) {
+            alert('Please sign in to resolve the discussion');
+            return;
+        }
+
+        const closingText = `${email} - closed this discussion`;
+        addCommentById(discussionId, closingText)
+            .then(() => {
+                resolveDiscussion(discussionId);
+                button.remove();
+                panel.remove();
+            })
+            .catch(error => console.error('Error resolving discussion:', error));
+    }
+
+    function insertCommentToCommentBox(commentBox, commentText) {
+        const commentsSection = commentBox.querySelector('.comments');
+        const newComment = document.createElement('div');
+        newComment.className = 'comment';
+
+        const userEl = document.createElement('span');
+        userEl.textContent = commentText.user;
+        userEl.className = 'user-box';
+
+        const commentEl = document.createElement('p');
+        commentEl.textContent = commentText.text;
+        commentEl.className = 'comment-text-box';
+
+        const timeEl = document.createElement('p');
+        timeEl.textContent = commentText.time;
+        timeEl.className = 'time-box';
+
+        newComment.appendChild(userEl);
+        newComment.appendChild(commentEl);
+        newComment.appendChild(timeEl);
+
+        commentsSection.insertBefore(newComment, commentsSection.firstChild);
+    }
+</script>
+
+</body>
+
+</html>
