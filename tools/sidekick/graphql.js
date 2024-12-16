@@ -1,4 +1,4 @@
-const XYZ = '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';
+const XYZ = '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';
 export const REPO_OWNER = 'akasjain-helix';
 export const REPO_NAME = 'hlxdiscussions';
 
