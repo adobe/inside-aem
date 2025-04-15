@@ -47,20 +47,15 @@ main .featured-article a:any-link {
 }
 
 main .featured-article-card-image {
-  height: 320px;
-  width: 100%;
+  height: 100%; /* Ensure the image fills the height */
+  width: 100%; /* Ensure the image fills the width */
+  aspect-ratio: 1 / 1; /* Make the image square */
   background: var(--color-black);
 }
 
 @media (min-width: 600px) {
   main .featured-article-card-image {
-    width: 40%;
-  }
-}
-
-@media (min-width: 1200px) {
-  main .featured-article-card-image {
-    width: 40%;
+    width: 50%; /* Half the card width */
   }
 }
 
@@ -68,7 +63,7 @@ main .featured-article-card-image img {
   object-fit: cover;
   height: 100%;
   width: 100%;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 main .featured-article-card-image img:hover {
@@ -76,20 +71,20 @@ main .featured-article-card-image img:hover {
 }
 
 main .featured-article-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
   text-align: center;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Make the text section square */
 }
 
 @media (min-width: 600px) {
   main .featured-article-card-body {
-    width: 60%;
+    width: 50%; /* Half the card width */
     text-align: left;
-  }
-}
-
-@media (min-width: 1200px) {
-  main .featured-article-card-body {
-    width: 60%;
   }
 }
 
@@ -109,7 +104,7 @@ main p.featured-article-card-date {
   font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
   margin-bottom: 0.5rem;
 }
 

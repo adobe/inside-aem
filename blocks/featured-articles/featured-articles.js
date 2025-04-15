@@ -15,6 +15,7 @@ async function decorateFeaturedArticles(featuredArticlesEl, articlePaths, eager 
     const article = await getBlogArticle(articlePath);
     if (article) {
       const card = buildArticleCard(article, 'featured-article', eager);
+      card.classList.add('featured-article-card'); // Ensure the card has the correct class
       featuredArticlesEl.append(card);
     } else {
       const { origin } = new URL(window.location.href);
