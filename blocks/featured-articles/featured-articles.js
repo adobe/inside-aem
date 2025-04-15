@@ -15,6 +15,13 @@ async function decorateFeaturedArticles(featuredArticlesEl, articlePaths, eager 
     const article = await getBlogArticle(articlePath);
     if (article) {
       const card = buildArticleCard(article, 'featured-article', eager);
+
+      // Add a "Tags" element above the image
+      const tags = document.createElement('p');
+      tags.classList.add('featured-article-card-tags');
+      tags.textContent = article.tags ? article.tags.join(', ') : 'Tags';
+      card.prepend(tags); // Add the tags above the image
+
       card.classList.add('featured-article-card'); // Ensure the card has the correct class
       featuredArticlesEl.append(card);
     } else {

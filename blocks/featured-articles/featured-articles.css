@@ -3,7 +3,7 @@
 main .featured-article-container {
   display: flex;
   flex-direction: column; /* Stack articles vertically */
-  gap: 2rem; /* Add spacing between articles */
+  gap: 1rem; /* Reduce spacing between articles */
   justify-content: center;
 }
 
@@ -18,7 +18,7 @@ main .featured-article-card {
   main .featured-article-card {
     flex-direction: row; /* Default: image on the left, text on the right */
     align-items: center;
-    margin-top: 40px;
+    margin-top: 20px; /* Reduce top margin */
     width: 100%;
   }
 
@@ -86,6 +86,20 @@ main p.featured-article-card-date {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 0.5rem;
+}
+
+/* Double the size of the "Tags" and move it above the image */
+main .featured-article-card-tags {
+  font-size: 2rem; /* Double the size */
+  font-weight: bold;
+  margin-bottom: 1rem; /* Add spacing below the tags */
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  main .featured-article-card-tags {
+    text-align: left; /* Align left on larger screens */
+  }
 }
 
 main .featured-article-card-body h3 {
