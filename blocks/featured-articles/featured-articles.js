@@ -6,6 +6,9 @@ import {
 } from '../../scripts/scripts.js';
 
 async function decorateFeaturedArticles(featuredArticlesEl, articlePaths, eager = false) {
+  // Add the container class for styling
+  featuredArticlesEl.classList.add('featured-article-container');
+
   const tagHeader = document.querySelector('.tag-header-container > div');
 
   for (const articlePath of articlePaths) {
