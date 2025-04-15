@@ -5,29 +5,32 @@ import {
   getBlogArticle,
 } from '../../scripts/scripts.js';
 
-async function decorateFeaturedArticle(featuredArticleEl, articlePath, eager = false) {
-  const article = await getBlogArticle(articlePath);
-  if (article) {
-    const card = buildArticleCard(article, 'featured-article', eager);
-    const tagHeader = document.querySelector('.tag-header-container > div');
-    if (tagHeader) {
-      featuredArticleEl.append(card);
-      tagHeader.append(featuredArticleEl);
+async function decorateFeaturedArticles(featuredArticlesEl, articlePaths, eager = false) {
+  const tagHeader = document.querySelector('.tag-header-container > div');
+
+  for (const articlePath of articlePaths) {
+    const article = await getBlogArticle(articlePath);
+    if (article) {
+      const card = buildArticleCard(article, 'featured-article', eager);
+      featuredArticlesEl.append(card);
     } else {
-      featuredArticleEl.append(card);
+      const { origin } = new URL(window.location.href);
+      // eslint-disable-next-line no-console
+      console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
     }
-  } else {
-    const { origin } = new URL(window.location.href);
-    // eslint-disable-next-line no-console
-    console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
+  }
+
+  if (tagHeader) {
+    tagHeader.append(featuredArticlesEl);
   }
 }
 
 export default async function decorate(block, blockName, document, eager) {
-  const a = block.querySelector('a');
+  const links = block.querySelectorAll('a');
   block.innerHTML = '';
-  if (a && a.href) {
-    const path = new URL(a.href).pathname;
-    await decorateFeaturedArticle(block, path, eager);
+
+  if (links.length > 0) {
+    const paths = Array.from(links).map((a) => new URL(a.href).pathname);
+    await decorateFeaturedArticles(block, paths, eager);
   }
 }
