@@ -1,22 +1,10 @@
 /* stylelint-disable no-descending-specificity */
 
-@media (min-width: 600px) {
-  main .featured-article-container > div {
-    max-width: unset;
-  }
-}
-
-@media (min-width: 1200px) {
-  main .featured-article-container div h1 {
-    max-width: 1200px;
-  }
-}
-
 main .featured-article-container {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping if needed */
+  flex-direction: column; /* Stack articles vertically */
   gap: 2rem; /* Add spacing between articles */
-  justify-content: center; /* Center the articles */
+  justify-content: center;
 }
 
 main .featured-article-card {
@@ -28,34 +16,28 @@ main .featured-article-card {
 
 @media (min-width: 600px) {
   main .featured-article-card {
-    flex-direction: row;
+    flex-direction: row; /* Default: image on the left, text on the right */
     align-items: center;
     margin-top: 40px;
-    width: calc(50% - 1rem); /* Two articles side by side */
+    width: 100%;
   }
-}
 
-@media (min-width: 1200px) {
-  main .featured-article-card {
-    width: calc(50% - 2rem); /* Adjust for larger screens */
-    max-width: 600px;
+  /* Alternate layout for even-indexed articles (image on the right) */
+  main .featured-article-card:nth-child(even) {
+    flex-direction: row-reverse; /* Reverse the order: text on the left, image on the right */
   }
-}
-
-main .featured-article a:any-link {
-  text-decoration: none;
 }
 
 main .featured-article-card-image {
-  height: 100%; /* Ensure the image fills the height */
-  width: 100%; /* Ensure the image fills the width */
-  aspect-ratio: 1 / 1; /* Make the image square */
+  height: 320px;
+  width: 100%;
   background: var(--color-black);
 }
 
 @media (min-width: 600px) {
   main .featured-article-card-image {
     width: 50%; /* Half the card width */
+    height: auto; /* Maintain aspect ratio */
   }
 }
 
@@ -74,11 +56,9 @@ main .featured-article-card-body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   padding: 2rem;
   text-align: center;
   width: 100%;
-  aspect-ratio: 1 / 1; /* Make the text section square */
 }
 
 @media (min-width: 600px) {
