@@ -110,13 +110,6 @@
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxxl: 3.75rem; /* 60px */
-
-    /* --heading-font-size-xxl: 60px;
-    --heading-font-size-xl: 48px;
-    --heading-font-size-l: 36px;
-    --heading-font-size-m: 30px;
-    --heading-font-size-s: 24px;
-    --heading-font-size-xs: 22px; */
   }
 }
 
@@ -599,4 +592,16 @@ main .section.carousel-container {
   to {
       opacity: 1;
   }
+}
+
+/* Fact-box width override */
+.fact-box main,
+.fact-box main .section,
+.fact-box main .section > div {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
