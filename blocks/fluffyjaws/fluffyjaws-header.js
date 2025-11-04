@@ -1,0 +1,199 @@
+import {
+  buildFigure,
+  fetchPlaceholders,
+} from '../../scripts/scripts.js';
+
+import {
+  createSVG,
+} from '../block-helpers.js';
+
+import {
+  createOptimizedPicture,
+} from '../../scripts/lib-franklin.js';
+
+async function populateAuthorInfo(authorLink, imgContainer, url, name, eager = false) {
+  try {
+    const resp = await fetch(`${url}.plain.html`);
+    if (!resp.ok) throw new Error('no author html');
+
+    const text = await resp.text();
+    const placeholder = document.createElement('div');
+    placeholder.innerHTML = text;
+    const placeholderImg = placeholder.querySelector('img');
+    if (placeholderImg) {
+      const src = new URL(placeholderImg.getAttribute('src'), new URL(url));
+      const picture = createOptimizedPicture(src, name, eager, [{ width: 200 }]);
+
+      // wrap the picture in a link so the logo/avatar is clickable
+      const link = document.createElement('a');
+      link.href = url;
+      link.className = 'fluffyjaws-logo';
+      link.setAttribute('aria-label', name || 'Author');
+      link.append(picture);
+
+      imgContainer.append(link);
+
+      const img = picture.querySelector('img');
+      if (img) {
+        if (!img.complete) {
+          img.addEventListener('load', () => {
+            // remove default background image to avoid halo
+            imgContainer.style.backgroundImage = 'none';
+          });
+          img.addEventListener('error', () => {
+            // removing broken img will reveal fallback background img
+            img.remove();
+          });
+        } else {
+          imgContainer.style.backgroundImage = 'none';
+        }
+      }
+    } else {
+      // no image found in placeholder HTML — fall back to plain author link text
+      const p = document.createElement('p');
+      p.innerHTML = authorLink.innerHTML;
+      authorLink.replaceWith(p);
+    }
+  } catch (e) {
+    const p = document.createElement('p');
+    p.innerHTML = authorLink ? authorLink.innerHTML : (name || 'Author');
+    if (authorLink) authorLink.replaceWith(p);
+  }
+}
+
+function openPopup(e) {
+  const target = e.target.closest('a');
+  if (!target) return;
+  const href = target.getAttribute('data-href');
+  const type = target.getAttribute('data-type');
+  if (!href) return;
+  window.open(
+    href,
+    type,
+    'popup,top=233,left=233,width=700,height=467',
+  );
+}
+
+function copyToClipboard(button) {
+  if (!navigator.clipboard) {
+    button.classList.add('copy-failure');
+    return;
+  }
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const copied = document.querySelector('.copied-to-clipboard');
+    if (!copied) {
+      fetchPlaceholders().then((placeholders) => {
+        button.setAttribute('title', placeholders['copied-to-clipboard']);
+        button.setAttribute('alt', placeholders['copied-to-clipboard']);
+        button.setAttribute('aria-label', placeholders['copied-to-clipboard']);
+        const toolTip = document.createElement('div');
+        toolTip.setAttribute('role', 'status');
+        toolTip.setAttribute('aria-live', 'polite');
+        toolTip.classList.add('copied-to-clipboard');
+        toolTip.textContent = placeholders['copied-to-clipboard'];
+        button.append(toolTip);
+        setTimeout(() => {
+          toolTip.remove();
+        }, 5000);
+      });
+    }
+    button.classList.remove('copy-failure');
+    button.classList.add('copy-success');
+  }, () => {
+    button.classList.remove('copy-success');
+    button.classList.add('copy-failure');
+  });
+}
+
+async function buildSharing() {
+  const sharing = document.createElement('div');
+  const placeholders = await fetchPlaceholders();
+  sharing.classList.add('article-byline-sharing');
+  sharing.innerHTML = `<span>
+      <a id="copy-to-clipboard" alt="${placeholders['copy-to-clipboard']}" aria-label="${placeholders['copy-to-clipboard']}">
+        ${createSVG('link').outerHTML}
+      </a>
+    </span>`;
+  sharing.querySelectorAll('[data-href]').forEach((link) => {
+    link.addEventListener('click', openPopup);
+  });
+  const copyButton = sharing.querySelector('#copy-to-clipboard');
+  if (copyButton) copyButton.addEventListener('click', () => { copyToClipboard(copyButton); });
+  return sharing;
+}
+
+function validateDate(date) {
+  if (date
+    && !window.location.hostname.includes('adobe.com')
+    && window.location.pathname.includes('/publish/')) {
+    // match publication date to MM-DD-YYYY format
+    if (!/[0-1]\d{1}-[0-3]\d{1}-[2]\d{3}/.test(date.textContent.trim())) {
+      date.classList.add('article-date-invalid');
+      fetchPlaceholders().then((placeholders) => {
+        date.setAttribute('title', placeholders['invalid-date']);
+      });
+    }
+  }
+}
+
+export default async function decorateArticleHeader(blockEl, blockName, eager) {
+  // mark block for scoped CSS
+  if (blockEl && !blockEl.classList.contains('fluffyjaws-header')) {
+    blockEl.classList.add('fluffyjaws-header');
+  }
+
+  const childrenEls = Array.from(blockEl.children);
+
+  // category
+  const categoryContainer = childrenEls[0];
+  if (categoryContainer) categoryContainer.classList.add('article-category');
+
+  // title
+  const titleContainer = childrenEls[1];
+  if (titleContainer) titleContainer.classList.add('article-title');
+
+  // byline
+  const bylineContainer = childrenEls[2];
+  if (bylineContainer) {
+    bylineContainer.classList.add('article-byline');
+    if (bylineContainer.firstElementChild) bylineContainer.firstElementChild.classList.add('article-byline-info');
+  }
+
+  // author
+  const author = bylineContainer && bylineContainer.firstElementChild && bylineContainer.firstElementChild.firstElementChild;
+  const authorLink = author ? author.querySelector('a') : null;
+  const authorURL = authorLink ? authorLink.href : '#';
+  const authorName = author ? author.textContent.trim() : 'Author';
+  if (author) author.classList.add('article-author');
+
+  // publication date
+  const date = bylineContainer && bylineContainer.firstElementChild && bylineContainer.firstElementChild.lastElementChild;
+  if (date) {
+    date.classList.add('article-date');
+    validateDate(date);
+  }
+
+  // author img (fallback to fluffyjaws logo)
+  const authorImg = document.createElement('div');
+  authorImg.classList = 'article-author-image';
+  authorImg.style.backgroundImage = "url('/blocks/fluffyjaws/fj-logo.svg')";
+  if (bylineContainer) bylineContainer.prepend(authorImg);
+
+  if (authorLink) {
+    populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+  }
+
+  // sharing
+  const shareBlock = await buildSharing();
+  if (bylineContainer) bylineContainer.append(shareBlock);
+
+  // feature img
+  const featureImgContainer = childrenEls[3];
+  if (featureImgContainer) {
+    featureImgContainer.classList.add('article-feature-image');
+    const featureFigEl = buildFigure(featureImgContainer.firstElementChild);
+    featureFigEl.classList.add('figure-feature');
+    featureImgContainer.prepend(featureFigEl);
+    if (featureImgContainer.lastElementChild) featureImgContainer.lastElementChild.remove();
+  }
+}
