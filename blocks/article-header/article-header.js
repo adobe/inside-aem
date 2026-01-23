@@ -103,17 +103,17 @@ function loadApplauseButtonLibrary() {
     const style = document.createElement('style');
     style.textContent = `
       applause-button {
-        width: 56px !important;
-        height: 56px !important;
+        width: auto !important;
+        height: 32px !important;
       }
       applause-button .style-root {
         width: auto !important;
-        height: 56px !important;
+        height: 32px !important;
       }
       applause-button svg,
       applause-button button {
-        width: 56px !important;
-        height: 56px !important;
+        width: 32px !important;
+        height: 32px !important;
       }
     `;
     document.head.appendChild(style);

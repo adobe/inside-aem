@@ -207,11 +207,9 @@ main .article-byline .article-byline-sharing a {
 main .article-byline .article-byline-sharing .applause-inline-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  min-width: 56px;
-  min-height: 56px;
+  justify-content: flex-start;
+  min-width: 70px;
+  height: 32px;
 }
 
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button {
@@ -220,10 +218,8 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper applause-b
   --applause-button-color: #1473E6;
   display: flex !important;
   align-items: center !important;
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 56px !important;
-  min-height: 56px !important;
+  width: auto !important;
+  height: 32px !important;
 }
 
 /* Override applause button default styling for inline display */
@@ -231,8 +227,8 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper applause-b
   display: flex !important;
   flex-direction: row-reverse !important;
   align-items: center !important;
-  gap: 10px !important;
-  height: 56px !important;
+  gap: 8px !important;
+  height: 32px !important;
   width: auto !important;
 }
 
@@ -240,28 +236,29 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper applause-b
   position: static !important;
   transform: none !important;
   margin: 0 !important;
-  font-size: 20px !important;
-  font-weight: 700 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
   color: var(--color-gray-800) !important;
   line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg,
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg.svg-clap {
   vertical-align: middle !important;
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 56px !important;
-  min-height: 56px !important;
-  max-width: 56px !important;
-  max-height: 56px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
 }
 
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button button {
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 56px !important;
-  min-height: 56px !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
 }
 
 main .article-byline .article-byline-sharing svg {
@@ -275,7 +272,8 @@ main .article-byline .article-byline-sharing a#copy-to-clipboard {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
+  height: 32px;
+  min-width: 32px;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard:hover svg,
