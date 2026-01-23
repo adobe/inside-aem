@@ -82,15 +82,69 @@ function copyToClipboard(button) {
   });
 }
 
+function loadApplauseButtonLibrary() {
+  // Check if already loaded
+  if (document.querySelector('script[src*="applause-button"]')) {
+    return;
+  }
+  // Load CSS
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://unpkg.com/applause-button@latest/dist/applause-button.css';
+  document.head.appendChild(link);
+
+  // Load JS
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/applause-button@latest/dist/applause-button.js';
+  document.head.appendChild(script);
+  
+  // Add custom style override after library loads
+  script.onload = () => {
+    const style = document.createElement('style');
+    style.textContent = `
+      applause-button {
+        width: 56px !important;
+        height: 56px !important;
+      }
+      applause-button .style-root {
+        width: auto !important;
+        height: 56px !important;
+      }
+      applause-button svg,
+      applause-button button {
+        width: 56px !important;
+        height: 56px !important;
+      }
+    `;
+    document.head.appendChild(style);
+  };
+}
+
 async function buildSharing() {
   const sharing = document.createElement('div');
   const placeholders = await fetchPlaceholders();
   sharing.classList.add('article-byline-sharing');
-  sharing.innerHTML = `<span>
-      <a id="copy-to-clipboard" alt="${placeholders['copy-to-clipboard']}" aria-label="${placeholders['copy-to-clipboard']}">
+  
+  // Create applause button
+  const applauseSpan = document.createElement('span');
+  applauseSpan.classList.add('applause-inline-wrapper');
+  const applauseButton = document.createElement('applause-button');
+  applauseButton.setAttribute('url', window.location.pathname);
+  applauseButton.setAttribute('api', 'https://applause.chabouis.fr');
+  applauseButton.setAttribute('multiclap', 'true');
+  applauseButton.setAttribute('color', '#1473E6');
+  applauseSpan.appendChild(applauseButton);
+  
+  // Create copy link button
+  const copySpan = document.createElement('span');
+  copySpan.innerHTML = `<a id="copy-to-clipboard" alt="${placeholders['copy-to-clipboard']}" aria-label="${placeholders['copy-to-clipboard']}">
         ${createSVG('link').outerHTML}
-      </a>
-    </span>`;
+      </a>`;
+  
+  // Assemble sharing section
+  sharing.appendChild(applauseSpan);
+  sharing.appendChild(copySpan);
+  
   sharing.querySelectorAll('[data-href]').forEach((link) => {
     link.addEventListener('click', openPopup);
   });
@@ -98,6 +152,10 @@ async function buildSharing() {
   copyButton.addEventListener('click', () => {
     copyToClipboard(copyButton);
   });
+  
+  // Load the applause button library
+  loadApplauseButtonLibrary();
+  
   return sharing;
 }
 

@@ -184,6 +184,8 @@ main .article-byline .article-byline-sharing {
   justify-content: space-around;
   flex: 0 1 100%;
   margin-top: 16px;
+  align-items: center;
+  gap: 20px;
 }
 
 @media (min-width: 600px) {
@@ -202,13 +204,78 @@ main .article-byline .article-byline-sharing a {
   cursor: pointer;
 }
 
+main .article-byline .article-byline-sharing .applause-inline-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+}
+
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  --applause-button-color: #1473E6;
+  display: flex !important;
+  align-items: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+}
+
+/* Override applause button default styling for inline display */
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button .style-root {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 56px !important;
+  width: auto !important;
+}
+
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button .count-container {
+  position: static !important;
+  transform: none !important;
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--color-gray-800) !important;
+  line-height: 1 !important;
+}
+
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg,
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg.svg-clap {
+  vertical-align: middle !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+}
+
+main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button button {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+}
+
 main .article-byline .article-byline-sharing svg {
   height: 22px;
   width: 22px;
+  vertical-align: middle;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard:hover svg,
