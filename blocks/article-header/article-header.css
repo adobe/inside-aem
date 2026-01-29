@@ -215,7 +215,7 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper {
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button {
   margin: 0 !important;
   padding: 0 !important;
-  --applause-button-color: #1473E6;
+  --applause-button-color: #000000;
   display: flex !important;
   align-items: center !important;
   width: auto !important;
