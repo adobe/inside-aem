@@ -310,29 +310,30 @@
     let currentSort = 'claps';
     let sortDirection = 'desc';
 
-    // Fetch blog articles from query-index (both English and other languages)
+    // Fetch blog articles from query-index
     async function fetchArticles() {
       try {
-        const languages = ['en', 'de', 'fr', 'es', 'it', 'ja', 'ko', 'pt-br', 'zh-cn', 'zh-tw'];
-        const allArticles = [];
+        console.log('Fetching /en/query-index.json...');
+        const response = await fetch('/en/query-index.json');
+        console.log('Response status:', response.status);
         
-        // Try each language
-        for (const lang of languages) {
-          try {
-            const response = await fetch(`/${lang}/query-index.json`);
-            if (response.ok) {
-              const data = await response.json();
-              const articles = data.data.filter(article => article['publication-date']);
-              allArticles.push(...articles);
-            }
-          } catch (langError) {
-            // Skip languages that don't exist
-            console.log(`No articles found for language: ${lang}`);
-          }
+        if (!response.ok) {
+          console.error('Failed to fetch articles:', response.status, response.statusText);
+          return [];
         }
         
-        console.log(`Loaded ${allArticles.length} articles`);
-        return allArticles;
+        const data = await response.json();
+        console.log('Raw data:', data);
+        console.log('Total entries:', data.data?.length);
+        
+        const articles = data.data.filter(article => {
+          const hasDate = !!article['publication-date'];
+          console.log(`Article "${article.title}": has publication-date = ${hasDate}`);
+          return hasDate;
+        });
+        
+        console.log(`Loaded ${articles.length} articles with publication dates`);
+        return articles;
       } catch (error) {
         console.error('Error fetching articles:', error);
         return [];
