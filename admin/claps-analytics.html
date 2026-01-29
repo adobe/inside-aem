@@ -326,13 +326,33 @@
         console.log('Raw data:', data);
         console.log('Total entries:', data.data?.length);
         
-        const articles = data.data.filter(article => {
-          const hasDate = !!article['publication-date'];
-          console.log(`Article "${article.title}": has publication-date = ${hasDate}`);
-          return hasDate;
-        });
+        // Check what fields the first article has
+        if (data.data && data.data.length > 0) {
+          console.log('Sample article fields:', Object.keys(data.data[0]));
+          console.log('Sample article:', data.data[0]);
+        }
         
-        console.log(`Loaded ${articles.length} articles with publication dates`);
+        // Try multiple possible date field names
+        const articles = data.data.filter(article => {
+          const hasDate = article['publication-date'] || article.date || article.publishDate || article.publicationDate;
+          return hasDate;
+        }).map(article => ({
+          ...article,
+          // Normalize the date field
+          date: article['publication-date'] || article.date || article.publishDate || article.publicationDate
+        }));
+        
+        console.log(`Loaded ${articles.length} articles with dates`);
+        
+        // If no articles have dates, just return all articles
+        if (articles.length === 0) {
+          console.warn('No articles have date fields, returning all articles');
+          return data.data.map(article => ({
+            ...article,
+            date: article.lastModified || new Date().toISOString()
+          }));
+        }
+        
         return articles;
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -372,7 +392,7 @@
           return {
             title: article.title,
             path: path,
-            date: article['publication-date'],
+            date: article.date || article.lastModified || 'N/A',
             claps: claps,
             description: article.description || ''
           };
