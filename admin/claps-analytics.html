@@ -310,12 +310,29 @@
     let currentSort = 'claps';
     let sortDirection = 'desc';
 
-    // Fetch blog articles from query-index
+    // Fetch blog articles from query-index (both English and other languages)
     async function fetchArticles() {
       try {
-        const response = await fetch('/query-index.json');
-        const data = await response.json();
-        return data.data.filter(article => article['publication-date']); // Only articles with publication date
+        const languages = ['en', 'de', 'fr', 'es', 'it', 'ja', 'ko', 'pt-br', 'zh-cn', 'zh-tw'];
+        const allArticles = [];
+        
+        // Try each language
+        for (const lang of languages) {
+          try {
+            const response = await fetch(`/${lang}/query-index.json`);
+            if (response.ok) {
+              const data = await response.json();
+              const articles = data.data.filter(article => article['publication-date']);
+              allArticles.push(...articles);
+            }
+          } catch (langError) {
+            // Skip languages that don't exist
+            console.log(`No articles found for language: ${lang}`);
+          }
+        }
+        
+        console.log(`Loaded ${allArticles.length} articles`);
+        return allArticles;
       } catch (error) {
         console.error('Error fetching articles:', error);
         return [];
@@ -336,13 +353,21 @@
 
     // Load all data
     async function loadData() {
+      console.log('Starting to load data...');
       const articlesData = await fetchArticles();
+      console.log(`Fetched ${articlesData.length} articles`);
+      
+      if (articlesData.length === 0) {
+        document.getElementById('loading').innerHTML = '<p style="color: #e74c3c;">⚠️ No articles found. Make sure you have blog posts with publication dates.</p>';
+        return;
+      }
       
       // Fetch claps for each article
       const articlesWithClaps = await Promise.all(
         articlesData.map(async (article) => {
           const path = article.path.replace('.html', '');
           const claps = await fetchClaps(path);
+          console.log(`${path}: ${claps} claps`);
           return {
             title: article.title,
             path: path,
@@ -354,6 +379,7 @@
       );
 
       articles = articlesWithClaps;
+      console.log(`Processed ${articles.length} articles with clap counts`);
       updateStats();
       renderTable();
       
