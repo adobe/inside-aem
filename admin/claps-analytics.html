@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/applause-button@latest/dist/applause-button.css">
-  <script src="https://unpkg.com/applause-button@latest/dist/applause-button.js"></script>
-  <title>Claps Analytics Dashboard</title>
+  <title>Articles Dashboard</title>
   <style>
     * {
       margin: 0;
@@ -250,26 +248,14 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>👏 Claps Analytics Dashboard</h1>
-      <p>Track engagement across all your blog articles</p>
+      <h1>📚 Articles Dashboard</h1>
+      <p>Browse and search all your blog articles</p>
     </div>
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="number" id="totalClaps">-</div>
-        <div class="label">Total Claps</div>
-      </div>
-      <div class="stat-card">
         <div class="number" id="totalArticles">-</div>
         <div class="label">Total Articles</div>
-      </div>
-      <div class="stat-card">
-        <div class="number" id="avgClaps">-</div>
-        <div class="label">Avg Claps/Article</div>
-      </div>
-      <div class="stat-card">
-        <div class="number" id="topClaps">-</div>
-        <div class="label">Most Claps</div>
       </div>
     </div>
 
@@ -277,8 +263,7 @@
       <div class="controls">
         <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search articles...">
         <div class="filter-buttons">
-          <button class="filter-btn active" data-sort="claps">Sort by Claps</button>
-          <button class="filter-btn" data-sort="date">Sort by Date</button>
+          <button class="filter-btn active" data-sort="date">Sort by Date</button>
           <button class="filter-btn" data-sort="title">Sort by Title</button>
         </div>
       </div>
@@ -291,7 +276,6 @@
       <table id="articlesTable" style="display: none;">
         <thead>
           <tr>
-            <th data-sort="claps">👏 Claps <span class="sort-indicator">▼</span></th>
             <th data-sort="title">Article Title</th>
             <th data-sort="path">Path</th>
             <th data-sort="date">Publication Date</th>
@@ -309,7 +293,7 @@
 
   <script>
     let articles = [];
-    let currentSort = 'claps';
+    let currentSort = 'date';
     let sortDirection = 'desc';
 
     // Fetch blog articles from query-index
@@ -362,39 +346,6 @@
       }
     }
 
-    // Fetch clap count for a specific article using hidden applause button
-    async function fetchClaps(path) {
-      return new Promise((resolve) => {
-        // Create a hidden applause button
-        const button = document.createElement('applause-button');
-        button.setAttribute('url', path);
-        button.setAttribute('api', 'https://applause.chabouis.fr');
-        button.style.display = 'none';
-        button.style.visibility = 'hidden';
-        button.style.position = 'absolute';
-        button.style.width = '0';
-        button.style.height = '0';
-        document.body.appendChild(button);
-        
-        // Wait for the button to load and get the count
-        setTimeout(() => {
-          try {
-            // Try to get the count from the button's shadow DOM
-            const countElement = button.shadowRoot?.querySelector('.count');
-            const count = countElement ? parseInt(countElement.textContent) || 0 : 0;
-            
-            // Clean up
-            button.remove();
-            resolve(count);
-          } catch (error) {
-            console.warn(`Could not read count for ${path}:`, error.message);
-            button.remove();
-            resolve(0);
-          }
-        }, 2000); // Wait 2 seconds for button to load
-      });
-    }
-
     // Load all data
     async function loadData() {
       console.log('Starting to load data...');
@@ -402,41 +353,19 @@
       console.log(`Fetched ${articlesData.length} articles`);
       
       if (articlesData.length === 0) {
-        document.getElementById('loading').innerHTML = '<p style="color: #e74c3c;">⚠️ No articles found. Make sure you have blog posts with publication dates.</p>';
+        document.getElementById('loading').innerHTML = '<p style="color: #e74c3c;">⚠️ No articles found.</p>';
         return;
       }
       
-      // Show a progress message
-      document.getElementById('loading').innerHTML = '<div class="spinner"></div><p>Loading clap counts for ' + articlesData.length + ' articles... This may take a minute.</p>';
-      
-      // Fetch claps for each article (in batches to avoid overwhelming the browser)
-      const batchSize = 10;
-      const articlesWithClaps = [];
-      
-      for (let i = 0; i < articlesData.length; i += batchSize) {
-        const batch = articlesData.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
-          batch.map(async (article) => {
-            const path = article.path.replace('.html', '');
-            const claps = await fetchClaps(path);
-            console.log(`${path}: ${claps} claps`);
-            return {
-              title: article.title,
-              path: path,
-              date: article.date || article.lastModified || 'N/A',
-              claps: claps,
-              description: article.description || ''
-            };
-          })
-        );
-        articlesWithClaps.push(...batchResults);
-        
-        // Update progress
-        document.getElementById('loading').innerHTML = `<div class="spinner"></div><p>Loaded ${articlesWithClaps.length} of ${articlesData.length} articles...</p>`;
-      }
+      // Map articles without fetching claps
+      articles = articlesData.map(article => ({
+        title: article.title,
+        path: article.path.replace('.html', ''),
+        date: article.date || article.lastModified || 'N/A',
+        description: article.description || ''
+      }));
 
-      articles = articlesWithClaps;
-      console.log(`Processed ${articles.length} articles with clap counts`);
+      console.log(`Loaded ${articles.length} articles`);
       updateStats();
       renderTable();
       
@@ -446,15 +375,8 @@
 
     // Update statistics
     function updateStats() {
-      const totalClaps = articles.reduce((sum, a) => sum + a.claps, 0);
       const totalArticles = articles.length;
-      const avgClaps = totalArticles > 0 ? Math.round(totalClaps / totalArticles) : 0;
-      const topClaps = articles.length > 0 ? Math.max(...articles.map(a => a.claps)) : 0;
-
-      document.getElementById('totalClaps').textContent = totalClaps.toLocaleString();
       document.getElementById('totalArticles').textContent = totalArticles.toLocaleString();
-      document.getElementById('avgClaps').textContent = avgClaps.toLocaleString();
-      document.getElementById('topClaps').textContent = topClaps.toLocaleString();
     }
 
     // Sort articles
@@ -467,9 +389,7 @@
         let aVal = a[sortBy];
         let bVal = b[sortBy];
 
-        if (sortBy === 'claps') {
-          return direction === 'desc' ? bVal - aVal : aVal - bVal;
-        } else if (sortBy === 'date') {
+        if (sortBy === 'date') {
           return direction === 'desc' 
             ? new Date(bVal) - new Date(aVal)
             : new Date(aVal) - new Date(bVal);
@@ -500,7 +420,6 @@
       filteredArticles.forEach(article => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><span class="claps-count">${article.claps}</span></td>
           <td><div class="article-title">${article.title}</div></td>
           <td><a href="${article.path}" target="_blank" class="article-link">${article.path}</a></td>
           <td><span class="article-date">${formatDate(article.date)}</span></td>
@@ -515,7 +434,9 @@
       const activeTh = document.querySelector(`th[data-sort="${currentSort}"]`);
       if (activeTh) {
         const indicator = activeTh.querySelector('.sort-indicator');
-        indicator.textContent = sortDirection === 'desc' ? '▼' : '▲';
+        if (indicator) {
+          indicator.textContent = sortDirection === 'desc' ? '▼' : '▲';
+        }
       }
     }
 
