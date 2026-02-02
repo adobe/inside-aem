@@ -373,7 +373,9 @@ export default async function init(blockEl) {
         const gnavDoc = parser.parseFromString(html, 'text/html');
         const gnav = new Gnav(gnavDoc.body, blockEl);
         gnav.init();
-      } catch {
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Could not create global navigation. ${url}`, error);
         debug(`Could not create global navigation.${url}`);
       }
     }
