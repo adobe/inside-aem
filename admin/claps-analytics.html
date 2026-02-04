@@ -536,7 +536,31 @@
     // Format date
     function formatDate(dateString) {
       if (!dateString) return '-';
+      
+      // Check if it's a Unix timestamp (number of milliseconds)
+      if (typeof dateString === 'number') {
+        // Excel serial date conversion (days since 1900-01-01)
+        if (dateString > 10000 && dateString < 100000) {
+          const excelEpoch = new Date(1900, 0, 1);
+          const date = new Date(excelEpoch.getTime() + (dateString - 2) * 86400000);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Unix timestamp in seconds
+        if (dateString > 1000000000 && dateString < 10000000000) {
+          const date = new Date(dateString * 1000);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Unix timestamp in milliseconds
+        if (dateString > 1000000000000) {
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+      }
+      
+      // Try parsing as ISO date string
       const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString; // Return as-is if can't parse
+      
       return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     }
 
