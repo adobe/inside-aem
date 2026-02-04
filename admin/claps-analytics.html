@@ -285,7 +285,6 @@
             <th data-sort="path">Path<span class="sort-indicator"></span></th>
             <th data-sort="date">Publication Date<span class="sort-indicator"></span></th>
             <th data-sort="totalClaps">Total Claps<span class="sort-indicator"></span></th>
-            <th data-sort="uniqueUsers">Unique Users<span class="sort-indicator"></span></th>
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -308,10 +307,8 @@
       try {
         const apiUrl = `https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(articlePath)}`;
         console.log(`Fetching claps for: ${articlePath}`);
-        console.log(`API URL: ${apiUrl}`);
         
         const response = await fetch(apiUrl);
-        console.log(`Response status for ${articlePath}:`, response.status);
         
         if (!response.ok) {
           console.warn(`Failed to fetch claps for ${articlePath}: ${response.status}`);
@@ -319,10 +316,19 @@
         }
         
         const data = await response.json();
-        console.log(`API response for ${articlePath}:`, data);
+        console.log(`API response for ${articlePath}:`, data, 'Type:', typeof data);
         
+        // The API returns just a number (total claps), not an object
+        if (typeof data === 'number') {
+          return {
+            totalClaps: data,
+            uniqueUsers: 0 // API doesn't provide unique users count
+          };
+        }
+        
+        // Fallback for object format
         return {
-          totalClaps: data.claps || 0,
+          totalClaps: data.claps || data || 0,
           uniqueUsers: data.unique || 0
         };
       } catch (error) {
@@ -509,7 +515,6 @@
           <td><a href="${article.path}" target="_blank" class="article-link">${article.path}</a></td>
           <td><span class="article-date">${formatDate(article.date)}</span></td>
           <td><span class="${clapsClass}">${article.totalClaps || 0}</span></td>
-          <td>${article.uniqueUsers || 0}</td>
         `;
         tbody.appendChild(row);
       });
