@@ -257,6 +257,10 @@
         <div class="number" id="totalArticles">-</div>
         <div class="label">Total Articles</div>
       </div>
+      <div class="stat-card">
+        <div class="number" id="totalClaps">-</div>
+        <div class="label">Total Claps</div>
+      </div>
     </div>
 
     <div class="table-container">
@@ -265,6 +269,7 @@
         <div class="filter-buttons">
           <button class="filter-btn active" data-sort="date">Sort by Date</button>
           <button class="filter-btn" data-sort="title">Sort by Title</button>
+          <button class="filter-btn" data-sort="totalClaps">Sort by Claps</button>
         </div>
       </div>
 
@@ -276,9 +281,11 @@
       <table id="articlesTable" style="display: none;">
         <thead>
           <tr>
-            <th data-sort="title">Article Title</th>
-            <th data-sort="path">Path</th>
-            <th data-sort="date">Publication Date</th>
+            <th data-sort="title">Article Title<span class="sort-indicator"></span></th>
+            <th data-sort="path">Path<span class="sort-indicator"></span></th>
+            <th data-sort="date">Publication Date<span class="sort-indicator"></span></th>
+            <th data-sort="totalClaps">Total Claps<span class="sort-indicator"></span></th>
+            <th data-sort="uniqueUsers">Unique Users<span class="sort-indicator"></span></th>
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -295,6 +302,24 @@
     let articles = [];
     let currentSort = 'date';
     let sortDirection = 'desc';
+
+    // Fetch claps data for a single article
+    async function fetchClapsForArticle(articlePath) {
+      try {
+        const response = await fetch(`https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(articlePath)}`);
+        if (!response.ok) {
+          return { totalClaps: 0, uniqueUsers: 0 };
+        }
+        const data = await response.json();
+        return {
+          totalClaps: data.claps || 0,
+          uniqueUsers: data.unique || 0
+        };
+      } catch (error) {
+        console.error(`Error fetching claps for ${articlePath}:`, error);
+        return { totalClaps: 0, uniqueUsers: 0 };
+      }
+    }
 
     // Fetch blog articles from query-index
     async function fetchArticles() {
@@ -357,12 +382,14 @@
         return;
       }
       
-      // Map articles without fetching claps
+      // Map articles without fetching claps initially
       articles = articlesData.map(article => ({
         title: article.title,
         path: article.path.replace('.html', ''),
         date: article.date || article.lastModified || 'N/A',
-        description: article.description || ''
+        description: article.description || '',
+        totalClaps: 0,
+        uniqueUsers: 0
       }));
 
       console.log(`Loaded ${articles.length} articles`);
@@ -371,12 +398,51 @@
       
       document.getElementById('loading').style.display = 'none';
       document.getElementById('articlesTable').style.display = 'table';
+
+      // Fetch claps data for all articles with progress indicator
+      await fetchAllClaps();
+    }
+
+    // Fetch claps for all articles with progress tracking
+    async function fetchAllClaps() {
+      const loadingEl = document.getElementById('loading');
+      loadingEl.style.display = 'block';
+      loadingEl.innerHTML = '<div class="spinner"></div><p>Loading claps data... <span id="clapsProgress">0/' + articles.length + '</span></p>';
+      
+      let completedCount = 0;
+      const progressEl = document.getElementById('clapsProgress');
+      
+      // Fetch claps in batches to avoid overwhelming the API
+      const batchSize = 5;
+      for (let i = 0; i < articles.length; i += batchSize) {
+        const batch = articles.slice(i, i + batchSize);
+        
+        await Promise.all(batch.map(async (article) => {
+          const clapsData = await fetchClapsForArticle(article.path);
+          article.totalClaps = clapsData.totalClaps;
+          article.uniqueUsers = clapsData.uniqueUsers;
+          completedCount++;
+          if (progressEl) {
+            progressEl.textContent = `${completedCount}/${articles.length}`;
+          }
+        }));
+        
+        // Update display after each batch
+        updateStats();
+        renderTable();
+      }
+      
+      loadingEl.style.display = 'none';
+      console.log('Finished loading all claps data');
     }
 
     // Update statistics
     function updateStats() {
       const totalArticles = articles.length;
+      const totalClaps = articles.reduce((sum, article) => sum + (article.totalClaps || 0), 0);
+      
       document.getElementById('totalArticles').textContent = totalArticles.toLocaleString();
+      document.getElementById('totalClaps').textContent = totalClaps.toLocaleString();
     }
 
     // Sort articles
@@ -393,7 +459,15 @@
           return direction === 'desc' 
             ? new Date(bVal) - new Date(aVal)
             : new Date(aVal) - new Date(bVal);
+        } else if (sortBy === 'totalClaps' || sortBy === 'uniqueUsers') {
+          // Numeric sorting for claps and users
+          const aNum = aVal || 0;
+          const bNum = bVal || 0;
+          return direction === 'desc'
+            ? bNum - aNum
+            : aNum - bNum;
         } else {
+          // String sorting for title and path
           return direction === 'desc'
             ? bVal.localeCompare(aVal)
             : aVal.localeCompare(bVal);
@@ -419,10 +493,13 @@
 
       filteredArticles.forEach(article => {
         const row = document.createElement('tr');
+        const clapsClass = (article.totalClaps || 0) > 10 ? 'claps-count' : '';
         row.innerHTML = `
           <td><div class="article-title">${article.title}</div></td>
           <td><a href="${article.path}" target="_blank" class="article-link">${article.path}</a></td>
           <td><span class="article-date">${formatDate(article.date)}</span></td>
+          <td><span class="${clapsClass}">${article.totalClaps || 0}</span></td>
+          <td>${article.uniqueUsers || 0}</td>
         `;
         tbody.appendChild(row);
       });
