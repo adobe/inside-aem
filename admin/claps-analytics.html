@@ -306,11 +306,21 @@
     // Fetch claps data for a single article
     async function fetchClapsForArticle(articlePath) {
       try {
-        const response = await fetch(`https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(articlePath)}`);
+        const apiUrl = `https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(articlePath)}`;
+        console.log(`Fetching claps for: ${articlePath}`);
+        console.log(`API URL: ${apiUrl}`);
+        
+        const response = await fetch(apiUrl);
+        console.log(`Response status for ${articlePath}:`, response.status);
+        
         if (!response.ok) {
+          console.warn(`Failed to fetch claps for ${articlePath}: ${response.status}`);
           return { totalClaps: 0, uniqueUsers: 0 };
         }
+        
         const data = await response.json();
+        console.log(`API response for ${articlePath}:`, data);
+        
         return {
           totalClaps: data.claps || 0,
           uniqueUsers: data.unique || 0
