@@ -1,5 +1,21 @@
 /* stylelint-disable no-descending-specificity */
 
+/* Black background full-width for featured article section */
+main .featured-article-container {
+  background-color: var(--color-black);
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100%;
+  max-width: 100%;
+}
+
+main .section.featured-article-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 @media (min-width: 600px) {
   main .featured-article-container > div {
     max-width: unset;
@@ -16,6 +32,7 @@ main .featured-article-card {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  background-color: var(--color-black);
 }
 
 @media (min-width: 600px) {
@@ -35,6 +52,7 @@ main .featured-article-card {
 
 main .featured-article a:any-link {
   text-decoration: none;
+  color: var(--color-white);
 }
 
 main .featured-article-card-image {
@@ -96,7 +114,7 @@ main p.featured-article-card-category,
 main p.featured-article-card-category a,
 main p.featured-article-card-date {
   font-weight: var(--detail-font-weight);
-  color: var(--detail-color);
+  color: var(--color-gray-300);
   font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;
@@ -111,6 +129,7 @@ main .featured-article-card-body h3 {
   margin-bottom: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-white);
 }
 
 @media (min-width: 600px) {
@@ -123,7 +142,7 @@ main .featured-article-card-body h3 {
 }
 
 main .featured-article-card-body .featured-article-card-description {
-  color: var(--color-gray-700);
+  color: var(--color-gray-300);
   overflow: hidden;
   text-overflow: ellipsis;
 }
