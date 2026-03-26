@@ -605,3 +605,27 @@ main .section.carousel-container {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
+/* Newsletter theme */
+.newsletter {
+  background-color: var(--color-gray-100);
+}
+
+.newsletter main {
+  background-color: var(--color-gray-100);
+}
+
+.newsletter main .section {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.newsletter main .section:first-of-type {
+  padding-top: 0;
+}
+
+.newsletter main .section > div {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}

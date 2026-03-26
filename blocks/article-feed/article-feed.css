@@ -364,3 +364,166 @@ main .article-feed .load-more {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Newsletter theme filters */
+.newsletter .filter-container {
+  background-color: var(--color-white);
+  border: none;
+  padding: 24px 2rem;
+  margin-bottom: 0;
+}
+
+.newsletter .filter-container > div {
+  justify-content: center;
+  gap: 12px;
+}
+
+.newsletter .filter-text {
+  display: none;
+}
+
+.newsletter .filter {
+  margin-left: 0;
+}
+
+.newsletter .filter-button {
+  padding: 8px 20px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-400);
+  border-radius: 24px;
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-700);
+  transition: all 0.2s ease;
+}
+
+.newsletter .filter-button::after {
+  display: none;
+}
+
+.newsletter .filter-button:hover,
+.newsletter .filter-button:focus {
+  outline: none;
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-700);
+}
+
+.newsletter .filter-button[aria-expanded="true"] {
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  border-color: var(--color-gray-800);
+  outline: none;
+}
+
+.newsletter .filter-dropdown {
+  display: none;
+}
+
+.newsletter .filter-curtain {
+  display: none;
+}
+
+.newsletter .selected-container {
+  display: none;
+}
+
+/* Newsletter theme article cards */
+.newsletter main .article-feed .article-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 32px 2rem;
+  justify-items: stretch;
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .newsletter main .article-feed .article-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.newsletter main .article-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  height: 100%;
+}
+
+.newsletter main .article-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.newsletter main .article-card-image {
+  height: 180px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-gray-100);
+  flex-shrink: 0;
+}
+
+.newsletter main .article-card-image img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.newsletter main .article-card:hover .article-card-image img {
+  transform: scale(1.05);
+}
+
+.newsletter main .article-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.newsletter main p.article-card-category,
+.newsletter main p.article-card-category a {
+  color: var(--color-gray-600);
+  font-size: var(--body-font-size-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+
+.newsletter main .article-card-body h3 {
+  font-size: var(--heading-font-size-s);
+  color: var(--color-black);
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.newsletter main .article-card-body .article-card-description {
+  color: var(--color-gray-700);
+  font-size: var(--body-font-size-xs);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.newsletter main p.article-card-date {
+  color: var(--color-gray-600);
+  font-size: var(--body-font-size-xxs);
+  margin: 0;
+  margin-top: auto;
+}
+
