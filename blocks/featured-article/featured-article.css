@@ -209,13 +209,13 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
   }
 }
 
-/* Newsletter theme featured article */
-.newsletter main .featured-article-container {
+/* Newsletter Landing Page theme featured article */
+.newsletter-landing main .featured-article-container {
   background-color: var(--color-gray-100);
   padding: 32px 2rem;
 }
 
-.newsletter main .featured-article-container::before {
+.newsletter-landing main .featured-article-container::before {
   content: 'Latest Issue';
   display: block;
   color: #8B4545;
@@ -229,7 +229,7 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
   margin-right: auto;
 }
 
-.newsletter main .featured-article-card {
+.newsletter-landing main .featured-article-card {
   background-color: var(--color-white);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -240,13 +240,13 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
   align-items: stretch;
 }
 
-.newsletter main .featured-article-card:hover {
+.newsletter-landing main .featured-article-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
   transition: all 0.3s ease;
 }
 
-.newsletter main .featured-article-card-image {
+.newsletter-landing main .featured-article-card-image {
   width: 280px;
   height: 280px;
   flex-shrink: 0;
@@ -254,27 +254,27 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
 }
 
 @media (max-width: 599px) {
-  .newsletter main .featured-article-card {
+  .newsletter-landing main .featured-article-card {
     flex-direction: column;
   }
 
-  .newsletter main .featured-article-card-image {
+  .newsletter-landing main .featured-article-card-image {
     width: 100%;
     height: 240px;
   }
 }
 
-.newsletter main .featured-article-card-image img {
+.newsletter-landing main .featured-article-card-image img {
   object-fit: cover;
   height: 100%;
   width: 100%;
 }
 
-.newsletter main .featured-article-card-image img:hover {
+.newsletter-landing main .featured-article-card-image img:hover {
   opacity: 1;
 }
 
-.newsletter main .featured-article-card-body {
+.newsletter-landing main .featured-article-card-body {
   padding: 32px;
   text-align: left;
   display: flex;
@@ -283,41 +283,41 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
 }
 
 @media (min-width: 600px) {
-  .newsletter main .featured-article-card-body {
+  .newsletter-landing main .featured-article-card-body {
     width: calc(100% - 280px);
   }
 }
 
-.newsletter main .featured-article a:any-link {
+.newsletter-landing main .featured-article a:any-link {
   color: var(--color-black);
 }
 
-.newsletter main p.featured-article-card-category,
-.newsletter main p.featured-article-card-category a {
+.newsletter-landing main p.featured-article-card-category,
+.newsletter-landing main p.featured-article-card-category a {
   color: var(--color-gray-600);
   margin-bottom: 8px;
 }
 
-.newsletter main .featured-article-card-body h3 {
+.newsletter-landing main .featured-article-card-body h3 {
   font-size: var(--heading-font-size-l);
   color: var(--color-black);
   margin-bottom: 12px;
   line-height: 1.3;
 }
 
-.newsletter main .featured-article-card-body .featured-article-card-description {
+.newsletter-landing main .featured-article-card-body .featured-article-card-description {
   color: var(--color-gray-700);
   margin-bottom: 16px;
   line-height: 1.6;
 }
 
-.newsletter main p.featured-article-card-date {
+.newsletter-landing main p.featured-article-card-date {
   color: var(--color-gray-600);
   font-size: var(--body-font-size-xs);
   margin-bottom: 16px;
 }
 
-.newsletter main .featured-article-card-body::after {
+.newsletter-landing main .featured-article-card-body::after {
   content: 'Read Issue →';
   display: inline-block;
   background-color: #8B4545;
@@ -330,7 +330,7 @@ main .tag-header-container .featured-article-card-body p:not(:first-child) {
   transition: background-color 0.2s ease;
 }
 
-.newsletter main .featured-article-card:hover .featured-article-card-body::after {
+.newsletter-landing main .featured-article-card:hover .featured-article-card-body::after {
   background-color: #703636;
 }
 

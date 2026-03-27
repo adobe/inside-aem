@@ -133,3 +133,9 @@ main .recommended-articles-small-container .article-card {
 .recommended-articles-small-container .article-card .article-card-body p {
   display: none;
 }
+
+/* Newsletter Article theme */
+.newsletter main .recommended-articles-container {
+  display: none;
+}
+

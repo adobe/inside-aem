@@ -368,3 +368,20 @@ main .article-feature-image .figure-feature img {
   max-height: 440px;
   object-fit: cover;
 }
+
+/* Newsletter Article theme */
+.newsletter main .article-header .article-category,
+.newsletter main .article-header .article-title {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.newsletter main .article-byline {
+  display: none;
+}
+
+.newsletter main .article-header .article-title {
+  font-size: var(--heading-font-size-xxl);
+  margin-bottom: 32px;
+}
+

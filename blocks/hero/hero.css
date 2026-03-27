@@ -38,30 +38,30 @@ main .hero img {
   height: 100%;
 }
 
-/* Newsletter theme hero */
-.newsletter main .hero-container {
+/* Newsletter Landing Page theme hero */
+.newsletter-landing main .hero-container {
   background-color: #2c2c2c;
 }
 
-.newsletter main .hero {
+.newsletter-landing main .hero {
   background-color: #2c2c2c;
   min-height: 200px;
   padding: 48px 32px;
   text-align: center;
 }
 
-.newsletter main .hero picture,
-.newsletter main .hero img {
+.newsletter-landing main .hero picture,
+.newsletter-landing main .hero img {
   display: none;
 }
 
-.newsletter main .hero h1 {
+.newsletter-landing main .hero h1 {
   font-size: var(--heading-font-size-xl);
   margin-bottom: 16px;
   color: white;
 }
 
-.newsletter main .hero p {
+.newsletter-landing main .hero p {
   color: var(--color-gray-300);
   font-size: var(--body-font-size-m);
   max-width: 800px;

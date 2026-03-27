@@ -606,26 +606,77 @@ main .section.carousel-container {
   padding-right: 0 !important;
 }
 
-/* Newsletter theme */
-.newsletter {
+/* Newsletter Landing Page theme */
+.newsletter-landing {
   background-color: var(--color-gray-100);
 }
 
-.newsletter main {
+.newsletter-landing main {
   background-color: var(--color-gray-100);
 }
 
-.newsletter main .section {
+.newsletter-landing main .section {
   padding-top: 32px;
   padding-bottom: 32px;
+}
+
+.newsletter-landing main .section:first-of-type {
+  padding-top: 0;
+}
+
+.newsletter-landing main .section > div {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Newsletter Article theme */
+.newsletter main {
+  background-color: var(--color-white);
+}
+
+.newsletter main,
+.newsletter main .section,
+.newsletter main .section > div {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.newsletter .section {
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .newsletter main .section:first-of-type {
   padding-top: 0;
 }
 
-.newsletter main .section > div {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+/* Style the last link in the last section as a back button */
+.newsletter main > div:last-of-type > div > p:last-child > a[href*="newsletter"] {
+  display: inline-block;
+  padding: 14px 28px;
+  background-color: var(--color-info-accent);
+  color: white !important;
+  font-weight: 600;
+  font-size: var(--body-font-size-s);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  margin-top: 32px;
 }
+
+.newsletter main > div:last-of-type > div > p:last-child > a[href*="newsletter"]:hover {
+  background-color: var(--color-info-accent-hover);
+}
+
+/* Center the back button */
+.newsletter main > div:last-of-type > div > p:last-child:has(a[href*="newsletter"]) {
+  text-align: center;
+  margin-top: 48px;
+  margin-bottom: 64px;
+}
+
