@@ -97,7 +97,7 @@ function loadApplauseButtonLibrary() {
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/applause-button@latest/dist/applause-button.js';
   document.head.appendChild(script);
-  
+
   // Add custom style override after library loads
   script.onload = () => {
     const style = document.createElement('style');
@@ -124,7 +124,7 @@ async function buildSharing() {
   const sharing = document.createElement('div');
   const placeholders = await fetchPlaceholders();
   sharing.classList.add('article-byline-sharing');
-  
+
   // Create applause button
   const applauseSpan = document.createElement('span');
   applauseSpan.classList.add('applause-inline-wrapper');
@@ -134,17 +134,17 @@ async function buildSharing() {
   applauseButton.setAttribute('multiclap', 'true');
   applauseButton.setAttribute('color', '#1473E6');
   applauseSpan.appendChild(applauseButton);
-  
+
   // Create copy link button
   const copySpan = document.createElement('span');
   copySpan.innerHTML = `<a id="copy-to-clipboard" alt="${placeholders['copy-to-clipboard']}" aria-label="${placeholders['copy-to-clipboard']}">
         ${createSVG('link').outerHTML}
       </a>`;
-  
+
   // Assemble sharing section
   sharing.appendChild(applauseSpan);
   sharing.appendChild(copySpan);
-  
+
   sharing.querySelectorAll('[data-href]').forEach((link) => {
     link.addEventListener('click', openPopup);
   });
@@ -152,10 +152,10 @@ async function buildSharing() {
   copyButton.addEventListener('click', () => {
     copyToClipboard(copyButton);
   });
-  
+
   // Load the applause button library
   loadApplauseButtonLibrary();
-  
+
   return sharing;
 }
 
