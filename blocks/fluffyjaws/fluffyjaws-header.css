@@ -1,6 +1,6 @@
 /* stylelint-disable no-descending-specificity, keyframes-name-pattern */
 
-/* article header */
+/* article header (kept original selectors for compatibility) */
 
 main .article-header-container > div {
   max-width: unset;
@@ -150,6 +150,7 @@ main .article-byline {
   padding: 0 2rem;
 }
 
+/* author image sizing and shape */
 main .article-byline .article-author-image,
 main .article-byline .article-author-image img {
   flex: 0 0 64px;
@@ -184,8 +185,6 @@ main .article-byline .article-byline-sharing {
   justify-content: space-around;
   flex: 0 1 100%;
   margin-top: 16px;
-  align-items: center;
-  gap: 20px;
 }
 
 @media (min-width: 600px) {
@@ -204,78 +203,13 @@ main .article-byline .article-byline-sharing a {
   cursor: pointer;
 }
 
-main .article-byline .article-byline-sharing .applause-inline-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-width: 70px;
-  height: 32px;
-}
-
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button {
-  margin: 0 !important;
-  padding: 0 !important;
-
-  --applause-button-color: #000;
-
-  display: flex !important;
-  align-items: center !important;
-  width: auto !important;
-  height: 32px !important;
-}
-
-/* Override applause button default styling for inline display */
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button .style-root {
-  display: flex !important;
-  flex-direction: row-reverse !important;
-  align-items: center !important;
-  gap: 8px !important;
-  height: 32px !important;
-  width: auto !important;
-}
-
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button .count-container {
-  position: static !important;
-  transform: none !important;
-  margin: 0 !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  color: #000 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-}
-
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg,
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button svg.svg-clap {
-  vertical-align: middle !important;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  max-width: 32px !important;
-  max-height: 32px !important;
-}
-
-main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button button {
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-}
-
 main .article-byline .article-byline-sharing svg {
   height: 22px;
   width: 22px;
-  vertical-align: middle;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  min-width: 32px;
 }
 
 main .article-byline .article-byline-sharing a#copy-to-clipboard:hover svg,
@@ -371,19 +305,44 @@ main .article-feature-image .figure-feature img {
   object-fit: cover;
 }
 
-/* Newsletter Article theme */
-.newsletter main .article-header .article-category,
-.newsletter main .article-header .article-title {
-  margin-left: 0;
-  margin-right: 0;
+/* --- FluffyJaws block specific overrides --- */
+
+/* Scope styles to a fluffyjaws block wrapper (if your block wrapper has this classname) */
+.fluffyjaws-header,
+main .fluffyjaws-header {
+  /* nothing by default; this selector ensures the following rules apply when the block is wrapped with .fluffyjaws-header */
 }
 
-.newsletter main .article-byline {
-  display: none;
+/* Use the fluffyjaws fallback logo for the author image container */
+.fluffyjaws-header .article-author-image,
+main .fluffyjaws-header .article-author-image {
+  background-image: url('/blocks/fluffyjaws/fj-logo.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  flex: 0 0 64px;
+  margin-right: 16px;
 }
 
-.newsletter main .article-header .article-title {
-  font-size: var(--heading-font-size-xxl);
-  margin-bottom: 32px;
+/* Ensure wrapped image link uses full area */
+.fluffyjaws-header .fluffyjaws-logo,
+main .fluffyjaws-header .fluffyjaws-logo {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  text-decoration: none;
 }
 
+.fluffyjaws-header .fluffyjaws-logo img,
+main .fluffyjaws-header .fluffyjaws-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Adobe Clean', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #2c3e50;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .stat-card .number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .label {
+      font-size: 1rem;
+      color: #ecf0f1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .table-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .search-box {
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 300px;
+      transition: border-color 0.3s;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: #667eea;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8f9fa;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #e0e0e0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover {
+      background: #e9ecef;
+    }
+
+    th .sort-indicator {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .claps-count {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .article-title {
+      color: #333;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .article-link {
+      color: #1473E6;
+      text-decoration: none;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .article-link:hover {
+      text-decoration: underline;
+    }
+
+    .article-date {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.2rem;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .emoji {
+      font-size: 1.2rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      .claps-count {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📚 Articles Dashboard</h1>
+      <p>Browse and search all your blog articles</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="number" id="totalArticles">-</div>
+        <div class="label">Total Articles</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="totalClaps">-</div>
+        <div class="label">Total Claps</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="controls">
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search articles...">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-sort="date">Sort by Date</button>
+          <button class="filter-btn" data-sort="title">Sort by Title</button>
+          <button class="filter-btn" data-sort="totalClaps">Sort by Claps</button>
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading analytics data...</p>
+      </div>
+
+      <table id="articlesTable" style="display: none;">
+        <thead>
+          <tr>
+            <th data-sort="title">Article Title<span class="sort-indicator"></span></th>
+            <th data-sort="path">Path<span class="sort-indicator"></span></th>
+            <th data-sort="date">Publication Date<span class="sort-indicator"></span></th>
+            <th data-sort="totalClaps">Total Claps<span class="sort-indicator"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+
+      <div id="noResults" class="no-results" style="display: none;">
+        No articles found matching your search.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Version: 9ba64ee - Fixed API response handling
+    let articles = [];
+    let currentSort = 'date';
+    let sortDirection = 'desc';
+
+    // Fetch claps data for a single article
+    async function fetchClapsForArticle(articlePath) {
+      try {
+        const apiUrl = `https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(articlePath)}`;
+        console.log(`Fetching claps for: ${articlePath}`);
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+          console.warn(`Failed to fetch claps for ${articlePath}: ${response.status}`);
+          return { totalClaps: 0, uniqueUsers: 0 };
+        }
+        
+        const data = await response.json();
+        console.log(`API response for ${articlePath}:`, data, 'Type:', typeof data);
+        
+        // The API returns just a number (total claps), not an object
+        if (typeof data === 'number') {
+          return {
+            totalClaps: data,
+            uniqueUsers: 0 // API doesn't provide unique users count
+          };
+        }
+        
+        // Fallback for object format
+        return {
+          totalClaps: data.claps || data || 0,
+          uniqueUsers: data.unique || 0
+        };
+      } catch (error) {
+        console.error(`Error fetching claps for ${articlePath}:`, error);
+        return { totalClaps: 0, uniqueUsers: 0 };
+      }
+    }
+
+    // Fetch blog articles from query-index
+    async function fetchArticles() {
+      try {
+        console.log('Fetching /en/query-index.json...');
+        const response = await fetch('/en/query-index.json');
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          console.error('Failed to fetch articles:', response.status, response.statusText);
+          return [];
+        }
+        
+        const data = await response.json();
+        console.log('Raw data:', data);
+        console.log('Total entries:', data.data?.length);
+        
+        // Check what fields the first article has
+        if (data.data && data.data.length > 0) {
+          console.log('Sample article fields:', Object.keys(data.data[0]));
+          console.log('Sample article:', data.data[0]);
+        }
+        
+        // Try multiple possible date field names
+        const articles = data.data.filter(article => {
+          const hasDate = article['publication-date'] || article.date || article.publishDate || article.publicationDate;
+          return hasDate;
+        }).map(article => ({
+          ...article,
+          // Normalize the date field
+          date: article['publication-date'] || article.date || article.publishDate || article.publicationDate
+        }));
+        
+        console.log(`Loaded ${articles.length} articles with dates`);
+        
+        // If no articles have dates, just return all articles
+        if (articles.length === 0) {
+          console.warn('No articles have date fields, returning all articles');
+          return data.data.map(article => ({
+            ...article,
+            date: article.lastModified || new Date().toISOString()
+          }));
+        }
+        
+        return articles;
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+        return [];
+      }
+    }
+
+    // Load all data
+    async function loadData() {
+      console.log('Starting to load data...');
+      const articlesData = await fetchArticles();
+      console.log(`Fetched ${articlesData.length} articles`);
+      
+      if (articlesData.length === 0) {
+        document.getElementById('loading').innerHTML = '<p style="color: #e74c3c;">⚠️ No articles found.</p>';
+        return;
+      }
+      
+      // Map articles without fetching claps initially
+      articles = articlesData.map(article => ({
+        title: article.title,
+        path: article.path.replace('.html', ''),
+        date: article.date || article.lastModified || 'N/A',
+        description: article.description || '',
+        totalClaps: 0,
+        uniqueUsers: 0
+      }));
+
+      console.log(`Loaded ${articles.length} articles`);
+      updateStats();
+      renderTable();
+      
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('articlesTable').style.display = 'table';
+
+      // Fetch claps data for all articles with progress indicator
+      await fetchAllClaps();
+    }
+
+    // Fetch claps for all articles with progress tracking
+    async function fetchAllClaps() {
+      const loadingEl = document.getElementById('loading');
+      loadingEl.style.display = 'block';
+      loadingEl.innerHTML = '<div class="spinner"></div><p>Loading claps data... <span id="clapsProgress">0/' + articles.length + '</span></p>';
+      
+      let completedCount = 0;
+      const progressEl = document.getElementById('clapsProgress');
+      
+      // Fetch claps in batches to avoid overwhelming the API
+      const batchSize = 5;
+      for (let i = 0; i < articles.length; i += batchSize) {
+        const batch = articles.slice(i, i + batchSize);
+        
+        await Promise.all(batch.map(async (article) => {
+          const clapsData = await fetchClapsForArticle(article.path);
+          article.totalClaps = clapsData.totalClaps;
+          article.uniqueUsers = clapsData.uniqueUsers;
+          completedCount++;
+          if (progressEl) {
+            progressEl.textContent = `${completedCount}/${articles.length}`;
+          }
+        }));
+        
+        // Update display after each batch
+        updateStats();
+        renderTable();
+      }
+      
+      loadingEl.style.display = 'none';
+      console.log('Finished loading all claps data');
+    }
+
+    // Update statistics
+    function updateStats() {
+      const totalArticles = articles.length;
+      const totalClaps = articles.reduce((sum, article) => sum + (article.totalClaps || 0), 0);
+      
+      document.getElementById('totalArticles').textContent = totalArticles.toLocaleString();
+      document.getElementById('totalClaps').textContent = totalClaps.toLocaleString();
+    }
+
+    // Sort articles
+    function sortArticles(sortBy) {
+      const direction = currentSort === sortBy && sortDirection === 'desc' ? 'asc' : 'desc';
+      sortDirection = direction;
+      currentSort = sortBy;
+
+      articles.sort((a, b) => {
+        let aVal = a[sortBy];
+        let bVal = b[sortBy];
+
+        if (sortBy === 'date') {
+          return direction === 'desc' 
+            ? new Date(bVal) - new Date(aVal)
+            : new Date(aVal) - new Date(bVal);
+        } else if (sortBy === 'totalClaps' || sortBy === 'uniqueUsers') {
+          // Numeric sorting for claps and users
+          const aNum = aVal || 0;
+          const bNum = bVal || 0;
+          return direction === 'desc'
+            ? bNum - aNum
+            : aNum - bNum;
+        } else {
+          // String sorting for title and path
+          return direction === 'desc'
+            ? bVal.localeCompare(aVal)
+            : aVal.localeCompare(bVal);
+        }
+      });
+
+      renderTable();
+    }
+
+    // Render table
+    function renderTable(filteredArticles = articles) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      if (filteredArticles.length === 0) {
+        document.getElementById('articlesTable').style.display = 'none';
+        document.getElementById('noResults').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('articlesTable').style.display = 'table';
+      document.getElementById('noResults').style.display = 'none';
+
+      filteredArticles.forEach(article => {
+        const row = document.createElement('tr');
+        const clapsClass = (article.totalClaps || 0) > 10 ? 'claps-count' : '';
+        row.innerHTML = `
+          <td><div class="article-title">${article.title}</div></td>
+          <td><a href="${article.path}" target="_blank" class="article-link">${article.path}</a></td>
+          <td><span class="article-date">${formatDate(article.date)}</span></td>
+          <td><span class="${clapsClass}">${article.totalClaps || 0}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Update sort indicators
+      document.querySelectorAll('th .sort-indicator').forEach(indicator => {
+        indicator.textContent = '';
+      });
+      const activeTh = document.querySelector(`th[data-sort="${currentSort}"]`);
+      if (activeTh) {
+        const indicator = activeTh.querySelector('.sort-indicator');
+        if (indicator) {
+          indicator.textContent = sortDirection === 'desc' ? '▼' : '▲';
+        }
+      }
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      
+      // Check if it's a Unix timestamp (number of milliseconds)
+      if (typeof dateString === 'number') {
+        // Excel serial date conversion (days since 1900-01-01)
+        if (dateString > 10000 && dateString < 100000) {
+          const excelEpoch = new Date(1900, 0, 1);
+          const date = new Date(excelEpoch.getTime() + (dateString - 2) * 86400000);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Unix timestamp in seconds
+        if (dateString > 1000000000 && dateString < 10000000000) {
+          const date = new Date(dateString * 1000);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Unix timestamp in milliseconds
+        if (dateString > 1000000000000) {
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+      }
+      
+      // Try parsing as ISO date string
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString; // Return as-is if can't parse
+      
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // Search functionality
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = articles.filter(article => 
+        article.title.toLowerCase().includes(searchTerm) ||
+        article.path.toLowerCase().includes(searchTerm) ||
+        article.description.toLowerCase().includes(searchTerm)
+      );
+      renderTable(filtered);
+    });
+
+    // Sort button handlers
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        sortArticles(e.target.dataset.sort);
+      });
+    });
+
+    // Table header click handlers
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        sortArticles(th.dataset.sort);
+      });
+    });
+
+    // Load data on page load
+    loadData();
+  </script>
+</body>
+</html>

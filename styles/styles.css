@@ -110,13 +110,6 @@
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxxl: 3.75rem; /* 60px */
-
-    /* --heading-font-size-xxl: 60px;
-    --heading-font-size-xl: 48px;
-    --heading-font-size-l: 36px;
-    --heading-font-size-m: 30px;
-    --heading-font-size-s: 24px;
-    --heading-font-size-xs: 22px; */
   }
 }
 
@@ -504,13 +497,13 @@ main .section > div:empty {
   }
 
   .fact-box .section > div {
-    max-width: 1000px;
+    max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
   }
 
   main .section > div > :not(div) {
-    max-width: 600px;
+    max-width: none;
     margin-left: auto;
     margin-right: auto;
   }
@@ -600,3 +593,93 @@ main .section.carousel-container {
       opacity: 1;
   }
 }
+
+/* stylelint-disable no-descending-specificity -- theme overrides are intentionally ordered by theme */
+
+/* Fact-box width override */
+.fact-box main,
+.fact-box main .section,
+.fact-box main .section > div {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Newsletter Landing Page theme */
+.newsletter-landing {
+  background-color: var(--color-gray-100);
+}
+
+.newsletter-landing main {
+  background-color: var(--color-gray-100);
+}
+
+.newsletter-landing main .section {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.newsletter-landing main .section:first-of-type {
+  padding-top: 0;
+}
+
+.newsletter-landing main .section > div {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Newsletter Article theme */
+.newsletter main {
+  background-color: var(--color-white);
+}
+
+.newsletter main,
+.newsletter main .section,
+.newsletter main .section > div {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.newsletter .section {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.newsletter main .section:first-of-type {
+  padding-top: 0;
+}
+
+/* Style the last link in the last section as a back button */
+.newsletter main > div:last-of-type > div > p:last-child > a[href*="newsletter"] {
+  display: inline-block;
+  padding: 14px 28px;
+  background-color: var(--color-info-accent);
+  color: white !important;
+  font-weight: 600;
+  font-size: var(--body-font-size-s);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  margin-top: 32px;
+}
+
+.newsletter main > div:last-of-type > div > p:last-child > a[href*="newsletter"]:hover {
+  background-color: var(--color-info-accent-hover);
+}
+
+/* Center the back button */
+.newsletter main > div:last-of-type > div > p:last-child:has(a[href*="newsletter"]) {
+  text-align: center;
+  margin-top: 48px;
+  margin-bottom: 64px;
+}
+
+/* stylelint-enable no-descending-specificity */
