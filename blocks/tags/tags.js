@@ -3,10 +3,8 @@ export default function decorateTags(blockEl) {
   const container = blockEl.querySelector('p');
   container.classList.add('tags-container');
   container.textContent = '';
-  const target = Array.from(tags).reduce((targets, tag) => {
+  Array.from(tags).forEach((tag) => {
     tag.classList.add('button');
     container.append(tag);
-    targets.push(tag.textContent);
-    return targets;
-  }, []).join('; ');
+  });
 }

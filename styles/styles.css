@@ -594,6 +594,8 @@ main .section.carousel-container {
   }
 }
 
+/* stylelint-disable no-descending-specificity -- theme overrides are intentionally ordered by theme */
+
 /* Fact-box width override */
 .fact-box main,
 .fact-box main .section,
@@ -680,3 +682,4 @@ main .section.carousel-container {
   margin-bottom: 64px;
 }
 
+/* stylelint-enable no-descending-specificity */

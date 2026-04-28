@@ -11,18 +11,18 @@ async function decorateFeaturedArticles(featuredArticlesEl, articlePaths, eager 
 
   const tagHeader = document.querySelector('.tag-header-container > div');
 
-  for (const articlePath of articlePaths) {
-    const article = await getBlogArticle(articlePath);
+  const articles = await Promise.all(articlePaths.map((path) => getBlogArticle(path)));
+  const { origin } = new URL(window.location.href);
+  articles.forEach((article, i) => {
     if (article) {
       const card = buildArticleCard(article, 'featured-article', eager);
-      card.classList.add('featured-article-card'); // Ensure the card has the correct class
+      card.classList.add('featured-article-card');
       featuredArticlesEl.append(card);
     } else {
-      const { origin } = new URL(window.location.href);
       // eslint-disable-next-line no-console
-      console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePath}`);
+      console.warn(`Featured article does not exist or is missing in index: ${origin}${articlePaths[i]}`);
     }
-  }
+  });
 
   if (tagHeader) {
     tagHeader.append(featuredArticlesEl);

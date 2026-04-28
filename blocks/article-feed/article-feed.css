@@ -448,7 +448,7 @@ main .article-feed .load-more {
   flex-direction: column;
   background: var(--color-white);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
   overflow: hidden;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -456,7 +456,7 @@ main .article-feed .load-more {
 }
 
 .newsletter-landing main .article-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 15%);
   transform: translateY(-4px);
 }
 
@@ -500,7 +500,7 @@ main .article-feed .load-more {
 .newsletter-landing main .article-card-body h3 {
   font-size: var(--heading-font-size-s);
   color: var(--color-black);
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;

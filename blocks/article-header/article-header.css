@@ -215,7 +215,9 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper {
 main .article-byline .article-byline-sharing .applause-inline-wrapper applause-button {
   margin: 0 !important;
   padding: 0 !important;
-  --applause-button-color: #000000;
+
+  --applause-button-color: #000;
+
   display: flex !important;
   align-items: center !important;
   width: auto !important;
@@ -238,7 +240,7 @@ main .article-byline .article-byline-sharing .applause-inline-wrapper applause-b
   margin: 0 !important;
   font-size: 16px !important;
   font-weight: 600 !important;
-  color: #000000 !important;
+  color: #000 !important;
   line-height: 1 !important;
   white-space: nowrap !important;
 }

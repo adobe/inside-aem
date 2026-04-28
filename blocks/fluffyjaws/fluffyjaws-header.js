@@ -160,14 +160,15 @@ export default async function decorateArticleHeader(blockEl, blockName, eager) {
   }
 
   // author
-  const author = bylineContainer && bylineContainer.firstElementChild && bylineContainer.firstElementChild.firstElementChild;
+  const bylineInfo = bylineContainer && bylineContainer.firstElementChild;
+  const author = bylineInfo && bylineInfo.firstElementChild;
   const authorLink = author ? author.querySelector('a') : null;
   const authorURL = authorLink ? authorLink.href : '#';
   const authorName = author ? author.textContent.trim() : 'Author';
   if (author) author.classList.add('article-author');
 
   // publication date
-  const date = bylineContainer && bylineContainer.firstElementChild && bylineContainer.firstElementChild.lastElementChild;
+  const date = bylineInfo && bylineInfo.lastElementChild;
   if (date) {
     date.classList.add('article-date');
     validateDate(date);
