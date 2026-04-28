@@ -72,3 +72,43 @@ main .images-list .figure img {
   width: 100%;
   min-width: unset;
 }
+
+main .images.show-original img {
+  cursor: pointer;
+}
+
+.images-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 85%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.images-overlay.images-overlay-open {
+  opacity: 1;
+}
+
+/* stylelint-disable-next-line no-descending-specificity -- overlay is on body, not inside .images */
+.images-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.images-overlay-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 12px;
+}
