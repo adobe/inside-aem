@@ -97,7 +97,6 @@ export default async function decorate(block) {
 
   if (resp.ok) {
     const html = await resp.text();
-
     // decorate nav DOM
     const nav = document.createElement('nav');
     nav.id = 'nav';
@@ -137,6 +136,22 @@ export default async function decorate(block) {
     isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
     decorateIcons(nav);
+
+    // Trap focus within the mobile nav when it is open
+    nav.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || isDesktop.matches || nav.getAttribute('aria-expanded') !== 'true') return;
+      const focusable = [...nav.querySelectorAll('a[href], button:not([disabled])')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
     const navWrapper = document.createElement('div');
     navWrapper.className = 'nav-wrapper';
     navWrapper.append(nav);

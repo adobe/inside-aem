@@ -136,6 +136,10 @@ class Gnav {
           if ($modal) {
             $modal.classList.add('active');
             document.body.classList.add('newsletter-no-scroll');
+            requestAnimationFrame(() => {
+              const closeBtn = $modal.querySelector('.newsletter-modal-close');
+              if (closeBtn) closeBtn.focus();
+            });
           }
         });
       }
@@ -216,8 +220,12 @@ class Gnav {
     const searchInput = createTag('input', { class: 'gnav-search-input', placeholder: label });
     const searchResults = createTag('div', { class: 'gnav-search-results' });
 
+    let searchDebounceTimer;
     searchInput.addEventListener('input', (e) => {
-      this.onSearchInput(e.target.value, searchResults);
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        this.onSearchInput(e.target.value, searchResults);
+      }, 250);
     });
 
     searchField.append(searchInput);

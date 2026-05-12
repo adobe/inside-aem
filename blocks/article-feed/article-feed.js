@@ -27,17 +27,21 @@ function openMenu(el) {
   el.setAttribute('aria-expanded', true);
 }
 
+let filterSearchTimer;
 function filterSearch(e) {
-  const { target } = e;
-  const { value } = target;
-  const parent = target.parentElement.parentElement;
-  parent.querySelectorAll('.filter-option').forEach((option) => {
-    if (!value.length || option.textContent.toLowerCase().includes(value)) {
-      option.classList.remove('hide');
-    } else {
-      option.classList.add('hide');
-    }
-  });
+  clearTimeout(filterSearchTimer);
+  filterSearchTimer = setTimeout(() => {
+    const { target } = e;
+    const { value } = target;
+    const parent = target.parentElement.parentElement;
+    parent.querySelectorAll('.filter-option').forEach((option) => {
+      if (!value.length || option.textContent.toLowerCase().includes(value)) {
+        option.classList.remove('hide');
+      } else {
+        option.classList.add('hide');
+      }
+    });
+  }, 200);
 }
 
 function enableSearch(id) {
@@ -157,6 +161,20 @@ function applyCurrentFilters(block, config, close) {
   } else {
     selectedContainer.classList.add('hide');
   }
+  // Sync filter state into URL so filtered views are bookmarkable/shareable
+  const url = new URL(window.location.href);
+  if (config.selectedProducts) {
+    url.searchParams.set('products', config.selectedProducts);
+  } else {
+    url.searchParams.delete('products');
+  }
+  if (config.selectedIndustries) {
+    url.searchParams.set('industries', config.selectedIndustries);
+  } else {
+    url.searchParams.delete('industries');
+  }
+  window.history.replaceState({}, '', url);
+
   if (block) {
     block.innerHTML = '';
     // eslint-disable-next-line no-use-before-define
@@ -341,13 +359,22 @@ async function decorateArticleFeed(
     articleCards.className = 'article-cards';
     articleFeedEl.appendChild(articleCards);
   }
-  // display spinner
+  // Show skeleton cards while articles load
   const placeholders = await fetchPlaceholders();
   const emptyDiv = document.createElement('div');
   emptyDiv.classList.add('article-cards-empty');
-  const spinner = document.createElement('div');
-  spinner.classList.add('spinner');
-  emptyDiv.append(spinner);
+  for (let s = 0; s < 6; s += 1) {
+    const skeleton = document.createElement('div');
+    skeleton.className = 'article-card-skeleton';
+    skeleton.setAttribute('aria-hidden', 'true');
+    skeleton.innerHTML = '<div class="skeleton-image"></div>'
+      + '<div class="skeleton-body">'
+      + '<div class="skeleton-line skeleton-line-short"></div>'
+      + '<div class="skeleton-line skeleton-line-long"></div>'
+      + '<div class="skeleton-line skeleton-line-medium"></div>'
+      + '</div>';
+    emptyDiv.append(skeleton);
+  }
   articleCards.append(emptyDiv);
 
   const limit = 12;
@@ -359,7 +386,7 @@ async function decorateArticleFeed(
     emptyDiv.remove();
   } else if (config.selectedProducts || config.selectedIndustries) {
     // no user filtered results were found
-    spinner.remove();
+    emptyDiv.innerHTML = '';
     const noMatches = document.createElement('p');
     noMatches.innerHTML = `<strong>${placeholders['no-matches']}</strong>`;
     const userHelp = document.createElement('p');
@@ -368,7 +395,7 @@ async function decorateArticleFeed(
     emptyDiv.append(noMatches, userHelp);
   } else {
     // no results were found
-    spinner.remove();
+    emptyDiv.innerHTML = '';
     const noResults = document.createElement('p');
     noResults.innerHTML = `<strong>${placeholders['no-results']}</strong>`;
     emptyDiv.append(noResults);
@@ -450,6 +477,12 @@ async function decorateFeedFilter(articleFeedEl, config) {
 export default function decorate(block) {
   const config = readBlockConfig(block);
   block.innerHTML = '';
+
+  // Restore filter state from URL params (set by applyCurrentFilters)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('products')) config.selectedProducts = params.get('products');
+  if (params.get('industries')) config.selectedIndustries = params.get('industries');
+
   if (config.filters) {
     // decorateFeedFilter(block, config);
   }

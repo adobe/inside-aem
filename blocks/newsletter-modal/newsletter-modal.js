@@ -22,8 +22,12 @@ export default async function decorate(block) {
   const $bannerContainer = createTag('div', { class: 'newsletter-modal-banner-container' });
   const $content = createTag('div', { class: 'newsletter-modal-content' });
   const $banner = createTag('img', { class: 'newsletter-modal-banner', src: '/blocks/newsletter-modal/newsletter-banner.png' });
-  const $close = createTag('a', { class: 'newsletter-modal-close' });
-  const $closeIcon = createTag('img', { class: 'newsletter-modal-close-icon', src: '/blocks/newsletter-modal/close.svg' });
+  const $close = createTag('button', { type: 'button', class: 'newsletter-modal-close', 'aria-label': 'Close newsletter signup' });
+  const $closeIcon = createTag('img', { class: 'newsletter-modal-close-icon', src: '/blocks/newsletter-modal/close.svg', 'aria-hidden': 'true' });
+
+  block.setAttribute('role', 'dialog');
+  block.setAttribute('aria-modal', 'true');
+  block.setAttribute('aria-label', 'Newsletter signup');
   const $text = createTag('p', { class: 'newsletter-modal-text' });
   const $form = createTag('form', { class: 'newsletter-modal-form' });
   const $emailLabel = createTag('label', { class: 'newsletter-modal-email-label', for: 'newsletter_email' });
@@ -42,6 +46,14 @@ export default async function decorate(block) {
     e.preventDefault();
     document.body.classList.remove('newsletter-no-scroll');
     $container.classList.remove('active');
+  });
+
+  // Close on Escape key
+  $container.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $container.classList.contains('active')) {
+      document.body.classList.remove('newsletter-no-scroll');
+      $container.classList.remove('active');
+    }
   });
 
   block.addEventListener('click', (e) => {
@@ -104,4 +116,19 @@ export default async function decorate(block) {
   $form.append($cta);
   $content.append($form);
   block.append($content);
+
+  // Focus trap: keep Tab/Shift+Tab within the modal while open
+  block.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = [...block.querySelectorAll('button, input[type="email"]')];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
 }

@@ -18,21 +18,21 @@ async function decorateRecommendedArticles(recommendedArticlesEl, paths) {
   }
   const articleCardsContainer = document.createElement('div');
   articleCardsContainer.className = 'article-cards';
-  for (let i = 0; i < paths.length; i += 1) {
-    const articlePath = paths[i];
-    // eslint-disable-next-line no-await-in-loop
-    const article = await getBlogArticle(articlePath);
+
+  const articles = await Promise.all(paths.map((p) => getBlogArticle(p)));
+  articles.forEach((article, i) => {
     if (article) {
-      const card = buildArticleCard(article);
-      articleCardsContainer.append(card);
-      recommendedArticlesEl.append(articleCardsContainer);
+      articleCardsContainer.append(buildArticleCard(article));
     } else {
       const { origin } = new URL(window.location.href);
       // eslint-disable-next-line no-console
-      console.warn(`Recommended article does not exist or is missing in index: ${origin}${articlePath}`);
+      console.warn(`Recommended article does not exist or is missing in index: ${origin}${paths[i]}`);
     }
-  }
-  if (articleCardsContainer.childElementCount === 0) {
+  });
+
+  if (articleCardsContainer.childElementCount > 0) {
+    recommendedArticlesEl.append(articleCardsContainer);
+  } else {
     recommendedArticlesEl.parentNode.parentNode.remove();
   }
 }
