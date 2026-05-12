@@ -1,6 +1,6 @@
 /* variables for pull-quote block */
 main .pull-quote {
-    --color-quote: #367ea8;
+    --color-quote: var(--color-info-accent);
 }
 
 @media (min-width: 700px) {

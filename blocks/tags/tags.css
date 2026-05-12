@@ -10,18 +10,21 @@ main .tags .tags-container {
 }
 
 main .tags .tags-container a.button {
-  background: var(--color-white);
-  color: var(--detail-color);
-  font-weight: 400;
-  border: 1px solid var(--color-gray-200);
-  border-radius: 4px;
-  padding: 16px;
-  margin: 0 16px 16px 0;
+  background: var(--color-info-accent-light);
+  color: var(--color-info-accent);
+  font-weight: 600;
+  border: none;
+  border-radius: 100px;
+  padding: 6px 14px;
+  margin: 0 8px 8px 0;
   font-size: var(--detail-font-size-s);
   text-transform: uppercase;
-  letter-spacing: .1em;
+  letter-spacing: .08em;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 main .tags .tags-container a.button:hover {
-  color: var(--color-info-accent);
+  background: var(--color-info-accent);
+  color: var(--color-white);
+  text-decoration: none;
 }
