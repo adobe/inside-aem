@@ -216,8 +216,12 @@ class Gnav {
     const searchInput = createTag('input', { class: 'gnav-search-input', placeholder: label });
     const searchResults = createTag('div', { class: 'gnav-search-results' });
 
+    let searchDebounceTimer;
     searchInput.addEventListener('input', (e) => {
-      this.onSearchInput(e.target.value, searchResults);
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        this.onSearchInput(e.target.value, searchResults);
+      }, 250);
     });
 
     searchField.append(searchInput);
@@ -358,8 +362,12 @@ class Gnav {
 }
 
 async function fetchGnav(url) {
+  const cacheKey = `gnav:${url}`;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) return cached;
   const resp = await fetch(`${url}.plain.html`);
   const html = await resp.text();
+  try { sessionStorage.setItem(cacheKey, html); } catch (e) { /* storage quota exceeded */ }
   return html;
 }
 

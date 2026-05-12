@@ -343,26 +343,44 @@ main .article-feed .load-more {
   display: none;
 }
 
-/* SPINNER */
-.spinner {
-  border: 2px dotted var(--color-gray-100);
-  border-bottom: 2px dotted var(--color-gray-200);
-  border-left: 2px dotted var(--color-gray-400);
-  border-top: 2px dotted var(--color-gray-800);
-  border-radius: 50%;
-  width: 1.6rem;
-  height: 1.6rem;
-  animation: spin 2s linear infinite;
+/* SKELETON LOADING */
+.article-card-skeleton {
+  width: 300px;
+  margin: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.skeleton-image {
+  height: 180px;
+  background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.skeleton-body {
+  padding: 16px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, var(--color-gray-100) 25%, var(--color-gray-200) 50%, var(--color-gray-100) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-line-short { width: 40%; }
+.skeleton-line-long { width: 90%; }
+.skeleton-line-medium { width: 65%; }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Newsletter Landing Page theme filters */

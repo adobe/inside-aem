@@ -90,14 +90,20 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // fetch nav content
+  // fetch nav content, caching in sessionStorage to avoid re-fetching on every page load
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta).pathname : '/nav';
-  const resp = await fetch(`${navPath}.plain.html`);
+  const cacheKey = `nav:${navPath}`;
+  let html = sessionStorage.getItem(cacheKey);
+  if (!html) {
+    const resp = await fetch(`${navPath}.plain.html`);
+    if (resp.ok) {
+      html = await resp.text();
+      try { sessionStorage.setItem(cacheKey, html); } catch (e) { /* storage quota exceeded */ }
+    }
+  }
 
-  if (resp.ok) {
-    const html = await resp.text();
-
+  if (html) {
     // decorate nav DOM
     const nav = document.createElement('nav');
     nav.id = 'nav';
@@ -137,6 +143,22 @@ export default async function decorate(block) {
     isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
     decorateIcons(nav);
+
+    // Trap focus within the mobile nav when it is open
+    nav.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || isDesktop.matches || nav.getAttribute('aria-expanded') !== 'true') return;
+      const focusable = [...nav.querySelectorAll('a[href], button:not([disabled])')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
     const navWrapper = document.createElement('div');
     navWrapper.className = 'nav-wrapper';
     navWrapper.append(nav);
