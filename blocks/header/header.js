@@ -90,20 +90,13 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // fetch nav content, caching in sessionStorage to avoid re-fetching on every page load
+  // fetch nav content
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta).pathname : '/nav';
-  const cacheKey = `nav:${navPath}`;
-  let html = sessionStorage.getItem(cacheKey);
-  if (!html) {
-    const resp = await fetch(`${navPath}.plain.html`);
-    if (resp.ok) {
-      html = await resp.text();
-      try { sessionStorage.setItem(cacheKey, html); } catch (e) { /* storage quota exceeded */ }
-    }
-  }
+  const resp = await fetch(`${navPath}.plain.html`);
 
-  if (html) {
+  if (resp.ok) {
+    const html = await resp.text();
     // decorate nav DOM
     const nav = document.createElement('nav');
     nav.id = 'nav';

@@ -136,6 +136,10 @@ class Gnav {
           if ($modal) {
             $modal.classList.add('active');
             document.body.classList.add('newsletter-no-scroll');
+            requestAnimationFrame(() => {
+              const closeBtn = $modal.querySelector('.newsletter-modal-close');
+              if (closeBtn) closeBtn.focus();
+            });
           }
         });
       }
@@ -362,12 +366,8 @@ class Gnav {
 }
 
 async function fetchGnav(url) {
-  const cacheKey = `gnav:${url}`;
-  const cached = sessionStorage.getItem(cacheKey);
-  if (cached) return cached;
   const resp = await fetch(`${url}.plain.html`);
   const html = await resp.text();
-  try { sessionStorage.setItem(cacheKey, html); } catch (e) { /* storage quota exceeded */ }
   return html;
 }
 

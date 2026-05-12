@@ -131,12 +131,4 @@ export default async function decorate(block) {
       first.focus();
     }
   });
-
-  // Move focus into modal when it opens, restore to trigger when it closes
-  const observer = new MutationObserver(() => {
-    if ($container.classList.contains('active')) {
-      requestAnimationFrame(() => $close.focus());
-    }
-  });
-  observer.observe($container, { attributes: true, attributeFilter: ['class'] });
 }
