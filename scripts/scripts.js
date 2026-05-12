@@ -104,7 +104,7 @@ export function getRootPath() {
  * @param {string} topic The topic name
  * @returns {string} A link tag as a string
  */
-export function getLinkForTopic(topic, path) {
+export function getLinkForTopic(topic) {
   // temporary title substitutions
   const titleSubs = {
     'Transformation digitale': 'Transformation numérique',
@@ -115,8 +115,6 @@ export function getLinkForTopic(topic, path) {
     if (tax) {
       catLink = tax.link;
     } else {
-      // eslint-disable-next-line no-console
-      console.debug(`Trying to get a link for an unknown topic: ${topic} ${path ? `on page ${path}` : '(current page)'}`);
       catLink = '#';
     }
   }
@@ -362,7 +360,7 @@ export function decorateMain(main) {
  * @param {Array} topics List of topics
  * @returns {Object} Taxonomy object
  */
-function computeTaxonomyFromTopics(topics, path) {
+function computeTaxonomyFromTopics(topics) {
   // no topics: default to a randomly choosen category
   const category = topics?.length > 0 ? topics[0] : 'news';
   if (taxonomy && topics) {
@@ -386,9 +384,6 @@ function computeTaxonomyFromTopics(topics, path) {
             });
           }
         }
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug(`Unknown topic in tags list: ${tag} ${path ? `on page ${path}` : '(current page)'}`);
       }
     });
     return {
