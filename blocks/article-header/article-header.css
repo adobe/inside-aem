@@ -92,13 +92,17 @@ main .article-header .article-category a {
   padding-left: 2rem;
   padding-right: 2rem;
   font-weight: var(--detail-font-weight);
-  color: var(--detail-color);
+  color: var(--color-info-accent);
   font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: .1em;
-  
+}
+
+main .article-header .article-category a:hover {
+  color: var(--color-info-accent-hover);
+  text-decoration: underline;
 }
 
 @media (min-width: 700px) {

@@ -735,6 +735,10 @@ export function buildArticleCard(article, type = 'article', eager = false) {
   const articleTax = getArticleTaxonomy(article);
   const categoryTag = getLinkForTopic(articleTax.category, path);
 
+  const wordCount = [title, description].join(' ').split(/\s+/).filter(Boolean).length;
+  const readMins = Math.max(1, Math.round((wordCount * 5) / 200));
+  const readTime = `${readMins} min read`;
+
   card.innerHTML = `<div class="${type}-card-image">
       ${pictureTag}
     </div>
@@ -744,7 +748,7 @@ export function buildArticleCard(article, type = 'article', eager = false) {
       </p>
       <h3>${title}</h3>
       <p class="${type}-card-description">${description}</p>
-      <p class="${type}-card-date">${formatLocalCardDate(date)}
+      <p class="${type}-card-date">${formatLocalCardDate(date)}<span class="${type}-card-read-time">${readTime}</span></p>
     </div>`;
   return card;
 }

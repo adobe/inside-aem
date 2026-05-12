@@ -117,6 +117,15 @@ export default async function decorate(block) {
 
     const navSections = nav.querySelector('.nav-sections');
     if (navSections) {
+      const currentPath = window.location.pathname;
+      navSections.querySelectorAll('a').forEach((a) => {
+        try {
+          const linkPath = new URL(a.href, window.location.origin).pathname;
+          if (linkPath !== '/' && currentPath.startsWith(linkPath)) {
+            a.setAttribute('aria-current', 'page');
+          }
+        } catch (e) { /* invalid href */ }
+      });
       navSections.querySelectorAll(':scope > ul > li').forEach((navSection) => {
         if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
         navSection.addEventListener('click', () => {

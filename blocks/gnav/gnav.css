@@ -161,6 +161,17 @@ button.gnav-toggle:after {
   background-color: #FAFAFA;
 }
 
+.gnav-navitem > a.is-current {
+  color: #5C5CE0;
+  font-weight: 700;
+}
+
+@media (min-width: 1200px) {
+  .gnav-navitem > a.is-current {
+    border-bottom: 2px solid #5C5CE0;
+  }
+}
+
 .gnav-navitem > a {
   border-bottom: solid 1px #f3f3f3;
 }

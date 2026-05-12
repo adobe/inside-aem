@@ -10,15 +10,29 @@ main .hero-container {
   
 main .hero {
   position: relative;
-  padding: 32px;
-  min-height: 300px;
+  padding: 64px 32px 48px;
+  min-height: 360px;
+  display: flex;
+  align-items: flex-end;
+}
+
+main .hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 65%) 0%, rgb(0 0 0 / 20%) 60%, transparent 100%);
+  z-index: 0;
 }
 
 main .hero h1 {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
   color: white;
+  font-size: var(--heading-font-size-xxl);
+  text-shadow: 0 1px 4px rgb(0 0 0 / 30%);
+  line-height: 1.15;
 }
 
 main .hero picture {

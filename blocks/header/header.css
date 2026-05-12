@@ -61,6 +61,18 @@ header nav a:hover {
   text-decoration: none;
 }
 
+header nav a[aria-current="page"] {
+  color: var(--color-info-accent);
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  header nav .nav-sections a[aria-current="page"] {
+    border-bottom: 2px solid var(--color-info-accent);
+    padding-bottom: 2px;
+  }
+}
+
 header nav li a:any-link {
   color: grey;
 }

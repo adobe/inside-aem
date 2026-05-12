@@ -59,7 +59,7 @@
   /* body sizes */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-weight: 300;
+  --body-font-weight: 400;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
   --body-font-size-xxl: 1.75rem; /* 28px */
@@ -491,7 +491,7 @@ main .section > div:empty {
 
 @media (min-width: 700px) {
   main .section > div {
-    max-width: 800px;
+    max-width: 680px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -683,6 +683,88 @@ main .section.carousel-container {
 }
 
 /* stylelint-enable no-descending-specificity */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --body-background-color: #121212;
+    --background-color: #121212;
+    --body-color: #e8e8e8;
+    --heading-color: #f0f0f0;
+    --color-gray-100: #1e1e1e;
+    --color-gray-200: #2a2a2a;
+    --color-gray-300: #3a3a3a;
+    --color-gray-400: #555;
+    --color-gray-500: #777;
+    --color-gray-600: #999;
+    --color-gray-700: #bbb;
+    --color-gray-800: #e0e0e0;
+    --overlay-background-color: #1e1e1e;
+    --highlight-background-color: #2a2a2a;
+    --text-color: #e8e8e8;
+    --link-color: #7b9ff5;
+    --link-hover-color: #a0b8ff;
+  }
+
+  header,
+  .gnav-wrapper {
+    background-color: #1a1a1a;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .gnav {
+    background: #1a1a1a;
+  }
+
+  .gnav-mainnav,
+  .gnav-navitem-menu {
+    background-color: #1a1a1a;
+  }
+
+  .gnav-navitem > a {
+    color: #e0e0e0;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .gnav-navitem > a:hover {
+    background-color: #222;
+  }
+
+  .gnav-search-bar,
+  .gnav-search-field .gnav-search-input {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  .cards > ul > li {
+    background-color: #1e1e1e;
+    border-color: #2a2a2a;
+  }
+
+  .article-card,
+  .featured-article-card {
+    background-color: #1e1e1e;
+  }
+
+  .filter-dropdown {
+    background: #1e1e1e;
+    border-color: #2a2a2a;
+  }
+
+  .filter-button {
+    background: #1e1e1e;
+    border-color: #2a2a2a;
+    color: #e0e0e0;
+  }
+
+  .newsletter-modal-container .newsletter-modal {
+    background: #1e1e1e;
+    color: #e0e0e0;
+  }
+
+  main pre {
+    background-color: #1e1e1e;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

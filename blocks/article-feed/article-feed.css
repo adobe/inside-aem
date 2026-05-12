@@ -21,6 +21,31 @@ main .article-feed .article-cards {
   max-width: 1200px;
 }
 
+/* Article card base hover effect */
+main .article-feed .article-card {
+  border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+main .article-feed .article-card:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+
+/* Reading time badge */
+.article-card-read-time {
+  display: inline-block;
+  font-size: var(--body-font-size-xxs);
+  color: var(--color-gray-500);
+  margin-left: 8px;
+}
+
+.article-card-read-time::before {
+  content: '· ';
+}
+
 @media (min-width: 600px) {
   main .article-cards {
     padding-left: 0;

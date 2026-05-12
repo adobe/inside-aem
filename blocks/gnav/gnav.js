@@ -118,8 +118,16 @@ class Gnav {
 
   buildMainNav = (navLinks) => {
     const mainNav = createTag('div', { class: 'gnav-mainnav' });
+    const currentPath = window.location.pathname;
     navLinks.forEach((navLink, idx) => {
       const navItem = createTag('div', { class: 'gnav-navitem' });
+      try {
+        const linkPath = new URL(navLink.href, window.location.origin).pathname;
+        if (linkPath !== '/' && currentPath.startsWith(linkPath)) {
+          navLink.classList.add('is-current');
+          navLink.setAttribute('aria-current', 'page');
+        }
+      } catch (e) { /* invalid href */ }
 
       const menu = navLink.closest('div');
       menu.querySelector('h2').remove();
