@@ -185,7 +185,15 @@ code, pre, samp {
 }
 
 code, samp {
-  padding: .125em;
+  background-color: var(--overlay-background-color);
+  padding: 1em;
+  border-radius: .25em;
+}
+
+pre code, pre samp {
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
 }
 
 pre {
@@ -761,7 +769,8 @@ main .section.carousel-container {
     color: #e0e0e0;
   }
 
-  main pre {
+  main pre,
+  code, samp {
     background-color: #1e1e1e;
   }
 }
