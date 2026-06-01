@@ -186,7 +186,7 @@ code, pre, samp {
 
 code, samp {
   background-color: var(--overlay-background-color);
-  padding: .125em .25em;
+  padding: 1em;
   border-radius: .25em;
 }
 
