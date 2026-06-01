@@ -190,6 +190,12 @@ code, samp {
   border-radius: .25em;
 }
 
+pre code, pre samp {
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+}
+
 pre {
   overflow: scroll;
 }
