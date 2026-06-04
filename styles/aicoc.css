@@ -1,0 +1,172 @@
+/* AI CoC — body-level theme.
+ *
+ * Loaded eagerly by scripts.js when the URL contains /aicoc/ or /aicochub.
+ * Scoped under .aicoc / .aicoc-hub / .aicoc-session body classes so NOTHING
+ * here can leak into the regular blog rendering.
+ *
+ * Block-specific styling lives next to each block:
+ *   - blocks/session-header/  → individual session page hero
+ *   - blocks/session-card/    → cards used by the feed
+ *   - blocks/session-feed/    → search + filter + grid on /aicochub
+ *
+ * This file covers:
+ *   - shared design tokens (CSS custom properties)
+ *   - body background + page-wide typography tweaks
+ *   - the /aicochub landing page hero (no separate block needed — the first
+ *     <div> in <main> becomes the hero through CSS alone)
+ */
+
+body.aicoc {
+  --aicoc-accent-1: #EB1000;   /* Adobe red */
+  --aicoc-accent-2: #FF3B2F;   /* coral, for gradients */
+  --aicoc-accent-3: #B30C00;   /* deep red, for hover/pressed */
+  --aicoc-ink: #0b0b0d;
+  --aicoc-ink-2: #2c2c2e;
+  --aicoc-muted: #6e6e73;
+  --aicoc-border: #e5e5e7;
+  --aicoc-bg: #fafafa;
+  --aicoc-card: #ffffff;
+
+  background-color: var(--aicoc-bg);
+  color: var(--aicoc-ink);
+}
+
+/* Soften the existing blog-default body padding so our heroes can run
+ * edge-to-edge without a white margin around them. */
+body.aicoc main {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+body.aicoc main > div {
+  max-width: unset;
+}
+
+/* Tighten H tags inside AI CoC body content. The blog stylesheet's defaults
+ * are still in play; these are nudges, not overrides. */
+body.aicoc main h2 { letter-spacing: -0.01em; }
+body.aicoc main a { color: var(--aicoc-accent-1); }
+body.aicoc main a:hover { color: var(--aicoc-accent-3); }
+
+/* ─── /aicochub landing hero ────────────────────────────────────────────
+ *
+ * The author writes a plain H1 + tagline + session-feed in the Word doc.
+ * The first <div> in <main> (the H1 + tagline section) becomes a styled hero
+ * automatically. No custom block needed for the hub page.
+ */
+
+body.aicoc-hub main > div:first-of-type {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 24px 72px;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(1100px 520px at 88% -10%, rgba(235, 16, 0, 0.55), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgba(255, 59, 47, 0.35), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+}
+
+body.aicoc-hub main > div:first-of-type::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
+  background-size: 80px 80px, 60px 60px, 120px 120px;
+  pointer-events: none;
+}
+
+body.aicoc-hub main > div:first-of-type > * {
+  position: relative;
+  z-index: 1;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Title */
+body.aicoc-hub main > div:first-of-type h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
+  color: #fff;
+}
+
+/* "Eyebrow" pill above the H1 — if author writes a small paragraph BEFORE
+ * the H1, treat it as an eyebrow. */
+body.aicoc-hub main > div:first-of-type > p:first-child {
+  display: inline-block;
+  margin: 0 auto 18px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(235, 16, 0, 0.95), rgba(255, 59, 47, 0.95));
+  border-radius: 999px;
+}
+
+/* Tagline paragraph(s) after the H1 */
+body.aicoc-hub main > div:first-of-type p {
+  font-size: clamp(15px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0 auto 18px;
+  max-width: 720px;
+}
+
+/* If the H1 is wrapped in a <picture> auto-block (rare), neutralise. */
+body.aicoc-hub main > div:first-of-type picture { display: none; }
+
+/* Section that follows the hero (where session-feed sits) */
+body.aicoc-hub main > div:nth-of-type(2) {
+  background: var(--aicoc-bg);
+}
+
+/* ─── /aicoc/<session> page body styling ──────────────────────────────── */
+
+/* The session-header block owns the top of the page. The body section
+ * that follows contains the article copy. Give it readable column width. */
+body.aicoc-session main > div:not(.session-header-container) {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--aicoc-ink-2);
+}
+
+body.aicoc-session main > div:not(.session-header-container) h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 36px 0 14px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) h2:first-child {
+  margin-top: 8px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) ul,
+body.aicoc-session main > div:not(.session-header-container) ol {
+  padding-left: 22px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) ul li,
+body.aicoc-session main > div:not(.session-header-container) ol li {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--aicoc-ink-2);
+  margin-bottom: 8px;
+}
+
+/* Back-to-hub navigation is provided by the breadcrumb in session-header.
+ * No separate footer link needed. */

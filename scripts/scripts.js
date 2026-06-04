@@ -261,11 +261,27 @@ function buildImageBlocks(mainEl) {
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
+function buildSessionHeader(mainEl) {
+  // Placeholder block. The actual hero (presenter, date, recording CTA, deck,
+  // Slack) is composed by blocks/session-header/session-header.js, which reads
+  // page metadata directly. We just mark the slot at the top of <main>.
+  const div = document.createElement('div');
+  div.append(buildBlock('session-header', { elems: [] }));
+  mainEl.prepend(div);
+}
+
 function buildAutoBlocks(main) {
   removeStylingFromImages(main);
   try {
     buildHeroBlock(main);
-    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
+    // AI CoC session pages get a custom hero; the regular article header would
+    // misrepresent the metadata, so route to buildSessionHeader instead.
+    const isAicocSession = window.location.pathname.includes('/aicoc/');
+    if (isAicocSession) {
+      if (getMetadata('publication-date') && !main.querySelector('.session-header')) {
+        buildSessionHeader(main);
+      }
+    } else if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
       buildArticleHeader(main);
       addArticleToHistory();
     }
@@ -461,6 +477,15 @@ export function getTaxonomy() {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  // AI CoC: detect path early so theme CSS + body class are applied before
+  // any blocks render, avoiding FOUC on the dark hero. Scoped to /aicoc/* and
+  // the /aicochub landing page — no impact on regular blog paths.
+  const aicocPath = window.location.pathname;
+  if (aicocPath.includes('/aicoc/') || aicocPath.endsWith('/aicochub')) {
+    document.body.classList.add('aicoc');
+    document.body.classList.add(aicocPath.endsWith('/aicochub') ? 'aicoc-hub' : 'aicoc-session');
+    loadCSS(`${window.hlx.codeBasePath}/styles/aicoc.css`);
+  }
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);

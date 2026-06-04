@@ -1,0 +1,325 @@
+/* AI CoC — session header block.
+ * Only renders on /en/aicoc/<slug> pages where body.aicoc-session is set.
+ * Styles are namespaced under .session-header to avoid any blog leakage.
+ */
+
+main .session-header-container,
+main .session-header-wrapper,
+main .session-header {
+  max-width: unset;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+main .session-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────────── */
+.session-header-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 32px 56px;
+  color: #fff;
+  background:
+    radial-gradient(1100px 520px at 88% -10%, rgba(235, 16, 0, 0.55), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgba(255, 59, 47, 0.35), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+}
+
+.session-header-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
+  background-size: 80px 80px, 60px 60px, 120px 120px;
+  pointer-events: none;
+}
+
+.session-header-bg-picture {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.session-header-bg-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.7);
+}
+
+.session-header-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* breadcrumb */
+.session-header-breadcrumb {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.session-header-breadcrumb a {
+  color: #fff;
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.session-header-breadcrumb a:hover { text-decoration: underline; }
+.session-header-breadcrumb-sep { opacity: 0.35; }
+.session-header-breadcrumb-current { opacity: 0.6; }
+
+/* pills */
+.session-header-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.session-header-pill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+.session-header-pill-format {
+  background: linear-gradient(90deg, rgba(235, 16, 0, 0.95), rgba(255, 59, 47, 0.95));
+  border-color: transparent;
+}
+
+/* title */
+main .session-header h1.session-header-title {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
+  color: #fff;
+  max-width: 900px;
+}
+
+/* description */
+.session-header-description {
+  font-size: 17px;
+  line-height: 1.55;
+  opacity: 0.88;
+  max-width: 760px;
+  margin: 0 0 26px;
+  color: #fff;
+}
+
+/* meta row */
+.session-header-meta-row-inline {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 14px;
+  opacity: 0.92;
+  margin-bottom: 30px;
+}
+
+.session-header-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-header-meta-item svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.session-header-presenters {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.session-header-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.session-header-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #B30C00, #EB1000);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  margin-left: -8px;
+}
+
+.session-header-avatar:first-child { margin-left: 0; }
+
+/* CTAs */
+.session-header-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+main .session-header .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+main .session-header .btn:hover { transform: translateY(-1px); text-decoration: none; }
+
+main .session-header .btn-primary {
+  background: #fff;
+  color: #0b0b0d;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+main .session-header .btn-secondary {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(6px);
+}
+
+main .session-header .btn-tertiary {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Inline iframe embed (Stream / YouTube / Vimeo only) */
+.session-header-embed {
+  position: relative;
+  margin-top: 24px;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.session-header-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────────────────────────── */
+.session-header-sidebar {
+  padding: 28px 32px 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.session-header-sidebar-card {
+  border: 1px solid var(--color-gray-200, #e5e5e7);
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.session-header-sidebar-title {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-gray-600, #6e6e73);
+  font-weight: 700;
+}
+
+.session-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.session-header-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  line-height: 1.4;
+}
+
+.session-header-meta-key {
+  color: var(--color-gray-600, #6e6e73);
+  flex-shrink: 0;
+}
+
+.session-header-meta-val {
+  color: #0b0b0d;
+  text-align: right;
+  font-weight: 500;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.session-header-meta-val a { color: #EB1000; text-decoration: none; }
+.session-header-meta-val a:hover { text-decoration: underline; }
+
+/* ── DESKTOP: sidebar to the right of the hero content ─────────────────── */
+@media (min-width: 960px) {
+  main .session-header {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+  }
+
+  .session-header-hero {
+    grid-column: 1 / -1;
+    padding: 80px 48px 64px;
+  }
+
+  /* Sidebar floats over the hero on the right, like a card pulled out. */
+  .session-header-sidebar {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: -120px;
+    margin-right: 48px;
+    padding: 0;
+    max-width: none;
+    z-index: 2;
+    position: relative;
+  }
+
+  .session-header-sidebar-card {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
+  }
+}

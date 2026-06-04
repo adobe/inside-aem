@@ -1,0 +1,176 @@
+/* AI CoC — session feed.
+ * Renders the grid of session cards on /en/aicochub.
+ * Self-contained styling; assumes body.aicoc context but degrades gracefully.
+ */
+
+main .session-feed-container > div { max-width: unset; }
+
+main .session-feed {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+/* ── controls (search + presenter dropdown + count) ───────────────────── */
+.session-feed-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.session-feed-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+.session-feed-search svg {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  fill: #6e6e73;
+  pointer-events: none;
+}
+
+.session-feed-search input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  font-size: 15px;
+  border: 1px solid #d5d5d9;
+  border-radius: 10px;
+  background: #fff;
+  color: #0b0b0d;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.session-feed-search input:focus {
+  outline: none;
+  border-color: #EB1000;
+  box-shadow: 0 0 0 3px rgba(235, 16, 0, 0.12);
+}
+
+.session-feed-search input::placeholder { color: #8a8a90; }
+
+.session-feed-presenter {
+  padding: 11px 14px;
+  font-size: 14px;
+  border: 1px solid #d5d5d9;
+  border-radius: 10px;
+  background: #fff;
+  color: #0b0b0d;
+  cursor: pointer;
+  min-width: 200px;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.session-feed-presenter:focus {
+  outline: none;
+  border-color: #EB1000;
+  box-shadow: 0 0 0 3px rgba(235, 16, 0, 0.12);
+}
+
+.session-feed-count {
+  font-size: 13px;
+  color: #6e6e73;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── grid ─────────────────────────────────────────────────────────────── */
+.session-feed-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  min-height: 200px;
+}
+
+@media (min-width: 600px) {
+  .session-feed-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 960px) {
+  .session-feed-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── load more ────────────────────────────────────────────────────────── */
+.session-feed-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.session-feed-load-more {
+  padding: 12px 28px;
+  background: #0b0b0d;
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.session-feed-load-more:hover {
+  background: #EB1000;
+  transform: translateY(-1px);
+}
+
+.session-feed-load-more:focus-visible {
+  outline: 2px solid #EB1000;
+  outline-offset: 2px;
+}
+
+/* ── empty state ──────────────────────────────────────────────────────── */
+.session-feed-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 16px;
+  color: #4a4a4f;
+}
+
+.session-feed-empty p { margin: 0 0 8px; }
+.session-feed-empty p:first-child { font-size: 18px; color: #0b0b0d; }
+
+/* ── skeleton ─────────────────────────────────────────────────────────── */
+.session-card-skeleton {
+  background: #fff;
+  border: 1px solid #e5e5e7;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.session-card-skeleton .ssk-media {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(90deg, #f0f0f3 25%, #e5e5e7 50%, #f0f0f3 75%);
+  background-size: 200% 100%;
+  animation: ssk-shimmer 1.5s infinite;
+}
+
+.session-card-skeleton .ssk-body { padding: 20px 22px; }
+
+.session-card-skeleton .ssk-line {
+  height: 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #f0f0f3 25%, #e5e5e7 50%, #f0f0f3 75%);
+  background-size: 200% 100%;
+  animation: ssk-shimmer 1.5s infinite;
+}
+
+.session-card-skeleton .ssk-line-short { width: 40%; }
+.session-card-skeleton .ssk-line-medium { width: 65%; }
+.session-card-skeleton .ssk-line-long { width: 90%; }
+
+@keyframes ssk-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
