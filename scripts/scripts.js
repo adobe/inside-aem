@@ -276,7 +276,9 @@ function buildAutoBlocks(main) {
     buildHeroBlock(main);
     // AI CoC session pages get a custom hero; the regular article header would
     // misrepresent the metadata, so route to buildSessionHeader instead.
-    const isAicocSession = window.location.pathname.includes('/aicoc/');
+    // Opt-in is driven by `Theme: aicoc, aicoc-session` in doc metadata —
+    // decorateTemplateAndTheme() in loadEager has already set the body class.
+    const isAicocSession = document.body.classList.contains('aicoc-session');
     if (isAicocSession) {
       if (getMetadata('publication-date') && !main.querySelector('.session-header')) {
         buildSessionHeader(main);
@@ -477,13 +479,11 @@ export function getTaxonomy() {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
-  // AI CoC: detect path early so theme CSS + body class are applied before
-  // any blocks render, avoiding FOUC on the dark hero. Scoped to /aicoc/* and
-  // the /aicochub landing page — no impact on regular blog paths.
-  const aicocPath = window.location.pathname;
-  if (aicocPath.includes('/aicoc/') || aicocPath.endsWith('/aicochub')) {
-    document.body.classList.add('aicoc');
-    document.body.classList.add(aicocPath.endsWith('/aicochub') ? 'aicoc-hub' : 'aicoc-session');
+  // AI CoC: opt-in via `Theme: aicoc, aicoc-session` (or aicoc-hub) in the
+  // doc's Metadata block. decorateTemplateAndTheme() above already added the
+  // matching body classes — here we just eager-load the theme CSS so the dark
+  // hero doesn't flash unstyled. Pages without `Theme: aicoc` are untouched.
+  if (document.body.classList.contains('aicoc')) {
     loadCSS(`${window.hlx.codeBasePath}/styles/aicoc.css`);
   }
   const main = doc.querySelector('main');
