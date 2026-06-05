@@ -43,19 +43,42 @@ main .session-header {
 
 /* Hero figure (the first picture from the doc, placed on the right of the
  * hero as a focal card). On mobile it stacks below the content. On desktop
- * it's absolutely positioned in the bottom-right (see media query below). */
+ * it's absolutely positioned in the bottom-right (see media query below).
+ *
+ * Sizing rules: the picture must FIT — never be cut. We give the figure a
+ * fixed width and a generous max-height; object-fit: contain on the <img>
+ * preserves aspect for both wide (banner-style) and tall (portrait) images.
+ * Any unused space inside the rounded card shows the dark backdrop, which
+ * blends with the hero's deep red gradient. */
 .session-header-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 28px 0 0;
   padding: 0;
+  width: 100%;
+  max-height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1a0606;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
 }
 
-.session-header-figure picture,
+.session-header-figure picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 380px;
+}
+
 .session-header-figure img {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
 }
 
 .session-header-inner {

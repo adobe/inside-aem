@@ -206,7 +206,21 @@ export default function decorate(block) {
       figure.append(optimised);
       hero.append(figure);
       hero.classList.add('has-figure');
-      heroPicture.closest('p')?.remove();
+
+      // Remove the original picture from <main>. Walk up to the nearest
+      // wrapping <p> or <div> that exists solely to hold this picture and
+      // drop it; if the wrapper has other text/content we leave it alone
+      // and just yank the picture node itself.
+      const wrapper = heroPicture.parentElement;
+      heroPicture.remove();
+      if (
+        wrapper
+        && wrapper !== main
+        && !wrapper.textContent.trim()
+        && wrapper.children.length === 0
+      ) {
+        wrapper.remove();
+      }
     }
   }
 
