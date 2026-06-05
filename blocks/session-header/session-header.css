@@ -293,38 +293,38 @@ main .session-header .btn-tertiary {
 .session-header-meta-val a { color: #EB1000; text-decoration: none; }
 .session-header-meta-val a:hover { text-decoration: underline; }
 
-/* ── DESKTOP: sidebar to the right of the hero content ─────────────────── */
+/* ── DESKTOP: sidebar absolutely positioned INSIDE the hero ───────────── */
 @media (min-width: 960px) {
+  /* Anchor for the absolutely-positioned sidebar so it sits within the hero
+   * picture, not below it. */
   main .session-header {
-    grid-template-columns: minmax(0, 1fr) 320px;
-    align-items: start;
+    position: relative;
   }
 
   .session-header-hero {
-    grid-column: 1 / -1;
     padding: 80px 48px 64px;
   }
 
-  /* The sidebar floats over the bottom-right of the hero. Hero content
-   * (title, description, meta row, CTAs) must NOT extend into that zone or
-   * the sidebar card will sit on top of it. Cap the right side here. */
+  /* Hero content (title, description, meta row, CTAs) reserves the right
+   * lane so it doesn't run under the sidebar card. */
   .session-header-inner {
     padding-right: calc(320px + 24px);
   }
 
-  /* Sidebar floats over the hero on the right, like a card pulled out. */
+  /* Sidebar lives in the top-right of the hero. Absolute positioning keeps
+   * it fully inside the hero picture regardless of hero-content height. */
   .session-header-sidebar {
-    grid-column: 2;
-    grid-row: 2;
-    margin-top: -120px;
-    margin-right: 48px;
+    position: absolute;
+    top: 80px;
+    right: 48px;
+    width: 320px;
+    margin: 0;
     padding: 0;
     max-width: none;
     z-index: 2;
-    position: relative;
   }
 
   .session-header-sidebar-card {
-    box-shadow: 0 12px 40px rgb(0 0 0 / 10%);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
   }
 }
