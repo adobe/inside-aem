@@ -13,19 +13,26 @@ main .session-feed {
 
 /* ── controls (search + presenter dropdown + count) ───────────────────── */
 .session-feed-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
-  margin-bottom: 32px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 720px) {
+  .session-feed-controls {
+    /* Search takes remaining space; dropdown fixed at 220px; count auto. */
+    grid-template-columns: 1fr 220px auto;
+    align-items: center;
+  }
 }
 
 .session-feed-search {
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1 1 320px;
-  min-width: 240px;
+  min-width: 0;
 }
 
 .session-feed-search svg {
@@ -37,39 +44,38 @@ main .session-feed {
   pointer-events: none;
 }
 
-.session-feed-search input {
+/* Shared field reset so the search box and dropdown line up exactly. */
+.session-feed-search input,
+.session-feed-presenter {
+  box-sizing: border-box;
   width: 100%;
-  padding: 12px 16px 12px 42px;
+  height: 44px;
+  padding: 0 16px;
   font-size: 15px;
+  line-height: 44px;
   border: 1px solid #d5d5d9;
   border-radius: 10px;
   background: #fff;
   color: #0b0b0d;
   font-family: inherit;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
 }
 
-.session-feed-search input:focus {
-  outline: none;
-  border-color: #EB1000;
-  box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
-}
+.session-feed-search input { padding-left: 42px; }
 
 .session-feed-search input::placeholder { color: #8a8a90; }
 
+/* Custom chevron for the native <select> so it lines up with the inputs. */
 .session-feed-presenter {
-  padding: 11px 14px;
-  font-size: 14px;
-  border: 1px solid #d5d5d9;
-  border-radius: 10px;
-  background: #fff;
-  color: #0b0b0d;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%236e6e73' d='M6 8 0 0h12z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
   cursor: pointer;
-  min-width: 200px;
-  font-family: inherit;
-  transition: border-color 0.15s ease;
 }
 
+.session-feed-search input:focus,
 .session-feed-presenter:focus {
   outline: none;
   border-color: #EB1000;
@@ -79,8 +85,8 @@ main .session-feed {
 .session-feed-count {
   font-size: 13px;
   color: #6e6e73;
-  margin-left: auto;
   white-space: nowrap;
+  text-align: right;
 }
 
 /* ── grid ─────────────────────────────────────────────────────────────── */

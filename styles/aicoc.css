@@ -125,9 +125,28 @@ body.aicoc-hub main > div:first-of-type p {
 /* If the H1 is wrapped in a <picture> auto-block (rare), neutralise. */
 body.aicoc-hub main > div:first-of-type picture { display: none; }
 
-/* Section that follows the hero (where session-feed sits) */
-body.aicoc-hub main > div:nth-of-type(2) {
+/* Section that follows the hero (where session-feed sits). The author break
+ * is "---" in the doc, which EDS converts into an <hr> element that signals
+ * a new section. We don't render that hr — its job is purely structural. */
+body.aicoc-hub main hr {
+  display: none;
+}
+
+/* Any section in main BEYOND the first one gets the light background. */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div ~ div {
   background: var(--aicoc-bg);
+  padding: 32px 0 48px;
+}
+
+/* Defensive: if the session-feed somehow ends up nested in the hero div
+ * (e.g. author forgets the "---" separator), force a light backdrop on the
+ * feed block itself so the controls + cards don't render on dark gradient. */
+body.aicoc-hub .session-feed {
+  background: var(--aicoc-bg);
+  color: var(--aicoc-ink);
+  padding-top: 40px;
+  border-radius: 0;
 }
 
 /* ─── /aicoc/<session> page body styling ──────────────────────────────── */
