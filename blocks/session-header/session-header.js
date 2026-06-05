@@ -1,4 +1,4 @@
-import { getMetadata, createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { getMetadata, createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * Hosts whose URLs can safely be iframe-embedded as a video player.
@@ -10,14 +10,11 @@ const EMBEDDABLE_HOSTS = new Set([
   'youtube.com',
   'www.youtube.com',
   'youtu.be',
-  'vimeo.com',
-  'player.vimeo.com',
 ]);
 
-const SVG_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>';
-const SVG_DOWNLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
-const SVG_SLACK = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 11h2V5a2 2 0 1 0-2 2v4zm-2 0H3a2 2 0 1 1 2-2h2v2zm6-6V3a2 2 0 1 1 2 2h-2zm0 2h2v6a2 2 0 1 1-2-2V7zm6 4h-2v-2h2a2 2 0 1 1 0 2zm-2 2v4a2 2 0 1 1-2-2V13h2zm-6 6v-2h2v2a2 2 0 1 1-2-2zm-2-2v-2h2v2a2 2 0 1 1-2 2z"/></svg>';
-const SVG_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+// Icon markers — replaced with inline SVG by decorateIcons() at end of decorate.
+// SVG sources live in /icons/<name>.svg.
+const icon = (name) => `<span class="icon icon-${name}"></span>`;
 
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
@@ -69,7 +66,7 @@ function splitCommaList(raw) {
 
 /**
  * Build the recording widget. SharePoint and unknown hosts render as a
- * "Watch recording" button (opens in a new tab). Stream / YouTube / Vimeo
+ * "Watch recording" button (opens in a new tab). Public Stream / YouTube
  * URLs become an inline iframe.
  */
 function buildRecording(url) {
@@ -78,7 +75,9 @@ function buildRecording(url) {
   try { host = new URL(url).hostname.toLowerCase(); } catch (_) { /* malformed */ }
 
   if (EMBEDDABLE_HOSTS.has(host)) {
-    return el('div', { class: 'session-header-embed' },
+    return el(
+      'div',
+      { class: 'session-header-embed' },
       el('iframe', {
         src: url,
         title: 'Session recording',
@@ -92,16 +91,22 @@ function buildRecording(url) {
   // Default: SharePoint or unknown → button (opens in a new tab)
   const label = host.includes('sharepoint.com') ? 'Watch on SharePoint' : 'Watch recording';
   return el('a', {
-    class: 'btn btn-primary', href: url, target: '_blank', rel: 'noopener',
-    html: `${SVG_PLAY}<span>${label}</span>`,
+    class: 'btn btn-primary',
+    href: url,
+    target: '_blank',
+    rel: 'noopener',
+    html: `${icon('play')}<span>${label}</span>`,
   });
 }
 
 function buildDeckButton(url) {
   if (!url) return null;
   return el('a', {
-    class: 'btn btn-secondary', href: url, target: '_blank', rel: 'noopener',
-    html: `${SVG_DOWNLOAD}<span>Slides</span>`,
+    class: 'btn btn-secondary',
+    href: url,
+    target: '_blank',
+    rel: 'noopener',
+    html: `${icon('download')}<span>Slides</span>`,
   });
 }
 
@@ -111,8 +116,11 @@ function buildSlackButton(slack) {
   const isUrl = /^https?:\/\//i.test(trimmed);
   const label = isUrl ? 'Join the discussion' : trimmed;
   return el('a', {
-    class: 'btn btn-tertiary', href: isUrl ? trimmed : '#', target: '_blank', rel: 'noopener',
-    html: `${SVG_SLACK}<span>${label}</span>`,
+    class: 'btn btn-tertiary',
+    href: isUrl ? trimmed : '#',
+    target: '_blank',
+    rel: 'noopener',
+    html: `${icon('slack')}<span>${label}</span>`,
   });
 }
 
@@ -121,10 +129,14 @@ function buildPresenters(presenterStr) {
   if (!presenters.length) return null;
   const avatars = el('div', { class: 'session-header-avatars' });
   presenters.slice(0, 3).forEach((name) => {
-    const initials = name.split(/\s+/).map((p) => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+    const initials = name.split(/\s+/).map((p) => p[0]).filter(Boolean).slice(0, 2)
+      .join('')
+      .toUpperCase();
     avatars.append(el('span', { class: 'session-header-avatar', title: name }, initials));
   });
-  return el('div', { class: 'session-header-presenters' },
+  return el(
+    'div',
+    { class: 'session-header-presenters' },
     avatars,
     el('span', { class: 'session-header-presenter-names' }, presenters.join(' & ')),
   );
@@ -141,12 +153,16 @@ function buildPills(tags) {
   return row;
 }
 
-function buildSidebar({ sessionDate, presenter, recording, deck, slack }) {
+function buildSidebar({
+  sessionDate, presenter, recording, deck, slack,
+}) {
   const rows = [];
   const addRow = (k, v) => {
     if (!v) return;
     rows.push(
-      el('div', { class: 'session-header-meta-row' },
+      el(
+        'div',
+        { class: 'session-header-meta-row' },
         el('span', { class: 'session-header-meta-key' }, k),
         el('span', { class: 'session-header-meta-val', html: v }),
       ),
@@ -154,8 +170,8 @@ function buildSidebar({ sessionDate, presenter, recording, deck, slack }) {
   };
   addRow('Date', formatSessionDate(sessionDate));
   addRow('Presenters', splitCommaList(presenter).join('<br>'));
-  if (recording) addRow('Recording', '<a href="' + recording + '" target="_blank" rel="noopener">Open ↗</a>');
-  if (deck) addRow('Slides', '<a href="' + deck + '" target="_blank" rel="noopener">Open ↗</a>');
+  if (recording) addRow('Recording', `<a href="${recording}" target="_blank" rel="noopener">Open ↗</a>`);
+  if (deck) addRow('Slides', `<a href="${deck}" target="_blank" rel="noopener">Open ↗</a>`);
   if (slack) {
     const t = String(slack).trim();
     const href = /^https?:\/\//i.test(t) ? t : '#';
@@ -163,8 +179,12 @@ function buildSidebar({ sessionDate, presenter, recording, deck, slack }) {
   }
 
   if (!rows.length) return null;
-  return el('aside', { class: 'session-header-sidebar' },
-    el('div', { class: 'session-header-sidebar-card' },
+  return el(
+    'aside',
+    { class: 'session-header-sidebar' },
+    el(
+      'div',
+      { class: 'session-header-sidebar-card' },
       el('h3', { class: 'session-header-sidebar-title' }, 'Session details'),
       el('div', { class: 'session-header-meta' }, ...rows),
     ),
@@ -193,7 +213,9 @@ export default function decorate(block) {
   const presenterText = meta.presenter || author || '';
 
   // ── Build the hero ────────────────────────────────────────────────────
-  const breadcrumb = el('nav', { class: 'session-header-breadcrumb', 'aria-label': 'Breadcrumb' },
+  const breadcrumb = el(
+    'nav',
+    { class: 'session-header-breadcrumb', 'aria-label': 'Breadcrumb' },
     el('a', { href: '/en/aicochub' }, 'AI CoC Hub'),
     el('span', { class: 'session-header-breadcrumb-sep' }, '›'),
     el('span', { class: 'session-header-breadcrumb-current' }, formatSessionDate(meta.sessionDate) || 'Session'),
@@ -206,7 +228,7 @@ export default function decorate(block) {
   const metaRow = el('div', { class: 'session-header-meta-row-inline' });
   const dateText = formatSessionDate(meta.sessionDate);
   if (dateText) {
-    metaRow.append(el('span', { class: 'session-header-meta-item', html: `${SVG_CALENDAR}<span>${dateText}</span>` }));
+    metaRow.append(el('span', { class: 'session-header-meta-item', html: `${icon('calendar')}<span>${dateText}</span>` }));
   }
   const presenters = buildPresenters(presenterText);
   if (presenters) metaRow.append(presenters);
@@ -220,7 +242,9 @@ export default function decorate(block) {
   const slack = buildSlackButton(meta.slack);
   if (slack) ctaRow.append(slack);
 
-  const heroInner = el('div', { class: 'session-header-inner' },
+  const heroInner = el(
+    'div',
+    { class: 'session-header-inner' },
     breadcrumb,
     buildPills(tags),
     titleEl,
@@ -253,4 +277,7 @@ export default function decorate(block) {
 
   // Remove the original h1 from main now that the hero owns the title.
   if (h1 && h1 !== titleEl) h1.remove();
+
+  // Swap the <span class="icon icon-*"> markers for inline SVGs from /icons/.
+  decorateIcons(block);
 }

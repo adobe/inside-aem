@@ -1,4 +1,4 @@
-import { loadCSS } from '../../scripts/lib-franklin.js';
+import { loadCSS, decorateIcons } from '../../scripts/lib-franklin.js';
 import { buildSessionCard } from '../session-card/session-card.js';
 
 const INDEX_URL = '/en/aicoc-index.json';
@@ -12,7 +12,11 @@ let cache = null; // memoized fetch result so multiple feeds on a page share dat
 
 function parseTags(raw) {
   if (!raw) return [];
-  return String(raw).replace(/[[\]"]/g, '').split(',').map((s) => s.trim()).filter(Boolean);
+  return String(raw)
+    .replace(/[[\]"]/g, '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function normalize(row) {
@@ -122,12 +126,14 @@ function renderSkeletons(grid, count = 6) {
     const s = document.createElement('div');
     s.className = 'session-card-skeleton';
     s.setAttribute('aria-hidden', 'true');
-    s.innerHTML = '<div class="ssk-media"></div>'
-      + '<div class="ssk-body">'
-      +   '<div class="ssk-line ssk-line-long"></div>'
-      +   '<div class="ssk-line ssk-line-medium"></div>'
-      +   '<div class="ssk-line ssk-line-short"></div>'
-      + '</div>';
+    s.innerHTML = `
+      <div class="ssk-media"></div>
+      <div class="ssk-body">
+        <div class="ssk-line ssk-line-long"></div>
+        <div class="ssk-line ssk-line-medium"></div>
+        <div class="ssk-line ssk-line-short"></div>
+      </div>
+    `;
     grid.append(s);
   }
 }
@@ -243,6 +249,9 @@ export default async function decorate(block) {
     }
     visibleCount = end;
     loadMoreWrap.hidden = visibleCount >= filtered.length;
+    // Swap any <span class="icon icon-*"> markers (e.g. the card play overlay)
+    // for inline SVGs from /icons/.
+    decorateIcons(grid);
   }
 
   function refilter() {

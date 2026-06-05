@@ -19,7 +19,7 @@
 .session-card:hover,
 .session-card:focus-visible {
   border-color: #EB1000;
-  box-shadow: 0 8px 24px rgba(235, 16, 0, 0.12);
+  box-shadow: 0 8px 24px rgb(235 16 0 / 12%);
   transform: translateY(-3px);
   text-decoration: none;
 }
@@ -44,8 +44,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(600px 300px at 80% 20%, rgba(235, 16, 0, 0.45), transparent 60%),
-    radial-gradient(500px 300px at 10% 90%, rgba(255, 59, 47, 0.30), transparent 60%),
+    radial-gradient(600px 300px at 80% 20%, rgb(235 16 0 / 45%), transparent 60%),
+    radial-gradient(500px 300px at 10% 90%, rgb(255 59 47 / 30%), transparent 60%),
     linear-gradient(135deg, #0b0b0d 0%, #1c0707 100%);
 }
 
@@ -59,10 +59,10 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #fff;
-  background: linear-gradient(90deg, rgba(235, 16, 0, 0.95), rgba(255, 59, 47, 0.95));
+  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
   border-radius: 999px;
   z-index: 1;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
 }
 
 .session-card-play {
@@ -76,13 +76,27 @@
   transition: opacity 0.2s ease;
 }
 
+.session-card-play .icon,
 .session-card-play svg {
   width: 56px;
   height: 56px;
   color: #fff;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.45));
+  fill: #fff;
+  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 45%));
   transform: scale(0.85);
   transition: transform 0.2s ease;
+}
+
+.session-card-play .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.session-card-play .icon svg {
+  width: 100%;
+  height: 100%;
+  filter: none;
 }
 
 .session-card:hover .session-card-play,

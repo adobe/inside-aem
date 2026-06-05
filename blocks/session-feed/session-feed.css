@@ -52,7 +52,7 @@ main .session-feed {
 .session-feed-search input:focus {
   outline: none;
   border-color: #EB1000;
-  box-shadow: 0 0 0 3px rgba(235, 16, 0, 0.12);
+  box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
 }
 
 .session-feed-search input::placeholder { color: #8a8a90; }
@@ -73,7 +73,7 @@ main .session-feed {
 .session-feed-presenter:focus {
   outline: none;
   border-color: #EB1000;
-  box-shadow: 0 0 0 3px rgba(235, 16, 0, 0.12);
+  box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
 }
 
 .session-feed-count {

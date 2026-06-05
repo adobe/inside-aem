@@ -52,11 +52,11 @@ export function buildSessionCard(session, eager = false) {
   }
 
   // Play-button overlay so the recording affordance is visible.
+  // The inner <span class="icon icon-play"> is swapped for the inline SVG by
+  // decorateIcons() in session-feed.js after the card is appended.
   media.insertAdjacentHTML(
     'beforeend',
-    '<span class="session-card-play" aria-hidden="true">'
-      + '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
-    + '</span>',
+    '<span class="session-card-play" aria-hidden="true"><span class="icon icon-play"></span></span>',
   );
 
   // ── body ──────────────────────────────────────────────────────────────

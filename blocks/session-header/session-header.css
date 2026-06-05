@@ -24,8 +24,8 @@ main .session-header {
   padding: 64px 32px 56px;
   color: #fff;
   background:
-    radial-gradient(1100px 520px at 88% -10%, rgba(235, 16, 0, 0.55), transparent 62%),
-    radial-gradient(900px 600px at -8% 115%, rgba(255, 59, 47, 0.35), transparent 60%),
+    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
     linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
 }
 
@@ -34,9 +34,9 @@ main .session-header {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px),
-    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
   background-size: 80px 80px, 60px 60px, 120px 120px;
   pointer-events: none;
 }
@@ -93,8 +93,8 @@ main .session-header {
 }
 
 .session-header-pill {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgb(255 255 255 / 14%);
+  border: 1px solid rgb(255 255 255 / 18%);
   color: #fff;
   padding: 6px 14px;
   border-radius: 999px;
@@ -106,7 +106,7 @@ main .session-header {
 }
 
 .session-header-pill-format {
-  background: linear-gradient(90deg, rgba(235, 16, 0, 0.95), rgba(255, 59, 47, 0.95));
+  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
   border-color: transparent;
 }
 
@@ -148,9 +148,24 @@ main .session-header h1.session-header-title {
   gap: 8px;
 }
 
-.session-header-meta-item svg {
+.session-header-meta-item svg,
+.session-header-meta-item .icon svg {
   flex-shrink: 0;
   opacity: 0.85;
+  width: 16px;
+  height: 16px;
+}
+
+/* The icon span is inline-flex so the SVG inherits sizing cleanly. */
+.session-header .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.session-header .btn .icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .session-header-presenters {
@@ -176,7 +191,7 @@ main .session-header h1.session-header-title {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgb(255 255 255 / 40%);
   margin-left: -8px;
 }
 
@@ -208,20 +223,20 @@ main .session-header .btn:hover { transform: translateY(-1px); text-decoration: 
 main .session-header .btn-primary {
   background: #fff;
   color: #0b0b0d;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 25%);
 }
 
 main .session-header .btn-secondary {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgb(255 255 255 / 10%);
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.30);
+  border-color: rgb(255 255 255 / 30%);
   backdrop-filter: blur(6px);
 }
 
 main .session-header .btn-tertiary {
   background: transparent;
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.30);
+  border-color: rgb(255 255 255 / 30%);
 }
 
 /* Inline iframe embed (Stream / YouTube / Vimeo only) */
@@ -233,7 +248,7 @@ main .session-header .btn-tertiary {
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
 }
 
 .session-header-embed iframe {
@@ -292,6 +307,7 @@ main .session-header .btn-tertiary {
   overflow-wrap: anywhere;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 .session-header-meta-val a { color: #EB1000; text-decoration: none; }
 .session-header-meta-val a:hover { text-decoration: underline; }
 
@@ -320,6 +336,6 @@ main .session-header .btn-tertiary {
   }
 
   .session-header-sidebar-card {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 10%);
   }
 }
