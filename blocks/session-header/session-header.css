@@ -302,21 +302,25 @@ main .session-header .btn-tertiary {
   }
 
   .session-header-hero {
-    padding: 80px 48px 64px;
+    /* Extra bottom padding leaves room for the sidebar card to fit inside
+     * the hero without poking out the bottom. */
+    padding: 80px 48px 120px;
   }
 
-  /* Hero content (title, description, meta row, CTAs) reserves the right
-   * lane so it doesn't run under the sidebar card. */
-  .session-header-inner {
-    padding-right: calc(320px + 24px);
+  /* Title + description span the full hero width — only the meta row and
+   * the CTA row need to leave space for the sidebar, since the sidebar is
+   * anchored to the bottom-right. */
+  .session-header-meta-row-inline,
+  .session-header-ctas {
+    max-width: calc(100% - 360px);
   }
 
-  /* Sidebar lives in the top-right of the hero. Absolute positioning keeps
-   * it fully inside the hero picture regardless of hero-content height. */
+  /* Sidebar lives in the BOTTOM-right of the hero. Absolute positioning
+   * keeps it fully inside the hero picture regardless of content height. */
   .session-header-sidebar {
     position: absolute;
-    top: 80px;
     right: 48px;
+    bottom: 48px;
     width: 320px;
     margin: 0;
     padding: 0;
