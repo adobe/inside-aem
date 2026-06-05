@@ -305,6 +305,13 @@ main .session-header .btn-tertiary {
     padding: 80px 48px 64px;
   }
 
+  /* The sidebar floats over the bottom-right of the hero. Hero content
+   * (title, description, meta row, CTAs) must NOT extend into that zone or
+   * the sidebar card will sit on top of it. Cap the right side here. */
+  .session-header-inner {
+    padding-right: calc(320px + 24px);
+  }
+
   /* Sidebar floats over the hero on the right, like a card pulled out. */
   .session-header-sidebar {
     grid-column: 2;
