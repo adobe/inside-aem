@@ -1,17 +1,5 @@
 import { getMetadata, createOptimizedPicture, decorateIcons } from '../../scripts/lib-franklin.js';
 
-/**
- * Hosts whose URLs can safely be iframe-embedded as a video player.
- * Anything else (SharePoint, intranet, unknown) renders as a "Watch recording"
- * button that opens in a new tab.
- */
-const EMBEDDABLE_HOSTS = new Set([
-  'web.microsoftstream.com',
-  'youtube.com',
-  'www.youtube.com',
-  'youtu.be',
-]);
-
 // Icon markers — replaced with inline SVG by decorateIcons() at end of decorate.
 // SVG sources live in /icons/<name>.svg.
 const icon = (name) => `<span class="icon icon-${name}"></span>`;
@@ -65,30 +53,18 @@ function splitCommaList(raw) {
 }
 
 /**
- * Build the recording widget. SharePoint and unknown hosts render as a
- * "Watch recording" button (opens in a new tab). Public Stream / YouTube
- * URLs become an inline iframe.
+ * Build the recording button — opens the recording in a new tab.
+ * SharePoint URLs get a "Watch on SharePoint" label; everything else gets
+ * "Watch recording".
  */
 function buildRecording(url) {
   if (!url) return null;
   let host = '';
-  try { host = new URL(url).hostname.toLowerCase(); } catch (_) { /* malformed */ }
-
-  if (EMBEDDABLE_HOSTS.has(host)) {
-    return el(
-      'div',
-      { class: 'session-header-embed' },
-      el('iframe', {
-        src: url,
-        title: 'Session recording',
-        allowFullscreen: true,
-        frameBorder: '0',
-        allow: 'autoplay; encrypted-media; picture-in-picture',
-      }),
-    );
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch (_) {
+    // Malformed URL — fall through with empty host; we still render the link.
   }
-
-  // Default: SharePoint or unknown → button (opens in a new tab)
   const label = host.includes('sharepoint.com') ? 'Watch on SharePoint' : 'Watch recording';
   return el('a', {
     class: 'btn btn-primary',
