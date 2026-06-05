@@ -129,44 +129,6 @@ function buildPills(tags) {
   return row;
 }
 
-function buildSidebar({
-  sessionDate, presenter, recording, deck, slack,
-}) {
-  const rows = [];
-  const addRow = (k, v) => {
-    if (!v) return;
-    rows.push(
-      el(
-        'div',
-        { class: 'session-header-meta-row' },
-        el('span', { class: 'session-header-meta-key' }, k),
-        el('span', { class: 'session-header-meta-val', html: v }),
-      ),
-    );
-  };
-  addRow('Date', formatSessionDate(sessionDate));
-  addRow('Presenters', splitCommaList(presenter).join('<br>'));
-  if (recording) addRow('Recording', `<a href="${recording}" target="_blank" rel="noopener">Open ↗</a>`);
-  if (deck) addRow('Slides', `<a href="${deck}" target="_blank" rel="noopener">Open ↗</a>`);
-  if (slack) {
-    const t = String(slack).trim();
-    const href = /^https?:\/\//i.test(t) ? t : '#';
-    addRow('Slack', `<a href="${href}" target="_blank" rel="noopener">${t}</a>`);
-  }
-
-  if (!rows.length) return null;
-  return el(
-    'aside',
-    { class: 'session-header-sidebar' },
-    el(
-      'div',
-      { class: 'session-header-sidebar-card' },
-      el('h3', { class: 'session-header-sidebar-title' }, 'Session details'),
-      el('div', { class: 'session-header-meta' }, ...rows),
-    ),
-  );
-}
-
 export default function decorate(block) {
   // Pull session metadata from the page head.
   const meta = {
@@ -231,16 +193,19 @@ export default function decorate(block) {
 
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
 
-  // ── Optional background image ─────────────────────────────────────────
-  // If the doc has a hero picture, use it as a subtle dark-tinted backdrop.
+  // ── Hero figure ──────────────────────────────────────────────────────
+  // If the doc has a hero picture (the first <picture> in <main>), place
+  // it inside the hero on the right side as a focal card, and remove the
+  // original from <main> so the doc doesn't show it twice in the body.
   if (heroPicture) {
     const img = heroPicture.querySelector('img');
     if (img && img.src) {
-      const optimised = createOptimizedPicture(img.src, img.alt || '', true, [{ width: '1600' }]);
-      optimised.classList.add('session-header-bg-picture');
-      hero.prepend(optimised);
-      hero.classList.add('has-bg');
-      // Remove from <main> so the doc doesn't show it twice.
+      const optimised = createOptimizedPicture(img.src, img.alt || '', true, [{ width: '750' }]);
+      const figure = document.createElement('figure');
+      figure.className = 'session-header-figure';
+      figure.append(optimised);
+      hero.append(figure);
+      hero.classList.add('has-figure');
       heroPicture.closest('p')?.remove();
     }
   }
@@ -248,8 +213,6 @@ export default function decorate(block) {
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';
   block.append(hero);
-  const sidebar = buildSidebar(meta);
-  if (sidebar) block.append(sidebar);
 
   // Remove the original h1 from main now that the hero owns the title.
   if (h1 && h1 !== titleEl) h1.remove();

@@ -41,19 +41,21 @@ main .session-header {
   pointer-events: none;
 }
 
-.session-header-bg-picture {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.18;
-  pointer-events: none;
+/* Hero figure (the first picture from the doc, placed on the right of the
+ * hero as a focal card). On mobile it stacks below the content. On desktop
+ * it's absolutely positioned in the bottom-right (see media query below). */
+.session-header-figure {
+  margin: 28px 0 0;
+  padding: 0;
 }
 
-.session-header-bg-picture img {
+.session-header-figure picture,
+.session-header-figure img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.7);
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
 }
 
 .session-header-inner {
@@ -239,96 +241,35 @@ main .session-header .btn-tertiary {
   border-color: rgb(255 255 255 / 30%);
 }
 
-/* ── SIDEBAR ──────────────────────────────────────────────────────────── */
-.session-header-sidebar {
-  padding: 28px 32px 8px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.session-header-sidebar-card {
-  border: 1px solid var(--color-gray-200, #e5e5e7);
-  background: #fff;
-  border-radius: 12px;
-  padding: 18px 20px;
-}
-
-.session-header-sidebar-title {
-  margin: 0 0 12px;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-gray-600, #6e6e73);
-  font-weight: 700;
-}
-
-.session-header-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.session-header-meta-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  line-height: 1.4;
-}
-
-.session-header-meta-key {
-  color: var(--color-gray-600, #6e6e73);
-  flex-shrink: 0;
-}
-
-.session-header-meta-val {
-  color: #0b0b0d;
-  text-align: right;
-  font-weight: 500;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-/* stylelint-disable-next-line no-descending-specificity */
-.session-header-meta-val a { color: #EB1000; text-decoration: none; }
-.session-header-meta-val a:hover { text-decoration: underline; }
-
-/* ── DESKTOP: sidebar absolutely positioned INSIDE the hero ───────────── */
+/* ── DESKTOP: figure floats on the right INSIDE the hero ──────────────── */
 @media (min-width: 960px) {
-  /* Anchor for the absolutely-positioned sidebar so it sits within the hero
+  /* Anchor for the absolutely-positioned figure so it sits within the hero
    * picture, not below it. */
   main .session-header {
     position: relative;
   }
 
   .session-header-hero {
-    /* Extra bottom padding leaves room for the sidebar card to fit inside
+    /* Extra bottom padding leaves room for the figure card to fit inside
      * the hero without poking out the bottom. */
     padding: 80px 48px 120px;
   }
 
-  /* Title + description span the full hero width — only the meta row and
-   * the CTA row need to leave space for the sidebar, since the sidebar is
-   * anchored to the bottom-right. */
-  .session-header-meta-row-inline,
-  .session-header-ctas {
+  /* When the doc has a hero picture, the meta row and CTA row leave a lane
+   * on the right so they don't run under the figure. Title and description
+   * always span the full hero width. */
+  .session-header.has-figure .session-header-meta-row-inline,
+  .session-header.has-figure .session-header-ctas {
     max-width: calc(100% - 360px);
   }
 
-  /* Sidebar lives in the BOTTOM-right of the hero. Absolute positioning
-   * keeps it fully inside the hero picture regardless of content height. */
-  .session-header-sidebar {
+  /* The figure card itself: bottom-right of the hero, 320px wide. */
+  .session-header.has-figure .session-header-figure {
     position: absolute;
     right: 48px;
     bottom: 48px;
     width: 320px;
     margin: 0;
-    padding: 0;
-    max-width: none;
     z-index: 2;
-  }
-
-  .session-header-sidebar-card {
-    box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
   }
 }
