@@ -132,21 +132,21 @@ body.aicoc-hub main hr {
   display: none;
 }
 
-/* Any section in main BEYOND the first one gets the light background. */
+/* Any section in main BEYOND the first one gets the light background.
+ * Vertical padding here also acts as breathing room above the feed so the
+ * hero ends crisply and the feed isn't crammed against it. */
 /* stylelint-disable-next-line no-descending-specificity */
 body.aicoc-hub main > div ~ div {
   background: var(--aicoc-bg);
-  padding: 32px 0 48px;
+  padding: 24px 0 32px;
 }
 
 /* Defensive: if the session-feed somehow ends up nested in the hero div
- * (e.g. author forgets the "---" separator), force a light backdrop on the
- * feed block itself so the controls + cards don't render on dark gradient. */
+ * (e.g. author forgets the "---" separator), force readable text colour on
+ * the controls + empty state. We don't paint an explicit background here —
+ * the surrounding section (body.aicoc-hub main > div ~ div) supplies it. */
 body.aicoc-hub .session-feed {
-  background: var(--aicoc-bg);
   color: var(--aicoc-ink);
-  padding-top: 40px;
-  border-radius: 0;
 }
 
 /* ─── /aicoc/<session> page body styling ──────────────────────────────── */

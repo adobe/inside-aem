@@ -94,7 +94,6 @@ main .session-feed {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  min-height: 200px;
 }
 
 @media (min-width: 600px) {
@@ -110,6 +109,11 @@ main .session-feed {
   display: flex;
   justify-content: center;
   margin-top: 32px;
+}
+
+/* The `hidden` attribute must beat `display: flex` above. */
+.session-feed-load-more-wrap[hidden] {
+  display: none;
 }
 
 .session-feed-load-more {
@@ -139,12 +143,13 @@ main .session-feed {
 .session-feed-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 48px 16px;
-  color: #4a4a4f;
+  padding: 24px 16px;
+  color: #2c2c2e;
 }
 
-.session-feed-empty p { margin: 0 0 8px; }
-.session-feed-empty p:first-child { font-size: 18px; color: #0b0b0d; }
+.session-feed-empty p { margin: 0 0 6px; line-height: 1.5; }
+.session-feed-empty p:first-child { font-size: 17px; color: #0b0b0d; font-weight: 600; }
+.session-feed-empty p:last-child { color: #6e6e73; font-size: 14px; }
 
 /* ── skeleton ─────────────────────────────────────────────────────────── */
 .session-card-skeleton {
