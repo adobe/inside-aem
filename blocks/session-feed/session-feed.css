@@ -22,11 +22,13 @@ main .session-feed {
 
 @media (min-width: 720px) {
   .session-feed-controls {
-    /* Search takes remaining space; dropdown fixed at 220px; count auto. */
-    grid-template-columns: 1fr 220px auto;
+    /* Search + presenter sit on one row; count is on a second row, centered
+     * across the full width. */
+    grid-template-columns: 1fr 220px;
     align-items: center;
   }
 }
+
 
 .session-feed-search {
   position: relative;
@@ -88,11 +90,14 @@ main .session-feed {
   box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
 }
 
+/* The count badge sits on its own row below the search + presenter, centered
+ * across the full width of the controls grid. */
 .session-feed-count {
+  grid-column: 1 / -1;
+  margin-top: 4px;
   font-size: 13px;
   color: #6e6e73;
-  white-space: nowrap;
-  text-align: right;
+  text-align: center;
 }
 
 /* ── grid ─────────────────────────────────────────────────────────────── */
@@ -100,6 +105,10 @@ main .session-feed {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+
+  /* Each card sizes to its own content; no vertical stretching to match
+   * the tallest sibling. */
+  align-items: start;
 }
 
 @media (min-width: 600px) {

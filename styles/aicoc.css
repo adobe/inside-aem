@@ -31,14 +31,39 @@ body.aicoc {
   color: var(--aicoc-ink);
 }
 
-/* Soften the existing blog-default body padding so our heroes can run
- * edge-to-edge without a white margin around them. */
+/* EDS boilerplate (styles.css) adds:
+ *   - margin-top: 128px above main .section:first-of-type
+ *   - padding: 0 2rem on main .section > div
+ * Both are wrong for our edge-to-edge heroes — reset them on AI CoC pages.
+ * Higher specificity via body class so we beat the boilerplate. */
 body.aicoc main {
   padding-left: 0;
   padding-right: 0;
 }
 
-body.aicoc main > div {
+body.aicoc main > div,
+body.aicoc main .section {
+  max-width: unset;
+}
+
+body.aicoc main .section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Reset the section-inner padding for the session-header so the dark
+ * hero is truly flush to the viewport edge — its own internal padding
+ * (set in session-header.css) handles content spacing. */
+body.aicoc-session main .session-header-container > div {
+  padding: 0;
+  max-width: unset;
+}
+
+/* Same for the hub hero — the first section's <div> should have no
+ * additional padding from the boilerplate. Hero CSS provides its own. */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div:first-of-type > div {
+  padding: 0;
   max-width: unset;
 }
 
@@ -55,6 +80,7 @@ body.aicoc main a:hover { color: var(--aicoc-accent-3); }
  * automatically. No custom block needed for the hub page.
  */
 
+/* stylelint-disable-next-line no-descending-specificity */
 body.aicoc-hub main > div:first-of-type {
   position: relative;
   overflow: hidden;
@@ -153,6 +179,7 @@ body.aicoc-hub .session-feed {
 
 /* The session-header block owns the top of the page. The body section
  * that follows contains the article copy. Give it readable column width. */
+/* stylelint-disable-next-line no-descending-specificity */
 body.aicoc-session main > div:not(.session-header-container) {
   max-width: 800px;
   margin: 0 auto;
