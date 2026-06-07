@@ -261,11 +261,29 @@ function buildImageBlocks(mainEl) {
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
+function buildSessionHeader(mainEl) {
+  // Placeholder block. The actual hero (presenter, date, recording CTA, deck,
+  // Slack) is composed by blocks/session-header/session-header.js, which reads
+  // page metadata directly. We just mark the slot at the top of <main>.
+  const div = document.createElement('div');
+  div.append(buildBlock('session-header', { elems: [] }));
+  mainEl.prepend(div);
+}
+
 function buildAutoBlocks(main) {
   removeStylingFromImages(main);
   try {
     buildHeroBlock(main);
-    if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
+    // AI CoC session pages get a custom hero; the regular article header would
+    // misrepresent the metadata, so route to buildSessionHeader instead.
+    // Opt-in is driven by `Theme: aicoc, aicoc-session` in doc metadata —
+    // decorateTemplateAndTheme() in loadEager has already set the body class.
+    const isAicocSession = document.body.classList.contains('aicoc-session');
+    if (isAicocSession) {
+      if (getMetadata('publication-date') && !main.querySelector('.session-header')) {
+        buildSessionHeader(main);
+      }
+    } else if (getMetadata('publication-date') && !main.querySelector('.article-header')) {
       buildArticleHeader(main);
       addArticleToHistory();
     }
@@ -461,6 +479,13 @@ export function getTaxonomy() {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  // AI CoC: opt-in via `Theme: aicoc, aicoc-session` (or aicoc-hub) in the
+  // doc's Metadata block. decorateTemplateAndTheme() above already added the
+  // matching body classes — here we just eager-load the theme CSS so the dark
+  // hero doesn't flash unstyled. Pages without `Theme: aicoc` are untouched.
+  if (document.body.classList.contains('aicoc')) {
+    loadCSS(`${window.hlx.codeBasePath}/styles/aicoc.css`);
+  }
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);

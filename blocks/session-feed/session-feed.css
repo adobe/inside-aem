@@ -1,0 +1,202 @@
+/* AI CoC — session feed.
+ * Renders the grid of session cards on /en/aicochub.
+ * Self-contained styling; assumes body.aicoc context but degrades gracefully.
+ */
+
+main .session-feed-container > div { max-width: unset; }
+
+main .session-feed {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+/* ── controls (search + presenter dropdown + count) ───────────────────── */
+.session-feed-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 720px) {
+  .session-feed-controls {
+    /* Search + presenter sit on one row; count is on a second row, centered
+     * across the full width. */
+    grid-template-columns: 1fr 220px;
+    align-items: center;
+  }
+}
+
+
+.session-feed-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.session-feed-search svg {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  fill: #6e6e73;
+  pointer-events: none;
+}
+
+/* Shared field reset so the search box and dropdown line up exactly.
+ * We avoid line-height because <select> ignores it and uses its own
+ * internal text centering, which then misaligns vs the <input>.
+ * Vertical centring is done with matching top/bottom padding and a
+ * consistent total height across both controls. */
+.session-feed-search input,
+.session-feed-presenter {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  border: 1px solid #d5d5d9;
+  border-radius: 10px;
+  background: #fff;
+  color: #0b0b0d;
+  vertical-align: middle;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
+}
+
+.session-feed-search input { padding-left: 42px; }
+
+.session-feed-search input::placeholder { color: #8a8a90; }
+
+/* Custom chevron for the native <select> so it lines up with the inputs. */
+.session-feed-presenter {
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%236e6e73' d='M6 8 0 0h12z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+.session-feed-search input:focus,
+.session-feed-presenter:focus {
+  outline: none;
+  border-color: #EB1000;
+  box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
+}
+
+/* The count badge sits on its own row below the search + presenter, centered
+ * across the full width of the controls grid. */
+.session-feed-count {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6e6e73;
+  text-align: center;
+}
+
+/* ── grid ─────────────────────────────────────────────────────────────── */
+.session-feed-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+
+  /* Each card sizes to its own content; no vertical stretching to match
+   * the tallest sibling. */
+  align-items: start;
+}
+
+@media (min-width: 600px) {
+  .session-feed-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 960px) {
+  .session-feed-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── load more ────────────────────────────────────────────────────────── */
+.session-feed-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* The `hidden` attribute must beat `display: flex` above. */
+.session-feed-load-more-wrap[hidden] {
+  display: none;
+}
+
+.session-feed-load-more {
+  padding: 12px 28px;
+  background: #0b0b0d;
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.session-feed-load-more:hover {
+  background: #EB1000;
+  transform: translateY(-1px);
+}
+
+.session-feed-load-more:focus-visible {
+  outline: 2px solid #EB1000;
+  outline-offset: 2px;
+}
+
+/* ── empty state ──────────────────────────────────────────────────────── */
+.session-feed-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px 16px;
+  color: #2c2c2e;
+}
+
+.session-feed-empty p { margin: 0 0 6px; line-height: 1.5; }
+.session-feed-empty p:first-child { font-size: 17px; color: #0b0b0d; font-weight: 600; }
+.session-feed-empty p:last-child { color: #6e6e73; font-size: 14px; }
+
+/* ── skeleton ─────────────────────────────────────────────────────────── */
+.session-card-skeleton {
+  background: #fff;
+  border: 1px solid #e5e5e7;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.session-card-skeleton .ssk-media {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(90deg, #f0f0f3 25%, #e5e5e7 50%, #f0f0f3 75%);
+  background-size: 200% 100%;
+  animation: ssk-shimmer 1.5s infinite;
+}
+
+.session-card-skeleton .ssk-body { padding: 20px 22px; }
+
+.session-card-skeleton .ssk-line {
+  height: 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #f0f0f3 25%, #e5e5e7 50%, #f0f0f3 75%);
+  background-size: 200% 100%;
+  animation: ssk-shimmer 1.5s infinite;
+}
+
+.session-card-skeleton .ssk-line-short { width: 40%; }
+.session-card-skeleton .ssk-line-medium { width: 65%; }
+.session-card-skeleton .ssk-line-long { width: 90%; }
+
+@keyframes ssk-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

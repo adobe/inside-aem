@@ -1,0 +1,298 @@
+/* AI CoC — session header block.
+ * Only renders on /en/aicoc/<slug> pages where body.aicoc-session is set.
+ * Styles are namespaced under .session-header to avoid any blog leakage.
+ */
+
+main .session-header-container,
+main .session-header-wrapper,
+main .session-header {
+  max-width: unset;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+main .session-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────────── */
+.session-header-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 32px 56px;
+  color: #fff;
+  background:
+    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+}
+
+.session-header-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
+  background-size: 80px 80px, 60px 60px, 120px 120px;
+  pointer-events: none;
+}
+
+/* Hero figure (the first picture from the doc, placed on the right of the
+ * hero as a focal card). On mobile it stacks below the content. On desktop
+ * it's absolutely positioned in the bottom-right (see media query below).
+ *
+ * Sizing rules: the picture must FIT — never be cut. We give the figure a
+ * fixed width and a generous max-height; object-fit: contain on the <img>
+ * preserves aspect for both wide (banner-style) and tall (portrait) images.
+ * Any unused space inside the rounded card shows the dark backdrop, which
+ * blends with the hero's deep red gradient. */
+.session-header-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0 0;
+  padding: 0;
+  width: 100%;
+  max-height: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1a0606;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
+}
+
+.session-header-figure picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 380px;
+}
+
+.session-header-figure img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+}
+
+.session-header-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* breadcrumb */
+.session-header-breadcrumb {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.session-header-breadcrumb a {
+  color: #fff;
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.session-header-breadcrumb a:hover { text-decoration: underline; }
+.session-header-breadcrumb-sep { opacity: 0.35; }
+.session-header-breadcrumb-current { opacity: 0.6; }
+
+/* pills */
+.session-header-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.session-header-pill {
+  background: rgb(255 255 255 / 14%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+.session-header-pill-format {
+  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
+  border-color: transparent;
+}
+
+/* title */
+main .session-header h1.session-header-title {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
+  color: #fff;
+  max-width: 900px;
+}
+
+/* description */
+.session-header-description {
+  font-size: 17px;
+  line-height: 1.55;
+  opacity: 0.88;
+  max-width: 760px;
+  margin: 0 0 26px;
+  color: #fff;
+}
+
+/* meta row */
+.session-header-meta-row-inline {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 14px;
+  opacity: 0.92;
+  margin-bottom: 30px;
+}
+
+.session-header-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-header-meta-item svg,
+.session-header-meta-item .icon svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+  width: 16px;
+  height: 16px;
+}
+
+/* The icon span is inline-flex so the SVG inherits sizing cleanly. */
+.session-header .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.session-header .btn .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.session-header-presenters {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.session-header-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.session-header-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #B30C00, #EB1000);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgb(255 255 255 / 40%);
+  margin-left: -8px;
+}
+
+.session-header-avatar:first-child { margin-left: 0; }
+
+/* CTAs */
+.session-header-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+main .session-header .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+main .session-header .btn:hover { transform: translateY(-1px); text-decoration: none; }
+
+main .session-header .btn-primary {
+  background: #fff;
+  color: #0b0b0d;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 25%);
+}
+
+main .session-header .btn-secondary {
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  border-color: rgb(255 255 255 / 30%);
+  backdrop-filter: blur(6px);
+}
+
+main .session-header .btn-tertiary {
+  background: transparent;
+  color: #fff;
+  border-color: rgb(255 255 255 / 30%);
+}
+
+/* ── DESKTOP: figure floats on the right INSIDE the hero ──────────────── */
+@media (min-width: 960px) {
+  /* Anchor for the absolutely-positioned figure so it sits within the hero
+   * picture, not below it. */
+  main .session-header {
+    position: relative;
+  }
+
+  .session-header-hero {
+    /* Extra bottom padding leaves room for the figure card to fit inside
+     * the hero without poking out the bottom. */
+    padding: 80px 48px 120px;
+  }
+
+  /* When the doc has a hero picture, the meta row and CTA row leave a lane
+   * on the right so they don't run under the figure. Title and description
+   * always span the full hero width. */
+  .session-header.has-figure .session-header-meta-row-inline,
+  .session-header.has-figure .session-header-ctas {
+    max-width: calc(100% - 360px);
+  }
+
+  /* The figure card itself: bottom-right of the hero, 320px wide. */
+  .session-header.has-figure .session-header-figure {
+    position: absolute;
+    right: 48px;
+    bottom: 48px;
+    width: 320px;
+    margin: 0;
+    z-index: 2;
+  }
+}

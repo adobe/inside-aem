@@ -1,0 +1,220 @@
+/* AI CoC — body-level theme.
+ *
+ * Loaded eagerly by scripts.js when the URL contains /aicoc/ or /aicochub.
+ * Scoped under .aicoc / .aicoc-hub / .aicoc-session body classes so NOTHING
+ * here can leak into the regular blog rendering.
+ *
+ * Block-specific styling lives next to each block:
+ *   - blocks/session-header/  → individual session page hero
+ *   - blocks/session-card/    → cards used by the feed
+ *   - blocks/session-feed/    → search + filter + grid on /aicochub
+ *
+ * This file covers:
+ *   - shared design tokens (CSS custom properties)
+ *   - body background + page-wide typography tweaks
+ *   - the /aicochub landing page hero (no separate block needed — the first
+ *     <div> in <main> becomes the hero through CSS alone)
+ */
+
+body.aicoc {
+  --aicoc-accent-1: #EB1000;   /* Adobe red */
+  --aicoc-accent-2: #FF3B2F;   /* coral, for gradients */
+  --aicoc-accent-3: #B30C00;   /* deep red, for hover/pressed */
+  --aicoc-ink: #0b0b0d;
+  --aicoc-ink-2: #2c2c2e;
+  --aicoc-muted: #6e6e73;
+  --aicoc-border: #e5e5e7;
+  --aicoc-bg: #fafafa;
+  --aicoc-card: #fff;
+
+  background-color: var(--aicoc-bg);
+  color: var(--aicoc-ink);
+}
+
+/* EDS boilerplate (styles.css) adds:
+ *   - margin-top: 128px above main .section:first-of-type
+ *   - padding: 0 2rem on main .section > div
+ * Both are wrong for our edge-to-edge heroes — reset them on AI CoC pages.
+ * Higher specificity via body class so we beat the boilerplate. */
+body.aicoc main {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+body.aicoc main > div,
+body.aicoc main .section {
+  max-width: unset;
+}
+
+body.aicoc main .section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Reset the section-inner padding for the session-header so the dark
+ * hero is truly flush to the viewport edge — its own internal padding
+ * (set in session-header.css) handles content spacing. */
+body.aicoc-session main .session-header-container > div {
+  padding: 0;
+  max-width: unset;
+}
+
+/* Same for the hub hero — the first section's <div> should have no
+ * additional padding from the boilerplate. Hero CSS provides its own. */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div:first-of-type > div {
+  padding: 0;
+  max-width: unset;
+}
+
+/* Tighten H tags inside AI CoC body content. The blog stylesheet's defaults
+ * are still in play; these are nudges, not overrides. */
+body.aicoc main h2 { letter-spacing: -0.01em; }
+body.aicoc main a { color: var(--aicoc-accent-1); }
+body.aicoc main a:hover { color: var(--aicoc-accent-3); }
+
+/* ─── /aicochub landing hero ────────────────────────────────────────────
+ *
+ * The author writes a plain H1 + tagline + session-feed in the Word doc.
+ * The first <div> in <main> (the H1 + tagline section) becomes a styled hero
+ * automatically. No custom block needed for the hub page.
+ */
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div:first-of-type {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 24px 72px;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+}
+
+body.aicoc-hub main > div:first-of-type::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
+  background-size: 80px 80px, 60px 60px, 120px 120px;
+  pointer-events: none;
+}
+
+body.aicoc-hub main > div:first-of-type > * {
+  position: relative;
+  z-index: 1;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Title */
+body.aicoc-hub main > div:first-of-type h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
+  color: #fff;
+}
+
+/* "Eyebrow" pill above the H1 — if author writes a small paragraph BEFORE
+ * the H1, treat it as an eyebrow. */
+body.aicoc-hub main > div:first-of-type > p:first-child {
+  display: inline-block;
+  margin: 0 auto 18px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
+  border-radius: 999px;
+}
+
+/* Tagline paragraph(s) after the H1 */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div:first-of-type p {
+  font-size: clamp(15px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: rgb(255 255 255 / 88%);
+  margin: 0 auto 18px;
+  max-width: 720px;
+}
+
+/* If the H1 is wrapped in a <picture> auto-block (rare), neutralise. */
+body.aicoc-hub main > div:first-of-type picture { display: none; }
+
+/* Section that follows the hero (where session-feed sits). The author break
+ * is "---" in the doc, which EDS converts into an <hr> element that signals
+ * a new section. We don't render that hr — its job is purely structural. */
+body.aicoc-hub main hr {
+  display: none;
+}
+
+/* Any section in main BEYOND the first one gets the light background.
+ * Vertical padding here also acts as breathing room above the feed so the
+ * hero ends crisply and the feed isn't crammed against it. */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-hub main > div ~ div {
+  background: var(--aicoc-bg);
+  padding: 24px 0 32px;
+}
+
+/* Defensive: if the session-feed somehow ends up nested in the hero div
+ * (e.g. author forgets the "---" separator), force readable text colour on
+ * the controls + empty state. We don't paint an explicit background here —
+ * the surrounding section (body.aicoc-hub main > div ~ div) supplies it. */
+body.aicoc-hub .session-feed {
+  color: var(--aicoc-ink);
+}
+
+/* ─── /aicoc/<session> page body styling ──────────────────────────────── */
+
+/* The session-header block owns the top of the page. The body section
+ * that follows contains the article copy. Give it readable column width. */
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-session main > div:not(.session-header-container) {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+body.aicoc-session main > div:not(.session-header-container) p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--aicoc-ink-2);
+}
+
+body.aicoc-session main > div:not(.session-header-container) h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 36px 0 14px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) h2:first-child {
+  margin-top: 8px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) ul,
+body.aicoc-session main > div:not(.session-header-container) ol {
+  padding-left: 22px;
+}
+
+body.aicoc-session main > div:not(.session-header-container) ul li,
+body.aicoc-session main > div:not(.session-header-container) ol li {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--aicoc-ink-2);
+  margin-bottom: 8px;
+}
+
+/* Back-to-hub navigation is provided by the breadcrumb in session-header.
+ * No separate footer link needed. */

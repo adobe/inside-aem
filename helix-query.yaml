@@ -45,3 +45,67 @@ indices:
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
 
+  aicoc:
+    include:
+      - /en/aicoc/*
+    exclude:
+      - '**/Document.*'
+    target: /en/aicoc-index.xlsx
+    properties:
+      title:
+        select: main h1:first-of-type
+        value: |
+          textContent(el)
+      author:
+        select: head > meta[name="author"]
+        value: |
+          attribute(el, 'content')
+      date:
+        select: head > meta[name="publication-date"]
+        value: |
+          attribute(el, 'content')
+      sessionDate:
+        select: head > meta[name="session-date"]
+        value: |
+          attribute(el, 'content')
+      presenter:
+        select: head > meta[name="presenter"]
+        value: |
+          attribute(el, 'content')
+      recording:
+        select: head > meta[name="recording"]
+        value: |
+          attribute(el, 'content')
+      deck:
+        select: head > meta[name="deck"]
+        value: |
+          attribute(el, 'content')
+      slack:
+        select: head > meta[name="slack"]
+        value: |
+          attribute(el, 'content')
+      image:
+        select: head > meta[property="og:image"]
+        value: |
+          match(attribute(el, 'content'), 'https:\/\/[^/]+(\/.*)')
+      imageAlt:
+        select: head > meta[property="og:image:alt"]
+        value: |
+          attribute(el, 'content')
+      description:
+        select: head > meta[name="description"]
+        value: |
+          attribute(el, 'content')
+      tags:
+        select: head > meta[property="article:tag"]
+        values: |
+          attribute(el, 'content')
+      robots:
+        select: head > meta[name="robots"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+
