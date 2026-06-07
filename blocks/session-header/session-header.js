@@ -142,10 +142,14 @@ export default function decorate(block) {
   const description = getMetadata('description');
   const tags = getMetadata('article:tag', true) || [];
 
-  // Borrow the h1 + first picture from <main> so they don't appear twice.
+  // Borrow the h1 from <main>. The first picture has already been moved into
+  // the block by buildSessionHeader() in scripts.js (it has to happen there,
+  // before buildImageBlocks wraps the picture in an <images> block which our
+  // decorator would otherwise fail to find).
   const main = block.closest('main') || document.querySelector('main');
   const h1 = main.querySelector('h1');
-  const heroPicture = main.querySelector('picture');
+  const figureSlot = block.querySelector('.session-header-figure-slot');
+  const heroPicture = figureSlot ? figureSlot.querySelector('picture') : null;
 
   // Fall back to author when presenter wasn't filled in.
   const presenterText = meta.presenter || author || '';
@@ -194,9 +198,9 @@ export default function decorate(block) {
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
 
   // ── Hero figure ──────────────────────────────────────────────────────
-  // If the doc has a hero picture (the first <picture> in <main>), place
-  // it inside the hero on the right side as a focal card, and remove the
-  // original from <main> so the doc doesn't show it twice in the body.
+  // The picture was moved into the block by buildSessionHeader() before
+  // buildImageBlocks could touch it, so it's just sitting in figureSlot.
+  // Build the right-side figure card from it and clean up the slot.
   if (heroPicture) {
     const img = heroPicture.querySelector('img');
     if (img && img.src) {
@@ -206,23 +210,9 @@ export default function decorate(block) {
       figure.append(optimised);
       hero.append(figure);
       hero.classList.add('has-figure');
-
-      // Remove the original picture from <main>. Walk up to the nearest
-      // wrapping <p> or <div> that exists solely to hold this picture and
-      // drop it; if the wrapper has other text/content we leave it alone
-      // and just yank the picture node itself.
-      const wrapper = heroPicture.parentElement;
-      heroPicture.remove();
-      if (
-        wrapper
-        && wrapper !== main
-        && !wrapper.textContent.trim()
-        && wrapper.children.length === 0
-      ) {
-        wrapper.remove();
-      }
     }
   }
+  if (figureSlot) figureSlot.remove();
 
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';
