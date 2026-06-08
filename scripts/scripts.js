@@ -1,3 +1,5 @@
+// Touched 2026-06-08 to force a fresh Helix code deploy (CDN was stuck on the
+// pre-AI-CoC version of this file). No functional change.
 import {
   buildBlock,
   createOptimizedPicture,
