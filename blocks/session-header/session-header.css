@@ -41,45 +41,8 @@ main .session-header {
   pointer-events: none;
 }
 
-/* Hero figure (the first picture from the doc, placed on the right of the
- * hero as a focal card). On mobile it stacks below the content. On desktop
- * it's absolutely positioned in the bottom-right (see media query below).
- *
- * Sizing rules: the picture must FIT — never be cut. We give the figure a
- * fixed width and a generous max-height; object-fit: contain on the <img>
- * preserves aspect for both wide (banner-style) and tall (portrait) images.
- * Any unused space inside the rounded card shows the dark backdrop, which
- * blends with the hero's deep red gradient. */
-.session-header-figure {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 28px 0 0;
-  padding: 0;
-  width: 100%;
-  max-height: 380px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #1a0606;
-  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
-}
-
-.session-header-figure picture {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-height: 380px;
-}
-
-.session-header-figure img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 380px;
-  object-fit: contain;
-}
+/* The hero deliberately doesn't carry an image — pictures from the doc
+ * flow in the body below, as normal article content. */
 
 .session-header-inner {
   position: relative;
@@ -264,35 +227,9 @@ main .session-header .btn-tertiary {
   border-color: rgb(255 255 255 / 30%);
 }
 
-/* ── DESKTOP: figure floats on the right INSIDE the hero ──────────────── */
+/* ── DESKTOP ───────────────────────────────────────────────────────────── */
 @media (min-width: 960px) {
-  /* Anchor for the absolutely-positioned figure so it sits within the hero
-   * picture, not below it. */
-  main .session-header {
-    position: relative;
-  }
-
   .session-header-hero {
-    /* Extra bottom padding leaves room for the figure card to fit inside
-     * the hero without poking out the bottom. */
-    padding: 80px 48px 120px;
-  }
-
-  /* When the doc has a hero picture, the meta row and CTA row leave a lane
-   * on the right so they don't run under the figure. Title and description
-   * always span the full hero width. */
-  .session-header.has-figure .session-header-meta-row-inline,
-  .session-header.has-figure .session-header-ctas {
-    max-width: calc(100% - 360px);
-  }
-
-  /* The figure card itself: bottom-right of the hero, 320px wide. */
-  .session-header.has-figure .session-header-figure {
-    position: absolute;
-    right: 48px;
-    bottom: 48px;
-    width: 320px;
-    margin: 0;
-    z-index: 2;
+    padding: 80px 48px 64px;
   }
 }

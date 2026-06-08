@@ -262,31 +262,14 @@ function buildImageBlocks(mainEl) {
  * @param {Element} main The container element
  */
 function buildSessionHeader(mainEl) {
-  // The actual hero (presenter, date, recording CTA, deck, Slack, figure
-  // image) is composed by blocks/session-header/session-header.js. We do
-  // two things here, BEFORE the rest of buildAutoBlocks runs:
-  //   1. Insert the session-header block placeholder at the top of <main>.
-  //   2. Move the first <picture>'s paragraph into the block as a slot.
-  //      We have to grab the picture here — buildImageBlocks runs later in
-  //      buildAutoBlocks and replaces <p><picture></p> with an <images>
-  //      block, which we don't want to touch. The decorator reads the
-  //      stashed picture from the block instead of re-querying <main>.
+  // Placeholder block — the actual hero (pills, title, description, meta
+  // row, CTAs) is composed by blocks/session-header/session-header.js,
+  // which reads page metadata directly. The hero deliberately does NOT
+  // include any picture; if the doc has pictures they flow inline in the
+  // body section like normal article content.
   const div = document.createElement('div');
-  const block = buildBlock('session-header', { elems: [] });
-  div.append(block);
+  div.append(buildBlock('session-header', { elems: [] }));
   mainEl.prepend(div);
-
-  const heroPicture = mainEl.querySelector('picture');
-  if (heroPicture) {
-    const wrapper = heroPicture.closest('p') || heroPicture.parentElement;
-    if (wrapper && wrapper !== mainEl) {
-      const slot = document.createElement('div');
-      slot.className = 'session-header-figure-slot';
-      slot.hidden = true;
-      slot.append(wrapper);
-      block.append(slot);
-    }
-  }
 }
 
 function buildAutoBlocks(main) {
