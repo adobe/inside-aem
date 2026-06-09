@@ -75,14 +75,40 @@ function buildRecording(url) {
   });
 }
 
+/**
+ * Heuristic: does this URL point to a SharePoint folder rather than a single
+ * file? Two patterns we care about:
+ *   - `:f:` share-link prefix (SharePoint's "Anyone with link can view" folder)
+ *   - Path-form URLs with no file extension after the last `/`
+ * Folders get a "Browse decks" label + folder icon since there's no single
+ * slide deck to download — the user needs to pick one inside the folder.
+ */
+function isFolderUrl(url) {
+  if (!url) return false;
+  if (/\/:f:\//i.test(url)) return true;
+  try {
+    const u = new URL(url);
+    const last = u.pathname.split('/').filter(Boolean).pop() || '';
+    // Decode to handle %20 etc. — a folder name like "10-30-24 Show & Tell"
+    // has no dot in it.
+    const decoded = decodeURIComponent(last);
+    return !/\.[a-z0-9]{2,5}$/i.test(decoded);
+  } catch (_) {
+    return false;
+  }
+}
+
 function buildDeckButton(url) {
   if (!url) return null;
+  const folder = isFolderUrl(url);
+  const label = folder ? 'Browse decks' : 'Slides';
+  const iconName = folder ? 'folder' : 'download';
   return el('a', {
     class: 'btn btn-secondary',
     href: url,
     target: '_blank',
     rel: 'noopener',
-    html: `${icon('download')}<span>Slides</span>`,
+    html: `${icon(iconName)}<span>${label}</span>`,
   });
 }
 
