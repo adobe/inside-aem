@@ -49,6 +49,9 @@ export function buildSessionCard(session, eager = false) {
 
   const card = document.createElement('a');
   card.className = 'session-card';
+  // Tag image-less cards so the CSS can collapse the empty 16:9 media area
+  // to a compact pill strip — otherwise it's just dead space above the title.
+  if (!image) card.classList.add('session-card--no-image');
   card.href = path;
 
   // ── media ─────────────────────────────────────────────────────────────

@@ -161,6 +161,30 @@
   color: #c5c5cd;
 }
 
+/* ── No-image cards ───────────────────────────────────────────────────────
+ * Today none of the AI CoC sessions have a per-session cover image, so
+ * every card hits this branch. The 16/9 dark-gradient placeholder no
+ * longer justifies its space — collapse it to a compact strip that just
+ * holds the AI COC pill. (Hover play overlay also hidden — no thumbnail
+ * to "play" into.) Applied in both light and dark mode for consistency.
+ *
+ * The `--no-image` modifier is intentional BEM-style on top of the kebab
+ * base class — disable the linter for these two selectors only.
+ */
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+.session-card--no-image .session-card-media {
+  aspect-ratio: auto;
+  min-height: 44px;
+  background: transparent;
+  border-bottom: 1px solid #ececef;
+}
+
+.session-card--no-image .session-card-placeholder,
+.session-card--no-image .session-card-play {
+  display: none;
+}
+/* stylelint-enable selector-class-pattern, no-descending-specificity */
+
 /* ── Dark mode ────────────────────────────────────────────────────────────
  * The AI CoC hub is intentionally dark-themed even in light mode (red
  * gradient hero), so a bright white card body sitting on a near-black page
@@ -201,26 +225,9 @@
     color: #555;
   }
 
-  /* When the session has no cover image, the dark gradient placeholder
-   * fills 16/9 of the card with empty space above the title. In light
-   * mode that's a deliberate dark band for visual separation; in dark
-   * mode it merges with the now-dark card body, leaving a void with
-   * just the format pill floating in it. Collapse to a compact strip. */
-  .session-card-media:has(.session-card-placeholder) {
-    aspect-ratio: auto;
-    min-height: 48px;
-    background: transparent;
-  }
-
-  /* The placeholder gradient is redundant on a dark card. */
-  .session-card-placeholder {
-    display: none;
-  }
-
-  /* The play overlay assumes a 16/9 media area to center inside. With the
-   * collapsed strip, the icon would render half-out-of-bounds. Hide it
-   * when there's no image (no thumbnail to "play" anyway). */
-  .session-card-media:has(.session-card-placeholder) .session-card-play {
-    display: none;
+  /* Dark variant of the no-image media strip — softer border. */
+  /* stylelint-disable-next-line selector-class-pattern */
+  .session-card--no-image .session-card-media {
+    border-bottom-color: #2a2a2e;
   }
 }
