@@ -175,11 +175,12 @@ body.aicoc-hub main > div ~ div {
   background: transparent;
 }
 
-/* Dark mode: tint the body bg so the contained dark hero still stands out
- * against the surrounding page (which would otherwise be pure white). */
+/* Dark mode: match the body bg to the hero's darkest gradient stop so the
+ * hero's rounded corners blend seamlessly with the page instead of showing
+ * lighter-grey corners. */
 @media (prefers-color-scheme: dark) {
   body.aicoc {
-    background-color: #0e0e10;
+    background-color: #0b0b0d;
   }
 }
 
