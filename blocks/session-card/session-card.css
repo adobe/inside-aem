@@ -160,3 +160,44 @@
 .session-card-sep {
   color: #c5c5cd;
 }
+
+/* ── Dark mode ────────────────────────────────────────────────────────────
+ * The AI CoC hub is intentionally dark-themed even in light mode (red
+ * gradient hero), so a bright white card body sitting on a near-black page
+ * looks jarring when the OS dark mode is on. Mirror the page tone by
+ * darkening the card itself and flipping the text colors.
+ *
+ * Scoped under prefers-color-scheme so light-mode rendering is byte-identical.
+ */
+@media (prefers-color-scheme: dark) {
+  .session-card {
+    background: #1a1a1c;
+    border-color: #2a2a2e;
+  }
+
+  .session-card:hover,
+  .session-card:focus-visible {
+    /* Brighter shadow so the hover lift still reads on a dark page. */
+    box-shadow: 0 8px 24px rgb(0 0 0 / 60%);
+  }
+
+  .session-card-title {
+    color: #f0f0f0;
+  }
+
+  .session-card-description {
+    color: #c5c5c9;
+  }
+
+  .session-card-meta {
+    color: #888;
+  }
+
+  .session-card-presenter {
+    color: #f0f0f0;
+  }
+
+  .session-card-sep {
+    color: #555;
+  }
+}
