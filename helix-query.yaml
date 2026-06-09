@@ -80,6 +80,10 @@ indices:
         select: head > meta[name="deck"]
         value: |
           attribute(el, 'content')
+      blog:
+        select: head > meta[name="blog"]
+        value: |
+          attribute(el, 'content')
       slack:
         select: head > meta[name="slack"]
         value: |
