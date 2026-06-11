@@ -177,9 +177,20 @@ body.aicoc-hub main > div ~ div {
 
 /* Dark mode: match the body bg to the hero's darkest gradient stop so the
  * hero's rounded corners blend seamlessly with the page instead of showing
- * lighter-grey corners. */
+ * lighter-grey corners.
+ *
+ * Belt-and-suspenders: also update the --aicoc-bg variable (used by any
+ * remaining var() references), and explicitly set the same colour on <main>
+ * so the page gutters are dark even if the body rule is overridden elsewhere
+ * in the cascade. */
 @media (prefers-color-scheme: dark) {
   body.aicoc {
+    --aicoc-bg: #0b0b0d;
+    --aicoc-card: #2d2d33;
+    background-color: #0b0b0d;
+  }
+
+  body.aicoc main {
     background-color: #0b0b0d;
   }
 }
