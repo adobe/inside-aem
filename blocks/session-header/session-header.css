@@ -18,6 +18,7 @@ main .session-header {
 }
 
 /* ── HERO ─────────────────────────────────────────────────────────────── */
+
 /* Contained, rounded hero — matches the /aicochub landing hero: a centred
  * dark block with the page background showing on either side, rather than
  * a full-bleed edge-to-edge band. */
@@ -57,26 +58,32 @@ main .session-header {
   margin: 0 auto;
 }
 
-/* breadcrumb */
+/* breadcrumb
+ * Explicit colours (no stacked opacity) so it stays legible on the dark
+ * hero. The link colour is set with extra specificity to beat the theme's
+ * `body.aicoc main a` red rule. */
 .session-header-breadcrumb {
   font-size: 13px;
   letter-spacing: 0.04em;
-  opacity: 0.75;
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.session-header-breadcrumb a {
-  color: #fff;
-  opacity: 0.85;
+body.aicoc-session .session-header-breadcrumb a {
+  color: #ff6a5e;
+  opacity: 1;
   text-decoration: none;
 }
 
-.session-header-breadcrumb a:hover { text-decoration: underline; }
-.session-header-breadcrumb-sep { opacity: 0.35; }
-.session-header-breadcrumb-current { opacity: 0.6; }
+body.aicoc-session .session-header-breadcrumb a:hover {
+  color: #ff8a80;
+  text-decoration: underline;
+}
+
+.session-header-breadcrumb-sep { color: rgb(255 255 255 / 45%); }
+.session-header-breadcrumb-current { color: rgb(255 255 255 / 80%); }
 
 /* pills */
 .session-header-pills {
