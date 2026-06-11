@@ -147,9 +147,8 @@
 }
 
 /* ── body (white area) ─────────────────────────────────────────────────
- * Description + presenter. No title (in the media area) and no date (the
- * feed is sorted chronologically, so the date doesn't earn its real estate
- * inside the card).
+ * Description + meta row (date · presenter). Title lives in the dark media
+ * area above; only the secondary details are in the white body.
  */
 .session-card-body {
   padding: 16px 18px 18px;
@@ -170,10 +169,98 @@
   overflow: hidden;
 }
 
-.session-card-presenter {
+/* Meta row — "Jun 2, 2026 · Presenter Name" */
+.session-card-meta {
   font-size: 13px;
-  font-weight: 600;
-  color: #0b0b0d;
+  color: #6e6e73;
   margin: 0;
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.session-card-presenter {
+  font-weight: 600;
+  color: #0b0b0d;
+}
+
+.session-card-sep {
+  color: #c5c5cd;
+}
+
+/* ── No-image cards ───────────────────────────────────────────────────────
+ * Today none of the AI CoC sessions have a per-session cover image, so
+ * every card hits this branch. The 16/9 dark-gradient placeholder no
+ * longer justifies its space — collapse it to a compact strip that just
+ * holds the AI COC pill. (Hover play overlay also hidden — no thumbnail
+ * to "play" into.) Applied in both light and dark mode for consistency.
+ *
+ * The `--no-image` modifier is intentional BEM-style on top of the kebab
+ * base class — disable the linter for these two selectors only.
+ */
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+.session-card--no-image .session-card-media {
+  aspect-ratio: auto;
+  min-height: 44px;
+  background: transparent;
+  border-bottom: 1px solid #ececef;
+}
+
+.session-card--no-image .session-card-placeholder,
+.session-card--no-image .session-card-play {
+  display: none;
+}
+/* stylelint-enable selector-class-pattern, no-descending-specificity */
+
+/* ── Dark mode ────────────────────────────────────────────────────────────
+ * The AI CoC hub is intentionally dark-themed even in light mode (red
+ * gradient hero), so a bright white card body sitting on a near-black page
+ * looks jarring when the OS dark mode is on. Mirror the page tone by
+ * darkening the card itself and flipping the text colors.
+ *
+ * Scoped under prefers-color-scheme so light-mode rendering is byte-identical.
+ */
+@media (prefers-color-scheme: dark) {
+  .session-card {
+    /* Lighter than the page bg (#0b0b0d) so cards lift visibly. The
+     * earlier #1a1a1c was too close to the page tone and the cards
+     * blended in. */
+    background: #2d2d33;
+    border-color: #3d3d44;
+  }
+
+  .session-card:hover,
+  .session-card:focus-visible {
+    /* Brighter shadow so the hover lift still reads on a dark page. */
+    box-shadow: 0 8px 24px rgb(0 0 0 / 60%);
+  }
+
+  .session-card-title {
+    color: #f5f5f7;
+  }
+
+  .session-card-description {
+    color: #d4d4d8;
+  }
+
+  .session-card-meta {
+    color: #9a9aa0;
+  }
+
+  .session-card-presenter {
+    color: #f5f5f7;
+  }
+
+  .session-card-sep {
+    color: #666;
+  }
+
+  /* Dark variant of the no-image media strip — softer border matching the
+   * lighter card body. */
+  /* stylelint-disable-next-line selector-class-pattern */
+  .session-card--no-image .session-card-media {
+    border-bottom-color: #3d3d44;
+  }
 }

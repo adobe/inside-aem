@@ -1,6 +1,30 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 
 /**
+ * Format whatever the index gives us for sessionDate into a short,
+ * human-readable string. Word doc cells that look like dates get serialised
+ * as Excel serial numbers ("46175") by the publishing pipeline — without
+ * this, the card shows the raw serial. Plain MM-DD-YYYY strings get
+ * pretty-formatted too.
+ */
+function formatSessionDate(raw) {
+  if (!raw) return '';
+  const t = String(raw).trim();
+  let d = null;
+  const m = t.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+  if (m) {
+    d = new Date(Date.UTC(+m[3], +m[1] - 1, +m[2]));
+  } else if (/^\d+$/.test(t)) {
+    // Excel serial → JS Date. Same epoch math as session-feed.js.
+    d = new Date(Math.round((Number(t) - (1 + 25567 + 1)) * 86400 * 1000));
+  }
+  if (!d || Number.isNaN(d.getTime())) return t;
+  return d.toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+  });
+}
+
+/**
  * Build a session card.
  *
  * Used inside `session-feed` to render each row from /en/aicoc-index.json.
@@ -30,12 +54,16 @@ export function buildSessionCard(session, eager = false) {
     description,
     image,
     imageAlt,
+    sessionDate,
     presenter,
     tags = [],
   } = session;
 
   const card = document.createElement('a');
   card.className = 'session-card';
+  // Tag image-less cards so the CSS can collapse the empty 16:9 media area
+  // to a compact pill strip — otherwise it's just dead space above the title.
+  if (!image) card.classList.add('session-card--no-image');
   card.href = path;
 
   // ── media (dark area) ────────────────────────────────────────────────
@@ -94,12 +122,14 @@ export function buildSessionCard(session, eager = false) {
     body.append(descEl);
   }
 
-  if (presenter) {
-    const presEl = document.createElement('p');
-    presEl.className = 'session-card-presenter';
-    presEl.textContent = presenter;
-    body.append(presEl);
-  }
+  const meta = document.createElement('p');
+  meta.className = 'session-card-meta';
+  const parts = [];
+  const dateText = formatSessionDate(sessionDate);
+  if (dateText) parts.push(`<span class="session-card-date">${dateText}</span>`);
+  if (presenter) parts.push(`<span class="session-card-presenter">${presenter}</span>`);
+  meta.innerHTML = parts.join('<span class="session-card-sep">·</span>');
+  body.append(meta);
 
   card.append(media, body);
   return card;

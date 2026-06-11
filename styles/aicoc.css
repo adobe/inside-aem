@@ -84,13 +84,19 @@ body.aicoc main a:hover { color: var(--aicoc-accent-3); }
 body.aicoc-hub main > div:first-of-type {
   position: relative;
   overflow: hidden;
-  padding: 80px 24px 72px;
+
+  /* Contained hero, not full-bleed — gives the page bg breathing room
+   * around a centered dark block, instead of dark edge-to-edge. */
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 64px 32px 56px;
+  border-radius: 24px;
   color: #fff;
   text-align: center;
   background:
     radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
     radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+    linear-gradient(to bottom, #0b0b0d 0%, #150506 100%);
 }
 
 body.aicoc-hub main > div:first-of-type::before {
@@ -158,13 +164,35 @@ body.aicoc-hub main hr {
   display: none;
 }
 
-/* Any section in main BEYOND the first one gets the light background.
- * Vertical padding here also acts as breathing room above the feed so the
- * hero ends crisply and the feed isn't crammed against it. */
+/* Any section in main BEYOND the first one (where the session-feed sits).
+ * Constrained to match the hero width, with the page bg showing on either
+ * side. */
 /* stylelint-disable-next-line no-descending-specificity */
 body.aicoc-hub main > div ~ div {
-  background: var(--aicoc-bg);
-  padding: 24px 0 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 0 48px;
+  background: transparent;
+}
+
+/* Dark mode: match the body bg to the hero's darkest gradient stop so the
+ * hero's rounded corners blend seamlessly with the page instead of showing
+ * lighter-grey corners.
+ *
+ * Belt-and-suspenders: also update the --aicoc-bg variable (used by any
+ * remaining var() references), and explicitly set the same colour on <main>
+ * so the page gutters are dark even if the body rule is overridden elsewhere
+ * in the cascade. */
+@media (prefers-color-scheme: dark) {
+  body.aicoc {
+    --aicoc-bg: #0b0b0d;
+    --aicoc-card: #2d2d33;
+    background-color: #0b0b0d;
+  }
+
+  body.aicoc main {
+    background-color: #0b0b0d;
+  }
 }
 
 /* Defensive: if the session-feed somehow ends up nested in the hero div
