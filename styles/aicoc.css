@@ -96,7 +96,7 @@ body.aicoc-hub main > div:first-of-type {
   background:
     radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
     radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+    linear-gradient(to bottom, #0b0b0d 0%, #150506 100%);
 }
 
 body.aicoc-hub main > div:first-of-type::before {
