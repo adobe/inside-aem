@@ -277,12 +277,12 @@ function buildSessionHeader(mainEl) {
 function buildAutoBlocks(main) {
   removeStylingFromImages(main);
   try {
-    buildHeroBlock(main);
     // AI CoC session pages get a custom hero; the regular article header would
     // misrepresent the metadata, so route to buildSessionHeader instead.
     // Opt-in is driven by `Theme: aicoc, aicoc-session` in doc metadata —
     // decorateTemplateAndTheme() in loadEager has already set the body class.
     const isAicocSession = document.body.classList.contains('aicoc-session');
+    if (!isAicocSession) buildHeroBlock(main);
     if (isAicocSession) {
       if (getMetadata('publication-date') && !main.querySelector('.session-header')) {
         buildSessionHeader(main);
