@@ -31,6 +31,18 @@ function formatSessionDate(raw) {
  * Pattern mirrors `buildArticleCard` in scripts.js — returns DOM directly so
  * the feed block can paginate cheaply without redecorating.
  *
+ * Layout:
+ *   ┌──────────────────────────────┐
+ *   │ [AI COC]                     │  ← dark media area (gradient or image)
+ *   │                              │     holds the format pill (top-left)
+ *   │                              │     and the session TITLE (bottom)
+ *   │  Session title goes here     │
+ *   ├──────────────────────────────┤
+ *   │ Short description text…      │  ← white body holds the description
+ *   │                              │     and the presenter name(s).
+ *   │ Presenter Names              │
+ *   └──────────────────────────────┘
+ *
  * @param {Object} session — one row from the index (already-typed by parseSessions in session-feed)
  * @param {boolean} eager — pass true for above-the-fold cards so the picture isn't lazy
  * @returns {HTMLAnchorElement}
@@ -54,22 +66,26 @@ export function buildSessionCard(session, eager = false) {
   if (!image) card.classList.add('session-card--no-image');
   card.href = path;
 
-  // ── media ─────────────────────────────────────────────────────────────
+  // ── media (dark area) ────────────────────────────────────────────────
+  // Holds: optional cover image, format pill, session title, play overlay.
   const media = document.createElement('div');
   media.className = 'session-card-media';
 
   if (image) {
     const picture = createOptimizedPicture(image, imageAlt || title, eager, [{ width: '600' }]);
+    picture.classList.add('session-card-media-picture');
     media.append(picture);
+    // Gradient overlay so the title stays legible over any image.
+    const scrim = document.createElement('div');
+    scrim.className = 'session-card-media-scrim';
+    scrim.setAttribute('aria-hidden', 'true');
+    media.append(scrim);
   } else {
-    // Visual placeholder so cards line up even without a hero image.
-    const placeholder = document.createElement('div');
-    placeholder.className = 'session-card-placeholder';
-    placeholder.setAttribute('aria-hidden', 'true');
-    media.append(placeholder);
+    // No image — the gradient placeholder is provided by .session-card-media's
+    // own background, so there's nothing to inject here.
   }
 
-  // Format badge (first tag — e.g. "Brownbag", "Deep Dive").
+  // Format badge (first tag — e.g. "Brownbag", "Show & Tell").
   const format = tags[0];
   if (format) {
     const badge = document.createElement('span');
@@ -78,7 +94,14 @@ export function buildSessionCard(session, eager = false) {
     media.append(badge);
   }
 
-  // Play-button overlay so the recording affordance is visible.
+  // Title lives inside the dark area now — the white body below is for the
+  // description and presenter only.
+  const titleEl = document.createElement('h3');
+  titleEl.className = 'session-card-title';
+  titleEl.textContent = title || '';
+  media.append(titleEl);
+
+  // Play-button overlay so the recording affordance is visible on hover.
   // The inner <span class="icon icon-play"> is swapped for the inline SVG by
   // decorateIcons() in session-feed.js after the card is appended.
   media.insertAdjacentHTML(
@@ -86,14 +109,11 @@ export function buildSessionCard(session, eager = false) {
     '<span class="session-card-play" aria-hidden="true"><span class="icon icon-play"></span></span>',
   );
 
-  // ── body ──────────────────────────────────────────────────────────────
+  // ── body (white area) ────────────────────────────────────────────────
+  // Description + presenter only. No title (in the dark area above) and no
+  // date (already encoded in the chronological order of the feed).
   const body = document.createElement('div');
   body.className = 'session-card-body';
-
-  const titleEl = document.createElement('h3');
-  titleEl.className = 'session-card-title';
-  titleEl.textContent = title || '';
-  body.append(titleEl);
 
   if (description) {
     const descEl = document.createElement('p');

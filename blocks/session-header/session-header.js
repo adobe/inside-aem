@@ -126,6 +126,22 @@ function buildSlackButton(slack) {
   });
 }
 
+/**
+ * "Read blog" CTA — points to the matching post on culture-tecture.adobe.com
+ * (or wherever the author put the canonical write-up). Opens in a new tab
+ * since most of these are off-domain on re-think.adobe.com.
+ */
+function buildBlogButton(url) {
+  if (!url) return null;
+  return el('a', {
+    class: 'btn btn-secondary',
+    href: url,
+    target: '_blank',
+    rel: 'noopener',
+    html: `${icon('book-open')}<span>Read blog</span>`,
+  });
+}
+
 function buildPresenters(presenterStr) {
   const presenters = splitCommaList(presenterStr);
   if (!presenters.length) return null;
@@ -162,6 +178,7 @@ export default function decorate(block) {
     sessionDate: getMetadata('session-date'),
     recording: getMetadata('recording'),
     deck: getMetadata('deck'),
+    blog: getMetadata('blog'),
     slack: getMetadata('slack'),
   };
   const author = getMetadata('author');
@@ -199,11 +216,14 @@ export default function decorate(block) {
   if (presenters) metaRow.append(presenters);
 
   // CTAs.
+  // Order: Watch recording (primary) → Slides/Browse decks → Read blog → Slack.
   const ctaRow = el('div', { class: 'session-header-ctas' });
   const watch = buildRecording(meta.recording);
   if (watch) ctaRow.append(watch);
   const deck = buildDeckButton(meta.deck);
   if (deck) ctaRow.append(deck);
+  const blog = buildBlogButton(meta.blog);
+  if (blog) ctaRow.append(blog);
   const slack = buildSlackButton(meta.slack);
   if (slack) ctaRow.append(slack);
 

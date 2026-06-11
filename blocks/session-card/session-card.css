@@ -1,6 +1,10 @@
 /* AI CoC — session card.
  * Rendered inside session-feed. Self-contained styling so the card looks
  * right wherever it's placed, but assumes body.aicoc context for theme tone.
+ *
+ * Layout:
+ *   - .session-card-media  — dark area: gradient/image, format pill, title
+ *   - .session-card-body   — white area: description + presenter
  */
 
 .session-card {
@@ -23,35 +27,50 @@
   text-decoration: none;
 }
 
-/* ── media ────────────────────────────────────────────────────────────── */
+/* ── media (dark area) ─────────────────────────────────────────────────
+ * Holds the format pill (top-left), the session title (bottom-left), and
+ * an optional cover image with a gradient scrim for legibility.
+ */
 .session-card-media {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #0b0b0d 0%, #1c0707 100%);
   overflow: hidden;
-}
-
-.session-card-media picture,
-.session-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.session-card-placeholder {
-  position: absolute;
-  inset: 0;
+  padding: 14px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   background:
     radial-gradient(600px 300px at 80% 20%, rgb(235 16 0 / 45%), transparent 60%),
     radial-gradient(500px 300px at 10% 90%, rgb(255 59 47 / 30%), transparent 60%),
     linear-gradient(135deg, #0b0b0d 0%, #1c0707 100%);
 }
 
-.session-card-format {
+/* When the session has its own cover image, the picture fills the media
+ * area underneath the title, and a dark scrim ensures the title stays
+ * readable regardless of the image's contrast. */
+.session-card-media-picture,
+.session-card-media-picture picture,
+.session-card-media-picture img {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.session-card-media-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 10%) 0%, rgb(0 0 0 / 65%) 100%);
+  z-index: 1;
+}
+
+.session-card-format {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
   padding: 5px 12px;
   font-size: 11px;
   font-weight: 700;
@@ -60,8 +79,27 @@
   color: #fff;
   background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
   border-radius: 999px;
-  z-index: 1;
   box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
+  margin-bottom: auto;
+}
+
+.session-card-title {
+  position: relative;
+  z-index: 2;
+  margin: 16px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 40%);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.session-card:hover .session-card-title {
+  color: #fff;
 }
 
 .session-card-play {
@@ -72,6 +110,7 @@
   justify-content: center;
   pointer-events: none;
   opacity: 0;
+  z-index: 3;
   transition: opacity 0.2s ease;
 }
 
@@ -107,28 +146,16 @@
   transform: scale(1);
 }
 
-/* ── body ─────────────────────────────────────────────────────────────── */
+/* ── body (white area) ─────────────────────────────────────────────────
+ * Description + meta row (date · presenter). Title lives in the dark media
+ * area above; only the secondary details are in the white body.
+ */
 .session-card-body {
   padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.session-card-title {
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #0b0b0d;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.session-card:hover .session-card-title {
-  color: #EB1000;
+  gap: 10px;
+  flex: 1;
 }
 
 .session-card-description {
@@ -137,23 +164,25 @@
   color: #4a4a4f;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+/* Meta row — "Jun 2, 2026 · Presenter Name" */
 .session-card-meta {
   font-size: 13px;
   color: #6e6e73;
   margin: 0;
+  margin-top: auto;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .session-card-presenter {
-  font-weight: 500;
+  font-weight: 600;
   color: #0b0b0d;
 }
 
