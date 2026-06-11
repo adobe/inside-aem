@@ -144,9 +144,13 @@ body.aicoc-hub main > div:first-of-type > p:first-child {
   border-radius: 999px;
 }
 
-/* Tagline paragraph(s) after the H1 */
+/* Tagline paragraph(s) after the H1.
+ * Direct-child (`> p`) only: when the author omits the `---` separator the
+ * session-feed renders inside this same first section, and a descendant
+ * selector here would paint the white card descriptions white too. Scoping
+ * to direct children keeps the tagline styled without leaking into the feed. */
 /* stylelint-disable-next-line no-descending-specificity */
-body.aicoc-hub main > div:first-of-type p {
+body.aicoc-hub main > div:first-of-type > p {
   font-size: clamp(15px, 1.8vw, 19px);
   line-height: 1.55;
   color: rgb(255 255 255 / 88%);

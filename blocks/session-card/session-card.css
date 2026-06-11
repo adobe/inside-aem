@@ -33,9 +33,13 @@
  */
 .session-card-media {
   position: relative;
-  aspect-ratio: 16 / 9;
+
+  /* Compact dark/cover band — roughly half the height of the white body
+   * below. Sized to fit the pill + a 2-line title rather than a tall
+   * 16:9 cover. */
+  min-height: 132px;
   overflow: hidden;
-  padding: 14px 18px 18px;
+  padding: 14px 18px 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -93,7 +97,7 @@
   color: #fff;
   text-shadow: 0 1px 12px rgb(0 0 0 / 40%);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -191,23 +195,15 @@
 }
 
 /* ── No-image cards ───────────────────────────────────────────────────────
- * Today none of the AI CoC sessions have a per-session cover image, so
- * every card hits this branch. The 16/9 dark-gradient placeholder no
- * longer justifies its space — collapse it to a compact strip that just
- * holds the AI COC pill. (Hover play overlay also hidden — no thumbnail
- * to "play" into.) Applied in both light and dark mode for consistency.
+ * Sessions without a per-session cover image keep the dark gradient band
+ * (with the format pill and the title) at the same compact height as image
+ * cards, so the dark area stays ~half the white body. We only drop the hover
+ * play overlay, since there's no thumbnail to "play" into.
  *
  * The `--no-image` modifier is intentional BEM-style on top of the kebab
- * base class — disable the linter for these two selectors only.
+ * base class — disable the linter for these selectors only.
  */
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
-.session-card--no-image .session-card-media {
-  aspect-ratio: auto;
-  min-height: 44px;
-  background: transparent;
-  border-bottom: 1px solid #ececef;
-}
-
 .session-card--no-image .session-card-placeholder,
 .session-card--no-image .session-card-play {
   display: none;
@@ -255,12 +251,5 @@
 
   .session-card-sep {
     color: #666;
-  }
-
-  /* Dark variant of the no-image media strip — softer border matching the
-   * lighter card body. */
-  /* stylelint-disable-next-line selector-class-pattern */
-  .session-card--no-image .session-card-media {
-    border-bottom-color: #3d3d44;
   }
 }
