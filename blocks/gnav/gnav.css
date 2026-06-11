@@ -677,3 +677,126 @@ button.gnav-toggle:after {
     max-width: 1440px;
   }
 }
+
+/* ── Dark mode ──────────────────────────────────────────────────────────────
+ * gnav.css is loaded as a block stylesheet (dynamically appended), so it
+ * arrives after styles.css in the cascade and its hard-coded #FFF / #2e2e2e
+ * values override every dark-mode rule placed in styles.css.  The only
+ * reliable fix is to put the dark-mode overrides here, after all the
+ * light-mode declarations.
+ */
+@media (prefers-color-scheme: dark) {
+  .gnav-wrapper {
+    background: #1a1a1a;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .gnav {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  /* All nav links */
+  .gnav a {
+    color: #e0e0e0;
+  }
+
+  button.gnav-toggle {
+    color: #e0e0e0;
+  }
+
+  /* Chevron on items with sub-menus */
+  .gnav-navitem.has-Menu > a:after {
+    border-color: #aaa;
+  }
+
+  /* Nav list (mobile: below wrapper; desktop: inline) */
+  .gnav .gnav-mainnav {
+    background: #1a1a1a;
+  }
+
+  .gnav-navitem a {
+    color: #e0e0e0;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .gnav-navitem > a:hover,
+  .gnav-navitem.has-Menu.is-Open > a {
+    background-color: #222;
+    color: #fff;
+  }
+
+  /* Open-state left-bar accent colour */
+  .gnav-navitem.has-Menu.is-Open:before {
+    background: #555;
+  }
+
+  /* Sub-menu panel */
+  .gnav-navitem-menu {
+    background-color: #1a1a1a;
+  }
+
+  .gnav-navitem.has-Menu.is-Open .gnav-navitem-menu {
+    border-top-color: #2a2a2a;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 50%);
+  }
+
+  .gnav-navitem-menu a:hover {
+    background-color: #222;
+    color: #7b9ff5;
+  }
+
+  /* Promo card inside sub-menu */
+  .gnav-promo {
+    background: #222;
+    border-color: #2a2a2a;
+  }
+
+  .gnav-promo a {
+    color: #7b9ff5;
+  }
+
+  /* Search bar */
+  .gnav-search-bar {
+    background: #1a1a1a;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .gnav-search-field svg {
+    fill: #aaa;
+  }
+
+  .gnav-search-field .gnav-search-input {
+    background: #222;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+  }
+
+  .gnav-search-input::placeholder {
+    color: #666;
+  }
+
+  .gnav-search-input:focus::placeholder,
+  .gnav-search-field:hover .gnav-search-input::placeholder {
+    color: #aaa;
+  }
+
+  /* Profile menu */
+  .gnav .gnav-profile-menu {
+    background: #1e1e1e;
+    border-color: #2a2a2a;
+  }
+
+  .gnav-profile-email {
+    color: #999;
+  }
+
+  .gnav-profile-actions a {
+    color: #c0c0c0;
+    border-top-color: #2a2a2a;
+  }
+
+  .gnav-profile-menu a:hover {
+    background-color: #2a2a2a;
+  }
+}
