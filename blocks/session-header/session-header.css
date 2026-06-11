@@ -18,10 +18,16 @@ main .session-header {
 }
 
 /* ── HERO ─────────────────────────────────────────────────────────────── */
+/* Contained, rounded hero — matches the /aicochub landing hero: a centred
+ * dark block with the page background showing on either side, rather than
+ * a full-bleed edge-to-edge band. */
 .session-header-hero {
   position: relative;
   overflow: hidden;
+  max-width: 1200px;
+  margin: 32px auto 0;
   padding: 64px 32px 56px;
+  border-radius: 24px;
   color: #fff;
   background:
     radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
