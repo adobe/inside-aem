@@ -186,8 +186,9 @@ code, pre, samp {
 
 code, samp {
   background-color: var(--overlay-background-color);
-  padding: 1em;
+  padding: .125em .375em;
   border-radius: .25em;
+  word-break: break-word;
 }
 
 pre code, pre samp {
