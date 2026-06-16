@@ -207,7 +207,8 @@ main pre {
   padding: 1em;
   border-radius: .25em;
   overflow-x: auto;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 a:any-link {
