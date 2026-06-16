@@ -246,3 +246,31 @@ main .session-header .btn-tertiary {
     padding: 80px 48px 64px;
   }
 }
+
+/* ── Brownbag variant (blue) ──────────────────────────────────────────────
+ * AI Assisted Brownbag sessions get a blue gradient hero instead of red.
+ */
+/* stylelint-disable selector-class-pattern */
+.session-header-hero--brownbag {
+  background:
+    radial-gradient(1100px 520px at 88% -10%, rgb(2 101 220 / 55%), transparent 62%),
+    radial-gradient(900px 600px at -8% 115%, rgb(55 142 240 / 35%), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #060e1a 55%, #06101c 100%);
+}
+
+.session-header-hero--brownbag .session-header-pill-format {
+  background: linear-gradient(90deg, rgb(2 101 220 / 95%), rgb(55 142 240 / 95%));
+}
+
+.session-header-hero--brownbag .session-header-breadcrumb a {
+  color: #6db3f2;
+}
+
+.session-header-hero--brownbag .session-header-breadcrumb a:hover {
+  color: #9ecef7;
+}
+
+.session-header-hero--brownbag .session-header-presenter-avatar {
+  background: linear-gradient(135deg, #0054B6, #0265DC);
+}
+/* stylelint-enable selector-class-pattern */

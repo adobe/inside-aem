@@ -210,6 +210,29 @@
 }
 /* stylelint-enable selector-class-pattern, no-descending-specificity */
 
+/* ── Brownbag variant (blue) ──────────────────────────────────────────────
+ * AI Assisted Brownbag sessions get a blue gradient instead of red.
+ * Only the media background, format badge, and hover accent change.
+ */
+/* stylelint-disable selector-class-pattern */
+.session-card--brownbag .session-card-media {
+  background:
+    radial-gradient(600px 300px at 80% 20%, rgb(2 101 220 / 45%), transparent 60%),
+    radial-gradient(500px 300px at 10% 90%, rgb(55 142 240 / 30%), transparent 60%),
+    linear-gradient(135deg, #0b0b0d 0%, #06101c 100%);
+}
+
+.session-card--brownbag .session-card-format {
+  background: linear-gradient(90deg, rgb(2 101 220 / 95%), rgb(55 142 240 / 95%));
+}
+
+.session-card--brownbag:hover,
+.session-card--brownbag:focus-visible {
+  border-color: #0265DC;
+  box-shadow: 0 8px 24px rgb(2 101 220 / 12%);
+}
+/* stylelint-enable selector-class-pattern */
+
 /* ── Dark mode ────────────────────────────────────────────────────────────
  * The AI CoC hub is intentionally dark-themed even in light mode (red
  * gradient hero), so a bright white card body sitting on a near-black page

@@ -64,6 +64,7 @@ export function buildSessionCard(session, eager = false) {
   // Tag image-less cards so the CSS can collapse the empty 16:9 media area
   // to a compact pill strip — otherwise it's just dead space above the title.
   if (!image) card.classList.add('session-card--no-image');
+  if (tags[0] && /brownbag/i.test(tags[0])) card.classList.add('session-card--brownbag');
   card.href = path;
 
   // ── media (dark area) ────────────────────────────────────────────────
