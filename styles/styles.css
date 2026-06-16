@@ -188,7 +188,8 @@ code, samp {
   background-color: var(--overlay-background-color);
   padding: .125em .375em;
   border-radius: .25em;
-  word-break: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 pre code, pre samp {
