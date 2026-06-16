@@ -10,7 +10,7 @@
 .session-card {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: #f5f5f7;
   border: 1px solid #e5e5e7;
   border-radius: 12px;
   overflow: hidden;
@@ -75,15 +75,15 @@
   position: relative;
   z-index: 2;
   align-self: flex-start;
-  padding: 5px 12px;
-  font-size: 11px;
+  padding: 3px 10px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #fff;
-  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
+  color: rgb(255 255 255 / 90%);
+  background: linear-gradient(90deg, rgb(235 16 0 / 80%), rgb(255 59 47 / 80%));
   border-radius: 999px;
-  box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
   margin-bottom: auto;
 }
 
@@ -208,6 +208,18 @@
 .session-card--no-image .session-card-play {
   display: none;
 }
+
+.session-card--no-image .session-card-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
+  background-size: 40px 40px, 30px 30px, 60px 60px;
+  pointer-events: none;
+}
 /* stylelint-enable selector-class-pattern, no-descending-specificity */
 
 /* ── Brownbag variant (blue) ──────────────────────────────────────────────
@@ -223,7 +235,7 @@
 }
 
 .session-card--brownbag .session-card-format {
-  background: linear-gradient(90deg, rgb(2 101 220 / 95%), rgb(55 142 240 / 95%));
+  background: linear-gradient(90deg, rgb(2 101 220 / 80%), rgb(55 142 240 / 80%));
 }
 
 .session-card--brownbag:hover,
