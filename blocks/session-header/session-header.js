@@ -239,7 +239,7 @@ export default function decorate(block) {
   );
 
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
-  if (tags[0] && /brownbag/i.test(tags[0])) hero.classList.add('session-header-hero--brownbag');
+  if (/brownbag/i.test(document.title)) hero.classList.add('session-header-hero--brownbag');
 
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';
