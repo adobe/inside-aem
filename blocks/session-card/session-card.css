@@ -45,8 +45,8 @@
   justify-content: flex-end;
   background:
     radial-gradient(600px 300px at 80% 20%, rgb(235 16 0 / 45%), transparent 60%),
-    radial-gradient(500px 300px at 10% 90%, rgb(255 59 47 / 30%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #1c0707 100%);
+    radial-gradient(400px 300px at 10% 90%, rgb(99 60 255 / 20%), transparent 60%),
+    linear-gradient(135deg, #080d1a 0%, #120609 100%);
 }
 
 /* When the session has its own cover image, the picture fills the media
@@ -80,10 +80,11 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 90%);
-  background: linear-gradient(90deg, rgb(235 16 0 / 80%), rgb(255 59 47 / 80%));
+  color: rgb(255 160 150 / 95%);
+  background: rgb(235 16 0 / 18%);
+  border: 1px solid rgb(235 16 0 / 35%);
   border-radius: 999px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+  box-shadow: none;
   margin-bottom: auto;
 }
 
@@ -230,12 +231,14 @@
 .session-card--brownbag .session-card-media {
   background:
     radial-gradient(600px 300px at 80% 20%, rgb(2 101 220 / 45%), transparent 60%),
-    radial-gradient(500px 300px at 10% 90%, rgb(55 142 240 / 30%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #06101c 100%);
+    radial-gradient(400px 300px at 10% 90%, rgb(99 60 255 / 20%), transparent 60%),
+    linear-gradient(135deg, #080d1a 0%, #060e1a 100%);
 }
 
 .session-card--brownbag .session-card-format {
-  background: linear-gradient(90deg, rgb(2 101 220 / 80%), rgb(55 142 240 / 80%));
+  background: rgb(2 101 220 / 18%);
+  border: 1px solid rgb(2 101 220 / 35%);
+  color: rgb(100 180 250 / 95%);
 }
 
 .session-card--brownbag:hover,
@@ -255,11 +258,8 @@
  */
 @media (prefers-color-scheme: dark) {
   .session-card {
-    /* Lighter than the page bg (#0b0b0d) so cards lift visibly. The
-     * earlier #1a1a1c was too close to the page tone and the cards
-     * blended in. */
-    background: #2d2d33;
-    border-color: #3d3d44;
+    background: #0d1325;
+    border-color: rgb(255 255 255 / 8%);
   }
 
   .session-card:hover,
