@@ -1,57 +1,47 @@
 /* AI CoC — session card.
- * Rendered inside session-feed. Self-contained styling so the card looks
- * right wherever it's placed, but assumes body.aicoc context for theme tone.
- *
  * Layout:
- *   - .session-card-media  — dark area: gradient/image, format pill, title
- *   - .session-card-body   — white area: description + presenter
+ *   - .session-card-media  — dark gradient area: AI CoC badge + title
+ *   - .session-card-body   — light area: format badge + date, description,
+ *                            divider, SP avatar + presenter
  */
 
 .session-card {
   display: flex;
   flex-direction: column;
-  background: #f5f5f7;
-  border: 1px solid #e5e5e7;
-  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e0e0e4;
+  border-radius: 20px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 }
 
 .session-card:hover,
 .session-card:focus-visible {
-  border-color: #EB1000;
-  box-shadow: 0 8px 24px rgb(235 16 0 / 12%);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 14%);
   transform: translateY(-3px);
   text-decoration: none;
 }
 
-/* ── media (dark area) ─────────────────────────────────────────────────
- * Holds the format pill (top-left), the session title (bottom-left), and
- * an optional cover image with a gradient scrim for legibility.
- */
+/* ── media (light tinted area) ─────────────────────────────────────────── */
+
 .session-card-media {
   position: relative;
-
-  /* Compact dark/cover band — roughly half the height of the white body
-   * below. Sized to fit the pill + a 2-line title rather than a tall
-   * 16:9 cover. */
-  min-height: 132px;
+  min-height: 160px;
   overflow: hidden;
-  padding: 14px 18px 16px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  /* Show & Tell default — warm red tint */
   background:
-    radial-gradient(600px 300px at 80% 20%, rgb(235 16 0 / 45%), transparent 60%),
-    radial-gradient(400px 300px at 10% 90%, rgb(99 60 255 / 20%), transparent 60%),
-    linear-gradient(135deg, #080d1a 0%, #120609 100%);
+    radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 50%), transparent 60%),
+    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 14%), transparent 60%),
+    linear-gradient(135deg, #ffe0e0 0%, #fff4f4 100%);
 }
 
-/* When the session has its own cover image, the picture fills the media
- * area underneath the title, and a dark scrim ensures the title stays
- * readable regardless of the image's contrast. */
 .session-card-media-picture,
 .session-card-media-picture picture,
 .session-card-media-picture img {
@@ -67,44 +57,40 @@
 .session-card-media-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(0 0 0 / 10%) 0%, rgb(0 0 0 / 65%) 100%);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0%) 0%, rgb(255 255 255 / 40%) 100%);
   z-index: 1;
 }
 
-.session-card-format {
+/* "AI CoC" ghost badge — top-left of the media area */
+.session-card-ai-badge {
   position: relative;
   z-index: 2;
   align-self: flex-start;
   padding: 3px 10px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: rgb(255 160 150 / 95%);
-  background: rgb(235 16 0 / 18%);
-  border: 1px solid rgb(235 16 0 / 35%);
+  color: rgb(235 16 0 / 60%);
+  background: rgb(235 16 0 / 6%);
+  border: 1px solid rgb(235 16 0 / 18%);
   border-radius: 999px;
-  box-shadow: none;
   margin-bottom: auto;
 }
 
 .session-card-title {
   position: relative;
   z-index: 2;
-  margin: 16px 0 0;
-  font-size: 18px;
+  margin: 14px 0 0;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1.3;
-  color: #fff;
-  text-shadow: 0 1px 12px rgb(0 0 0 / 40%);
+  color: #0b0b0d;
+  text-shadow: none;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.session-card:hover .session-card-title {
-  color: #fff;
 }
 
 .session-card-play {
@@ -121,11 +107,11 @@
 
 .session-card-play .icon,
 .session-card-play svg {
-  width: 56px;
-  height: 56px;
-  color: #fff;
-  fill: #fff;
-  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 45%));
+  width: 48px;
+  height: 48px;
+  color: rgb(235 16 0 / 80%);
+  fill: rgb(235 16 0 / 80%);
+  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 20%));
   transform: scale(0.85);
   transition: transform 0.2s ease;
 }
@@ -136,31 +122,47 @@
   justify-content: center;
 }
 
-.session-card-play .icon svg {
-  width: 100%;
-  height: 100%;
-  filter: none;
-}
+.session-card-play .icon svg { width: 100%; height: 100%; filter: none; }
 
 .session-card:hover .session-card-play,
-.session-card:focus-visible .session-card-play {
-  opacity: 1;
-}
+.session-card:focus-visible .session-card-play { opacity: 1; }
 
-.session-card:hover .session-card-play svg {
-  transform: scale(1);
-}
+.session-card:hover .session-card-play svg { transform: scale(1); }
 
-/* ── body (white area) ─────────────────────────────────────────────────
- * Description + meta row (date · presenter). Title lives in the dark media
- * area above; only the secondary details are in the white body.
- */
+/* ── body (light area) ─────────────────────────────────────────────────── */
+
 .session-card-body {
-  padding: 16px 18px 18px;
+  padding: 16px 20px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   flex: 1;
+  background: #fff;
+}
+
+/* Format badge + date row */
+.session-card-format-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.session-card-format {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 3px 10px;
+  /* Show & Tell default — red */
+  color: rgb(200 30 20 / 95%);
+  background: rgb(235 16 0 / 10%);
+  border: 1px solid rgb(235 16 0 / 20%);
+}
+
+.session-card-date {
+  font-size: 13px;
+  color: #8e8e93;
 }
 
 .session-card-description {
@@ -169,122 +171,156 @@
   color: #4a4a4f;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 
-/* Meta row — "Jun 2, 2026 · Presenter Name" */
-.session-card-meta {
-  font-size: 13px;
-  color: #6e6e73;
-  margin: 0;
-  margin-top: auto;
+.session-card-divider {
+  border: none;
+  border-top: 1px solid #e5e5e7;
+  margin: 2px 0 0;
+}
+
+/* Presenter row — SP avatar + name */
+.session-card-presenter-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
+}
+
+.session-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  /* Show & Tell default — red */
+  background: rgb(235 16 0 / 18%);
+  color: rgb(200 30 20 / 95%);
+  border: 1px solid rgb(235 16 0 / 25%);
 }
 
 .session-card-presenter {
+  font-size: 14px;
   font-weight: 600;
   color: #0b0b0d;
 }
 
-.session-card-sep {
-  color: #c5c5cd;
-}
-
-/* ── No-image cards ───────────────────────────────────────────────────────
- * Sessions without a per-session cover image keep the dark gradient band
- * (with the format pill and the title) at the same compact height as image
- * cards, so the dark area stays ~half the white body. We only drop the hover
- * play overlay, since there's no thumbnail to "play" into.
- *
- * The `--no-image` modifier is intentional BEM-style on top of the kebab
- * base class — disable the linter for these selectors only.
- */
+/* ── No-image cards ──────────────────────────────────────────────────────── */
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
-.session-card--no-image .session-card-placeholder,
-.session-card--no-image .session-card-play {
-  display: none;
-}
+.session-card--no-image .session-card-play { display: none; }
 
 .session-card--no-image .session-card-media::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
-    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
+    radial-gradient(circle at 20% 30%, rgb(235 16 0 / 8%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(235 16 0 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(235 16 0 / 5%) 0 1px, transparent 1px);
   background-size: 40px 40px, 30px 30px, 60px 60px;
   pointer-events: none;
 }
-/* stylelint-enable selector-class-pattern, no-descending-specificity */
 
-/* ── Brownbag variant (blue) ──────────────────────────────────────────────
- * AI Assisted Brownbag sessions get a blue gradient instead of red.
- * Only the media background, format badge, and hover accent change.
- */
-/* stylelint-disable selector-class-pattern */
+/* ── Brownbag variant (blue) ─────────────────────────────────────────────── */
 .session-card--brownbag .session-card-media {
   background:
-    radial-gradient(600px 300px at 80% 20%, rgb(2 101 220 / 45%), transparent 60%),
-    radial-gradient(400px 300px at 10% 90%, rgb(99 60 255 / 20%), transparent 60%),
-    linear-gradient(135deg, #080d1a 0%, #060e1a 100%);
+    radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 50%), transparent 60%),
+    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 14%), transparent 60%),
+    linear-gradient(135deg, #ddeaff 0%, #f0f5ff 100%);
 }
 
 .session-card--brownbag .session-card-format {
+  color: rgb(2 90 200 / 95%);
+  background: rgb(2 101 220 / 10%);
+  border-color: rgb(2 101 220 / 20%);
+}
+
+.session-card--brownbag .session-card-avatar {
   background: rgb(2 101 220 / 18%);
-  border: 1px solid rgb(2 101 220 / 35%);
-  color: rgb(100 180 250 / 95%);
+  color: rgb(2 90 200 / 95%);
+  border-color: rgb(2 101 220 / 25%);
+}
+
+.session-card--brownbag .session-card-ai-badge {
+  color: rgb(2 101 220 / 60%);
+  background: rgb(2 101 220 / 6%);
+  border-color: rgb(2 101 220 / 18%);
+}
+
+.session-card--brownbag .session-card-play .icon,
+.session-card--brownbag .session-card-play svg {
+  color: rgb(2 101 220 / 80%);
+  fill: rgb(2 101 220 / 80%);
+}
+
+.session-card--brownbag--no-image .session-card-media::before {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(2 101 220 / 8%) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 80%, rgb(2 101 220 / 6%) 0 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, rgb(2 101 220 / 5%) 0 1px, transparent 1px);
 }
 
 .session-card--brownbag:hover,
 .session-card--brownbag:focus-visible {
-  border-color: #0265DC;
-  box-shadow: 0 8px 24px rgb(2 101 220 / 12%);
+  box-shadow: 0 8px 32px rgb(2 101 220 / 14%);
 }
-/* stylelint-enable selector-class-pattern */
+/* stylelint-enable selector-class-pattern, no-descending-specificity */
 
-/* ── Dark mode ────────────────────────────────────────────────────────────
- * The AI CoC hub is intentionally dark-themed even in light mode (red
- * gradient hero), so a bright white card body sitting on a near-black page
- * looks jarring when the OS dark mode is on. Mirror the page tone by
- * darkening the card itself and flipping the text colors.
- *
- * Scoped under prefers-color-scheme so light-mode rendering is byte-identical.
- */
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   .session-card {
-    background: #0d1325;
+    background: #1a1a22;
     border-color: rgb(255 255 255 / 8%);
   }
 
+  .session-card-media {
+    background:
+      radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 20%), transparent 60%),
+      radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
+      linear-gradient(135deg, #1f1015 0%, #1a1a22 100%);
+  }
+
+  .session-card--brownbag .session-card-media {
+    background:
+      radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 20%), transparent 60%),
+      radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
+      linear-gradient(135deg, #0f1520 0%, #1a1a22 100%);
+  }
+
+  .session-card-title { color: #f0f0f5; }
+
+  .session-card-ai-badge {
+    color: rgb(255 100 90 / 70%);
+    background: rgb(235 16 0 / 10%);
+    border-color: rgb(235 16 0 / 20%);
+  }
+
+  .session-card--brownbag .session-card-ai-badge {
+    color: rgb(80 160 240 / 70%);
+    background: rgb(2 101 220 / 10%);
+    border-color: rgb(2 101 220 / 20%);
+  }
+
+  .session-card-body { background: #1a1a22; }
+
   .session-card:hover,
   .session-card:focus-visible {
-    /* Brighter shadow so the hover lift still reads on a dark page. */
-    box-shadow: 0 8px 24px rgb(0 0 0 / 60%);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
   }
 
-  .session-card-title {
-    color: #f5f5f7;
-  }
+  .session-card-description { color: #b0b0b8; }
 
-  .session-card-description {
-    color: #d4d4d8;
-  }
+  .session-card-date { color: #6e6e73; }
 
-  .session-card-meta {
-    color: #9a9aa0;
-  }
+  .session-card-presenter { color: #f0f0f5; }
 
-  .session-card-presenter {
-    color: #f5f5f7;
-  }
-
-  .session-card-sep {
-    color: #666;
-  }
+  .session-card-divider { border-color: rgb(255 255 255 / 8%); }
 }

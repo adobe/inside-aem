@@ -68,7 +68,7 @@ export function buildSessionCard(session, eager = false) {
   card.href = path;
 
   // ── media (dark area) ────────────────────────────────────────────────
-  // Holds: optional cover image, format pill, session title, play overlay.
+  // Holds: "AI CoC" ghost badge (top-left), title (bottom), play overlay.
   const media = document.createElement('div');
   media.className = 'session-card-media';
 
@@ -76,45 +76,51 @@ export function buildSessionCard(session, eager = false) {
     const picture = createOptimizedPicture(image, imageAlt || title, eager, [{ width: '600' }]);
     picture.classList.add('session-card-media-picture');
     media.append(picture);
-    // Gradient overlay so the title stays legible over any image.
     const scrim = document.createElement('div');
     scrim.className = 'session-card-media-scrim';
     scrim.setAttribute('aria-hidden', 'true');
     media.append(scrim);
-  } else {
-    // No image — the gradient placeholder is provided by .session-card-media's
-    // own background, so there's nothing to inject here.
   }
 
-  // Format badge (first tag — e.g. "Brownbag", "Show & Tell").
-  const format = tags[0];
-  if (format) {
-    const badge = document.createElement('span');
-    badge.className = 'session-card-format';
-    badge.textContent = format;
-    media.append(badge);
-  }
+  // "AI CoC" ghost badge — always shown in the media area.
+  const aiBadge = document.createElement('span');
+  aiBadge.className = 'session-card-ai-badge';
+  aiBadge.textContent = 'AI CoC';
+  media.append(aiBadge);
 
-  // Title lives inside the dark area now — the white body below is for the
-  // description and presenter only.
   const titleEl = document.createElement('h3');
   titleEl.className = 'session-card-title';
   titleEl.textContent = title || '';
   media.append(titleEl);
 
-  // Play-button overlay so the recording affordance is visible on hover.
-  // The inner <span class="icon icon-play"> is swapped for the inline SVG by
-  // decorateIcons() in session-feed.js after the card is appended.
   media.insertAdjacentHTML(
     'beforeend',
     '<span class="session-card-play" aria-hidden="true"><span class="icon icon-play"></span></span>',
   );
 
-  // ── body (white area) ────────────────────────────────────────────────
-  // Description + presenter only. No title (in the dark area above) and no
-  // date (already encoded in the chronological order of the feed).
+  // ── body (light area) ────────────────────────────────────────────────
+  // Format badge + date, description, divider, SP avatar + presenter.
   const body = document.createElement('div');
   body.className = 'session-card-body';
+
+  // Format badge + date row
+  const formatRow = document.createElement('div');
+  formatRow.className = 'session-card-format-row';
+  const format = tags[0];
+  if (format) {
+    const badge = document.createElement('span');
+    badge.className = 'session-card-format';
+    badge.textContent = /brownbag/i.test(title) ? 'Brownbag' : 'Show & Tell';
+    formatRow.append(badge);
+  }
+  const dateText = formatSessionDate(sessionDate);
+  if (dateText) {
+    const dateEl = document.createElement('span');
+    dateEl.className = 'session-card-date';
+    dateEl.textContent = dateText;
+    formatRow.append(dateEl);
+  }
+  body.append(formatRow);
 
   if (description) {
     const descEl = document.createElement('p');
@@ -123,14 +129,26 @@ export function buildSessionCard(session, eager = false) {
     body.append(descEl);
   }
 
-  const meta = document.createElement('p');
-  meta.className = 'session-card-meta';
-  const parts = [];
-  const dateText = formatSessionDate(sessionDate);
-  if (dateText) parts.push(`<span class="session-card-date">${dateText}</span>`);
-  if (presenter) parts.push(`<span class="session-card-presenter">${presenter}</span>`);
-  meta.innerHTML = parts.join('<span class="session-card-sep">·</span>');
-  body.append(meta);
+  // Divider + presenter row
+  const divider = document.createElement('hr');
+  divider.className = 'session-card-divider';
+  body.append(divider);
+
+  const presenterRow = document.createElement('div');
+  presenterRow.className = 'session-card-presenter-row';
+
+  const avatar = document.createElement('span');
+  avatar.className = 'session-card-avatar';
+  avatar.textContent = 'SP';
+  presenterRow.append(avatar);
+
+  if (presenter) {
+    const presenterEl = document.createElement('span');
+    presenterEl.className = 'session-card-presenter';
+    presenterEl.textContent = presenter;
+    presenterRow.append(presenterEl);
+  }
+  body.append(presenterRow);
 
   card.append(media, body);
   return card;
