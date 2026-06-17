@@ -35,11 +35,11 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  /* Show & Tell default — very light warm tint */
+  /* Show & Tell default — warm red tint */
   background:
-    radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 12%), transparent 60%),
-    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 6%), transparent 60%),
-    linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+    radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 28%), transparent 60%),
+    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
+    linear-gradient(135deg, #ffecec 0%, #fff8f8 100%);
 }
 
 .session-card-media-picture,
@@ -232,9 +232,9 @@
 /* ── Brownbag variant (blue) ─────────────────────────────────────────────── */
 .session-card--brownbag .session-card-media {
   background:
-    radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 12%), transparent 60%),
-    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 6%), transparent 60%),
-    linear-gradient(135deg, #f0f6ff 0%, #fff 100%);
+    radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 28%), transparent 60%),
+    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
+    linear-gradient(135deg, #e8f0ff 0%, #f5f8ff 100%);
 }
 
 .session-card--brownbag .session-card-format {
