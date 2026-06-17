@@ -20,12 +20,15 @@ body.aicoc {
   --aicoc-accent-1: #EB1000;   /* Adobe red */
   --aicoc-accent-2: #FF3B2F;   /* coral, for gradients */
   --aicoc-accent-3: #B30C00;   /* deep red, for hover/pressed */
+  --aicoc-blue-1: #0265DC;
+  --aicoc-purple-1: #633CFF;
   --aicoc-ink: #0b0b0d;
   --aicoc-ink-2: #2c2c2e;
   --aicoc-muted: #6e6e73;
   --aicoc-border: #e5e5e7;
   --aicoc-bg: #fafafa;
   --aicoc-card: #fff;
+  --aicoc-dark-base: #080d1a;
 
   background-color: var(--aicoc-bg);
   color: var(--aicoc-ink);
@@ -94,9 +97,10 @@ body.aicoc-hub main > div:first-of-type {
   color: #fff;
   text-align: center;
   background:
-    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
-    radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
-    linear-gradient(to bottom, #0b0b0d 0%, #150506 100%);
+    radial-gradient(ellipse 900px 500px at 15% -20%, rgb(99 60 255 / 20%), transparent 65%),
+    radial-gradient(ellipse 700px 500px at 90% 120%, rgb(2 101 220 / 16%), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 88% -10%, rgb(235 16 0 / 35%), transparent 55%),
+    linear-gradient(to bottom, #080d1a 0%, #0c0912 100%);
 }
 
 body.aicoc-hub main > div:first-of-type::before {
@@ -126,21 +130,27 @@ body.aicoc-hub main > div:first-of-type h1 {
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0 0 18px;
-  color: #fff;
+  background: linear-gradient(135deg, #fff 40%, rgb(180 195 255 / 85%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* "Eyebrow" pill above the H1 — if author writes a small paragraph BEFORE
  * the H1, treat it as an eyebrow. */
 body.aicoc-hub main > div:first-of-type > p:first-child {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin: 0 auto 18px;
-  padding: 6px 16px;
-  font-size: 12px;
+  padding: 5px 14px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #fff;
-  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
+  color: rgb(255 255 255 / 55%);
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 12%);
   border-radius: 999px;
 }
 
@@ -194,13 +204,13 @@ body.aicoc-hub main > div ~ div {
  * in the cascade. */
 @media (prefers-color-scheme: dark) {
   body.aicoc {
-    --aicoc-bg: #0b0b0d;
-    --aicoc-card: #2d2d33;
-    background-color: #0b0b0d;
+    --aicoc-bg: #080d1a;
+    --aicoc-card: #0d1325;
+    background-color: #080d1a;
   }
 
   body.aicoc main {
-    background-color: #0b0b0d;
+    background-color: #080d1a;
   }
 }
 

@@ -31,9 +31,9 @@ main .session-header {
   border-radius: 24px;
   color: #fff;
   background:
-    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 55%), transparent 62%),
-    radial-gradient(900px 600px at -8% 115%, rgb(255 59 47 / 35%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #141416 55%, #1c0707 100%);
+    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 50%), transparent 62%),
+    radial-gradient(700px 500px at -8% 115%, rgb(99 60 255 / 22%), transparent 60%),
+    linear-gradient(135deg, #080d1a 0%, #100818 55%, #160609 100%);
 }
 
 .session-header-hero::before {
@@ -107,8 +107,9 @@ body.aicoc-session .session-header-breadcrumb a:hover {
 }
 
 .session-header-pill-format {
-  background: linear-gradient(90deg, rgb(235 16 0 / 95%), rgb(255 59 47 / 95%));
-  border-color: transparent;
+  background: rgb(235 16 0 / 18%);
+  border-color: rgb(235 16 0 / 35%);
+  color: rgb(255 150 140 / 95%);
 }
 
 /* title */
@@ -184,7 +185,8 @@ main .session-header h1.session-header-title {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #B30C00, #EB1000);
+  background: rgb(235 16 0 / 25%);
+  border-color: rgb(235 16 0 / 35%);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -253,13 +255,15 @@ main .session-header .btn-tertiary {
 /* stylelint-disable selector-class-pattern */
 .session-header-hero--brownbag {
   background:
-    radial-gradient(1100px 520px at 88% -10%, rgb(2 101 220 / 55%), transparent 62%),
-    radial-gradient(900px 600px at -8% 115%, rgb(55 142 240 / 35%), transparent 60%),
-    linear-gradient(135deg, #0b0b0d 0%, #060e1a 55%, #06101c 100%);
+    radial-gradient(1100px 520px at 88% -10%, rgb(2 101 220 / 50%), transparent 62%),
+    radial-gradient(700px 500px at -8% 115%, rgb(99 60 255 / 22%), transparent 60%),
+    linear-gradient(135deg, #080d1a 0%, #060d1a 55%, #071426 100%);
 }
 
 .session-header-hero--brownbag .session-header-pill-format {
-  background: linear-gradient(90deg, rgb(2 101 220 / 95%), rgb(55 142 240 / 95%));
+  background: rgb(2 101 220 / 18%);
+  border-color: rgb(2 101 220 / 35%);
+  color: rgb(100 180 250 / 95%);
 }
 
 .session-header-hero--brownbag .session-header-breadcrumb a {
