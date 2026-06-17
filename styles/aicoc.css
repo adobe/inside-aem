@@ -178,9 +178,10 @@ body.aicoc-hub main hr {
   display: none;
 }
 
-body.aicoc-hub main > div:has(> hr) {
-  margin: 0;
-  padding: 0;
+body.aicoc-hub main > div:has(hr) {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
 }
 
 /* Any section in main BEYOND the first one (where the session-feed sits).
