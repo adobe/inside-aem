@@ -121,6 +121,7 @@ body.aicoc-hub main > div:first-of-type > * {
   max-width: 880px;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
 /* Title */
