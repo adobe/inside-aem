@@ -79,10 +79,21 @@ async function fetchAllSessions() {
 // Filtering
 // ─────────────────────────────────────────────────────────────────────────
 
-function applyFilters(sessions, { q, presenter }) {
+/**
+ * Session format lives in the title (there are no usable tags): titles read
+ * like "[AI CoC] AI Assisted Brownbag - …" or "[AI CoC] Show & Tell - …".
+ */
+function sessionFormat(s) {
+  if (/brownbag/i.test(s.title)) return 'Brownbag';
+  if (/show\s*(?:&|and)\s*tell/i.test(s.title)) return 'Show & Tell';
+  return '';
+}
+
+function applyFilters(sessions, { q, presenter, format }) {
   const needle = (q || '').toLowerCase().trim();
   const presenterNeedle = (presenter || '').toLowerCase().trim();
   return sessions.filter((s) => {
+    if (format && sessionFormat(s) !== format) return false;
     if (presenterNeedle && !s.presenter.toLowerCase().includes(presenterNeedle)) return false;
     if (needle) {
       const hay = `${s.title} ${s.description} ${s.presenter}`.toLowerCase();
@@ -106,13 +117,18 @@ function uniquePresenters(sessions) {
 
 function readUrlState() {
   const params = new URLSearchParams(window.location.search);
-  return { q: params.get('q') || '', presenter: params.get('presenter') || '' };
+  return {
+    q: params.get('q') || '',
+    presenter: params.get('presenter') || '',
+    format: params.get('format') || '',
+  };
 }
 
 function writeUrlState(state) {
   const url = new URL(window.location.href);
   if (state.q) url.searchParams.set('q', state.q); else url.searchParams.delete('q');
   if (state.presenter) url.searchParams.set('presenter', state.presenter); else url.searchParams.delete('presenter');
+  if (state.format) url.searchParams.set('format', state.format); else url.searchParams.delete('format');
   window.history.replaceState({}, '', url);
 }
 
@@ -180,14 +196,31 @@ export default async function decorate(block) {
 
   // Presenter dropdown (populated after fetch).
   const presenterSelect = document.createElement('select');
-  presenterSelect.className = 'session-feed-presenter';
+  presenterSelect.className = 'session-feed-presenter session-feed-select';
   presenterSelect.setAttribute('aria-label', 'Filter by presenter');
+
+  // Format dropdown (Show & Tell / Brownbag).
+  const formatSelect = document.createElement('select');
+  formatSelect.className = 'session-feed-format session-feed-select';
+  formatSelect.setAttribute('aria-label', 'Filter by format');
+  [
+    ['', 'All formats'],
+    ['Show & Tell', 'Show & Tell'],
+    ['Brownbag', 'Brownbag'],
+  ].forEach(([value, label]) => {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = label;
+    if (value === state.format) opt.selected = true;
+    formatSelect.append(opt);
+  });
 
   // Result count badge.
   const count = document.createElement('span');
   count.className = 'session-feed-count';
 
-  controls.append(searchWrap, presenterSelect, count);
+  // Order: search (left, wide) · presenter · format.
+  controls.append(searchWrap, presenterSelect, formatSelect, count);
   block.append(controls);
 
   // ── Grid ──
@@ -280,6 +313,12 @@ export default async function decorate(block) {
 
   presenterSelect.addEventListener('change', () => {
     state.presenter = presenterSelect.value;
+    writeUrlState(state);
+    refilter();
+  });
+
+  formatSelect.addEventListener('change', () => {
+    state.format = formatSelect.value;
     writeUrlState(state);
     refilter();
   });
