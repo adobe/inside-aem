@@ -1,6 +1,10 @@
-/* AI CoC — session header block.
+/* AI CoC — session header block (Adobe brand-aligned: red / black / white,
+ * solid colours, no tints/frost/gradients).
  * Only renders on /en/aicoc/<slug> pages where body.aicoc-session is set.
- * Styles are namespaced under .session-header to avoid any blog leakage.
+ *
+ * Format differentiation mirrors the cards (red FILL vs red OUTLINE):
+ *   - Show & Tell (default): solid Adobe red flood hero, white text
+ *   - Brownbag (--brownbag):  white hero, black text, red accents
  */
 
 main .session-header-container,
@@ -19,37 +23,20 @@ main .session-header {
 
 /* ── HERO ─────────────────────────────────────────────────────────────── */
 
-/* Contained, rounded hero — matches the /aicochub landing hero: a centred
- * dark block with the page background showing on either side, rather than
- * a full-bleed edge-to-edge band. */
+/* Contained, rounded hero — a centred block with the page background showing
+ * on either side. Show & Tell default: solid Adobe red flood. */
 .session-header-hero {
+  --hd-red: #eb1000;
+
   position: relative;
   overflow: hidden;
   max-width: 1200px;
-  margin: 32px auto 0;
-  padding: 64px 32px 56px;
-  border-radius: 24px;
+  margin: 24px auto 0;
+  padding: 56px 32px 48px;
+  border-radius: 20px;
   color: #fff;
-  background:
-    radial-gradient(1100px 520px at 88% -10%, rgb(235 16 0 / 50%), transparent 62%),
-    radial-gradient(700px 500px at -8% 115%, rgb(99 60 255 / 22%), transparent 60%),
-    linear-gradient(135deg, #080d1a 0%, #100818 55%, #160609 100%);
+  background: var(--hd-red);
 }
-
-.session-header-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 6%) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 80%, rgb(255 255 255 / 5%) 0 1px, transparent 1px),
-    radial-gradient(circle at 90% 20%, rgb(255 255 255 / 5%) 0 1px, transparent 1px);
-  background-size: 80px 80px, 60px 60px, 120px 120px;
-  pointer-events: none;
-}
-
-/* The hero deliberately doesn't carry an image — pictures from the doc
- * flow in the body below, as normal article content. */
 
 .session-header-inner {
   position: relative;
@@ -58,10 +45,7 @@ main .session-header {
   margin: 0 auto;
 }
 
-/* breadcrumb
- * Explicit colours (no stacked opacity) so it stays legible on the dark
- * hero. The link colour is set with extra specificity to beat the theme's
- * `body.aicoc main a` red rule. */
+/* breadcrumb */
 .session-header-breadcrumb {
   font-size: 13px;
   letter-spacing: 0.04em;
@@ -72,18 +56,19 @@ main .session-header {
 }
 
 body.aicoc-session .session-header-breadcrumb a {
-  color: #ff6a5e;
+  color: #fff;
   opacity: 1;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 body.aicoc-session .session-header-breadcrumb a:hover {
-  color: #ff8a80;
-  text-decoration: underline;
+  color: #fff;
+  opacity: 0.85;
 }
 
-.session-header-breadcrumb-sep { color: rgb(255 255 255 / 45%); }
-.session-header-breadcrumb-current { color: rgb(255 255 255 / 80%); }
+.session-header-breadcrumb-sep { color: rgb(255 255 255 / 70%); }
+.session-header-breadcrumb-current { color: #fff; }
 
 /* pills */
 .session-header-pills {
@@ -94,30 +79,30 @@ body.aicoc-session .session-header-breadcrumb a:hover {
 }
 
 .session-header-pill {
-  background: rgb(255 255 255 / 14%);
-  border: 1px solid rgb(255 255 255 / 18%);
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 70%);
   color: #fff;
   padding: 6px 14px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  backdrop-filter: blur(6px);
 }
 
+/* The format pill is the emphasis chip: solid white on the red flood. */
 .session-header-pill-format {
-  background: rgb(235 16 0 / 18%);
-  border-color: rgb(235 16 0 / 35%);
-  color: rgb(255 150 140 / 95%);
+  background: #fff;
+  border-color: #fff;
+  color: var(--hd-red);
 }
 
 /* title */
 main .session-header h1.session-header-title {
-  font-size: clamp(32px, 5vw, 52px);
-  line-height: 1.08;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1.02;
+  font-weight: 900;
+  letter-spacing: -0.025em;
   margin: 0 0 18px;
   color: #fff;
   max-width: 900px;
@@ -127,7 +112,6 @@ main .session-header h1.session-header-title {
 .session-header-description {
   font-size: 17px;
   line-height: 1.55;
-  opacity: 0.88;
   max-width: 760px;
   margin: 0 0 26px;
   color: #fff;
@@ -140,8 +124,8 @@ main .session-header h1.session-header-title {
   flex-wrap: wrap;
   align-items: center;
   font-size: 14px;
-  opacity: 0.92;
   margin-bottom: 30px;
+  color: #fff;
 }
 
 .session-header-meta-item {
@@ -153,7 +137,6 @@ main .session-header h1.session-header-title {
 .session-header-meta-item svg,
 .session-header-meta-item .icon svg {
   flex-shrink: 0;
-  opacity: 0.85;
   width: 16px;
   height: 16px;
 }
@@ -185,8 +168,7 @@ main .session-header h1.session-header-title {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgb(235 16 0 / 25%);
-  border-color: rgb(235 16 0 / 35%);
+  background: transparent;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -194,7 +176,7 @@ main .session-header h1.session-header-title {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgb(255 255 255 / 40%);
+  border: 2px solid #fff;
   margin-left: -8px;
 }
 
@@ -218,63 +200,113 @@ main .session-header .btn {
   cursor: pointer;
   border: 1px solid transparent;
   text-decoration: none;
-  transition: transform 0.1s, box-shadow 0.15s;
+  transition: transform 0.1s, box-shadow 0.15s, background 0.15s, color 0.15s;
 }
 
 main .session-header .btn:hover { transform: translateY(-1px); text-decoration: none; }
 
+/* On the red flood: primary = solid white, secondary/tertiary = white outline. */
 main .session-header .btn-primary {
   background: #fff;
-  color: #0b0b0d;
-  box-shadow: 0 8px 28px rgb(0 0 0 / 25%);
+  color: var(--hd-red);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 20%);
 }
 
-main .session-header .btn-secondary {
-  background: rgb(255 255 255 / 10%);
-  color: #fff;
-  border-color: rgb(255 255 255 / 30%);
-  backdrop-filter: blur(6px);
-}
-
+main .session-header .btn-secondary,
 main .session-header .btn-tertiary {
   background: transparent;
   color: #fff;
-  border-color: rgb(255 255 255 / 30%);
+  border-color: #fff;
+}
+
+main .session-header .btn-secondary:hover,
+main .session-header .btn-tertiary:hover {
+  background: #fff;
+  color: var(--hd-red);
 }
 
 /* ── DESKTOP ───────────────────────────────────────────────────────────── */
 @media (min-width: 960px) {
   .session-header-hero {
-    padding: 80px 48px 64px;
+    padding: 72px 48px 60px;
   }
 }
 
-/* ── Brownbag variant (blue) ──────────────────────────────────────────────
- * AI Assisted Brownbag sessions get a blue gradient hero instead of red.
- */
-/* stylelint-disable selector-class-pattern */
+/* ── Brownbag variant — white hero, black text, red accents ──────────────── */
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
 .session-header-hero--brownbag {
-  background:
-    radial-gradient(1100px 520px at 88% -10%, rgb(2 101 220 / 50%), transparent 62%),
-    radial-gradient(700px 500px at -8% 115%, rgb(99 60 255 / 22%), transparent 60%),
-    linear-gradient(135deg, #080d1a 0%, #060d1a 55%, #071426 100%);
+  background: #fff;
+  color: #000;
+  border: 1px solid var(--aicoc-border, #e5e5e7);
 }
 
+.session-header-hero--brownbag .session-header-pill {
+  border-color: var(--hd-red);
+  color: var(--hd-red);
+}
+
+/* On white, the format pill becomes the red-outline emphasis chip. */
 .session-header-hero--brownbag .session-header-pill-format {
-  background: rgb(2 101 220 / 18%);
-  border-color: rgb(2 101 220 / 35%);
-  color: rgb(100 180 250 / 95%);
+  background: #fff;
+  border-color: var(--hd-red);
+  color: var(--hd-red);
 }
 
-.session-header-hero--brownbag .session-header-breadcrumb a {
-  color: #6db3f2;
+body.aicoc-session .session-header-hero--brownbag .session-header-breadcrumb a {
+  color: var(--hd-red);
+  text-decoration: none;
 }
 
-.session-header-hero--brownbag .session-header-breadcrumb a:hover {
-  color: #9ecef7;
+body.aicoc-session .session-header-hero--brownbag .session-header-breadcrumb a:hover {
+  color: #b30c00;
+  text-decoration: underline;
 }
 
-.session-header-hero--brownbag .session-header-presenter-avatar {
-  background: linear-gradient(135deg, #0054B6, #0265DC);
+.session-header-hero--brownbag .session-header-breadcrumb-sep { color: #8e8e93; }
+.session-header-hero--brownbag .session-header-breadcrumb-current { color: #2c2c2e; }
+
+.session-header-hero--brownbag h1.session-header-title { color: #000; }
+.session-header-hero--brownbag .session-header-description { color: #2c2c2e; }
+.session-header-hero--brownbag .session-header-meta-row-inline { color: #2c2c2e; }
+
+.session-header-hero--brownbag .session-header-avatar {
+  background: transparent;
+  color: var(--hd-red);
+  border-color: var(--hd-red);
 }
-/* stylelint-enable selector-class-pattern */
+
+/* Buttons on white: primary = solid red, secondary/tertiary = red outline. */
+.session-header-hero--brownbag .btn-primary {
+  background: var(--hd-red);
+  color: #fff;
+}
+
+.session-header-hero--brownbag .btn-secondary,
+.session-header-hero--brownbag .btn-tertiary {
+  background: #fff;
+  color: var(--hd-red);
+  border-color: var(--hd-red);
+}
+
+.session-header-hero--brownbag .btn-secondary:hover,
+.session-header-hero--brownbag .btn-tertiary:hover {
+  background: var(--hd-red);
+  color: #fff;
+}
+
+/* ── Dark mode (true black) ──────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .session-header-hero--brownbag {
+    background: #141414;
+    color: #fff;
+    border-color: #2a2a2a;
+  }
+
+  .session-header-hero--brownbag h1.session-header-title,
+  .session-header-hero--brownbag .session-header-description,
+  .session-header-hero--brownbag .session-header-meta-row-inline,
+  .session-header-hero--brownbag .session-header-breadcrumb-current {
+    color: #fff;
+  }
+}
+/* stylelint-enable selector-class-pattern, no-descending-specificity */

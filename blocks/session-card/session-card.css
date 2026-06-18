@@ -1,16 +1,25 @@
-/* AI CoC — session card.
+/* AI CoC — session card (Adobe brand-aligned: red / black / white, solid
+ * colours, no tints or transparencies).
+ *
+ * Format differentiation = red FILL vs red OUTLINE:
+ *   - Show & Tell (default): solid Adobe red media + red-fill label/avatar
+ *   - Brownbag (--brownbag):  white media + red-OUTLINE label/avatar
+ *
  * Layout:
- *   - .session-card-media  — dark gradient area: AI CoC badge + title
- *   - .session-card-body   — light area: format badge + date, description,
+ *   - .session-card-media  — header area (red flood or image): AI CoC + title
+ *   - .session-card-body   — white area: format label + date, description,
  *                            divider, SP avatar + presenter
  */
 
 .session-card {
+  --card-red: #eb1000;
+  --card-red-deep: #b30c00;
+
   display: flex;
   flex-direction: column;
   background: #fff;
   border: 1px solid #e0e0e4;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
@@ -20,26 +29,23 @@
 
 .session-card:hover,
 .session-card:focus-visible {
-  box-shadow: 0 8px 32px rgb(0 0 0 / 14%);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 16%);
   transform: translateY(-3px);
   text-decoration: none;
 }
 
-/* ── media (light tinted area) ─────────────────────────────────────────── */
+/* ── media (header area) ───────────────────────────────────────────────── */
 
+/* Show & Tell default — solid Adobe red flood, white text. */
 .session-card-media {
   position: relative;
-  min-height: 160px;
+  min-height: 150px;
   overflow: hidden;
   padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  /* Show & Tell default — warm red tint */
-  background:
-    radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 50%), transparent 60%),
-    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 14%), transparent 60%),
-    linear-gradient(135deg, #ffe0e0 0%, #fff4f4 100%);
+  background: var(--card-red);
 }
 
 .session-card-media-picture,
@@ -54,14 +60,16 @@
   z-index: 0;
 }
 
+/* Scrim only sits over photos, for title legibility. */
 .session-card-media-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0%) 0%, rgb(255 255 255 / 40%) 100%);
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%) 30%, rgb(0 0 0 / 60%) 100%);
   z-index: 1;
 }
 
-/* "AI CoC" ghost badge — top-left of the media area */
+/* "AI CoC" badge — top-left of the media area. On the red flood it's a
+ * white outline pill. */
 .session-card-ai-badge {
   position: relative;
   z-index: 2;
@@ -71,9 +79,9 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: rgb(235 16 0 / 60%);
-  background: rgb(235 16 0 / 6%);
-  border: 1px solid rgb(235 16 0 / 18%);
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 70%);
   border-radius: 999px;
   margin-bottom: auto;
 }
@@ -83,10 +91,10 @@
   z-index: 2;
   margin: 14px 0 0;
   font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #0b0b0d;
-  text-shadow: none;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #fff;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -109,9 +117,9 @@
 .session-card-play svg {
   width: 48px;
   height: 48px;
-  color: rgb(235 16 0 / 80%);
-  fill: rgb(235 16 0 / 80%);
-  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 20%));
+  color: #fff;
+  fill: #fff;
+  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 45%));
   transform: scale(0.85);
   transition: transform 0.2s ease;
 }
@@ -129,7 +137,7 @@
 
 .session-card:hover .session-card-play svg { transform: scale(1); }
 
-/* ── body (light area) ─────────────────────────────────────────────────── */
+/* ── body (white area) ─────────────────────────────────────────────────── */
 
 .session-card-body {
   padding: 16px 20px 18px;
@@ -140,35 +148,35 @@
   background: #fff;
 }
 
-/* Format badge + date row */
+/* Format label + date row */
 .session-card-format-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* Show & Tell — solid red fill, white text. */
 .session-card-format {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   border-radius: 999px;
-  padding: 3px 10px;
-  /* Show & Tell default — red */
-  color: rgb(200 30 20 / 95%);
-  background: rgb(235 16 0 / 10%);
-  border: 1px solid rgb(235 16 0 / 20%);
+  padding: 4px 11px;
+  color: #fff;
+  background: var(--card-red);
+  border: 1px solid var(--card-red);
 }
 
 .session-card-date {
   font-size: 13px;
-  color: #8e8e93;
+  color: #6e6e73;
 }
 
 .session-card-description {
   font-size: 14px;
   line-height: 1.5;
-  color: #4a4a4f;
+  color: #2c2c2e;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -190,6 +198,7 @@
   gap: 10px;
 }
 
+/* Show & Tell — solid red circle, white "SP". */
 .session-card-avatar {
   width: 32px;
   height: 32px;
@@ -201,126 +210,86 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   flex-shrink: 0;
-  /* Show & Tell default — red */
-  background: rgb(235 16 0 / 18%);
-  color: rgb(200 30 20 / 95%);
-  border: 1px solid rgb(235 16 0 / 25%);
+  color: #fff;
+  background: var(--card-red);
+  border: 1px solid var(--card-red);
 }
 
 .session-card-presenter {
   font-size: 14px;
   font-weight: 600;
-  color: #0b0b0d;
+  color: #000;
 }
 
 /* ── No-image cards ──────────────────────────────────────────────────────── */
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
 .session-card--no-image .session-card-play { display: none; }
 
-.session-card--no-image .session-card-media::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgb(235 16 0 / 8%) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 80%, rgb(235 16 0 / 6%) 0 1px, transparent 1px),
-    radial-gradient(circle at 90% 20%, rgb(235 16 0 / 5%) 0 1px, transparent 1px);
-  background-size: 40px 40px, 30px 30px, 60px 60px;
-  pointer-events: none;
+/* ── Brownbag variant — dark header, red OUTLINE labels ──────────────────── */
+
+/* Darker (near-black) media gives Brownbag a clear identity vs the Show & Tell
+ * red flood, while staying inside the red/black/white palette. */
+.session-card--brownbag .session-card-media {
+  background: linear-gradient(160deg, #6a6a70 0%, #45454b 100%);
 }
 
-/* ── Brownbag variant (blue) ─────────────────────────────────────────────── */
-.session-card--brownbag .session-card-media {
-  background:
-    radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 50%), transparent 60%),
-    radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 14%), transparent 60%),
-    linear-gradient(135deg, #ddeaff 0%, #f0f5ff 100%);
+.session-card--brownbag .session-card-title { color: #fff; }
+
+.session-card--brownbag .session-card-ai-badge {
+  color: #fff;
+  border-color: #fff;
 }
 
 .session-card--brownbag .session-card-format {
-  color: rgb(2 90 200 / 95%);
-  background: rgb(2 101 220 / 10%);
-  border-color: rgb(2 101 220 / 20%);
+  color: var(--card-red);
+  background: #fff;
+  border-color: var(--card-red);
 }
 
 .session-card--brownbag .session-card-avatar {
-  background: rgb(2 101 220 / 18%);
-  color: rgb(2 90 200 / 95%);
-  border-color: rgb(2 101 220 / 25%);
-}
-
-.session-card--brownbag .session-card-ai-badge {
-  color: rgb(2 101 220 / 60%);
-  background: rgb(2 101 220 / 6%);
-  border-color: rgb(2 101 220 / 18%);
+  color: var(--card-red);
+  background: #fff;
+  border-color: var(--card-red);
 }
 
 .session-card--brownbag .session-card-play .icon,
 .session-card--brownbag .session-card-play svg {
-  color: rgb(2 101 220 / 80%);
-  fill: rgb(2 101 220 / 80%);
-}
-
-.session-card--brownbag--no-image .session-card-media::before {
-  background-image:
-    radial-gradient(circle at 20% 30%, rgb(2 101 220 / 8%) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 80%, rgb(2 101 220 / 6%) 0 1px, transparent 1px),
-    radial-gradient(circle at 90% 20%, rgb(2 101 220 / 5%) 0 1px, transparent 1px);
-}
-
-.session-card--brownbag:hover,
-.session-card--brownbag:focus-visible {
-  box-shadow: 0 8px 32px rgb(2 101 220 / 14%);
+  color: var(--card-red);
+  fill: var(--card-red);
 }
 /* stylelint-enable selector-class-pattern, no-descending-specificity */
 
-/* ── Dark mode ───────────────────────────────────────────────────────────── */
+/* ── Dark mode (true black, brand red accents) ───────────────────────────── */
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
 @media (prefers-color-scheme: dark) {
   .session-card {
-    background: #1a1a22;
-    border-color: rgb(255 255 255 / 8%);
+    background: #141414;
+    border-color: #2a2a2a;
   }
 
-  .session-card-media {
-    background:
-      radial-gradient(500px 300px at 90% 10%, rgb(235 16 0 / 20%), transparent 60%),
-      radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
-      linear-gradient(135deg, #1f1015 0%, #1a1a22 100%);
-  }
+  .session-card-body { background: #141414; }
 
+  /* Show & Tell keeps the red flood; Brownbag media stays dark. */
   .session-card--brownbag .session-card-media {
-    background:
-      radial-gradient(500px 300px at 90% 10%, rgb(2 101 220 / 20%), transparent 60%),
-      radial-gradient(300px 200px at 5% 90%, rgb(99 60 255 / 10%), transparent 60%),
-      linear-gradient(135deg, #0f1520 0%, #1a1a22 100%);
+    background: linear-gradient(160deg, #242428 0%, #141414 100%);
   }
 
-  .session-card-title { color: #f0f0f5; }
-
-  .session-card-ai-badge {
-    color: rgb(255 100 90 / 70%);
-    background: rgb(235 16 0 / 10%);
-    border-color: rgb(235 16 0 / 20%);
+  .session-card--brownbag .session-card-format,
+  .session-card--brownbag .session-card-avatar {
+    background: #141414;
   }
-
-  .session-card--brownbag .session-card-ai-badge {
-    color: rgb(80 160 240 / 70%);
-    background: rgb(2 101 220 / 10%);
-    border-color: rgb(2 101 220 / 20%);
-  }
-
-  .session-card-body { background: #1a1a22; }
 
   .session-card:hover,
   .session-card:focus-visible {
-    box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 60%);
   }
 
-  .session-card-description { color: #b0b0b8; }
+  .session-card-description { color: #c8c8c8; }
 
-  .session-card-date { color: #6e6e73; }
+  .session-card-date { color: #8a8a8a; }
 
-  .session-card-presenter { color: #f0f0f5; }
+  .session-card-presenter { color: #fff; }
 
-  .session-card-divider { border-color: rgb(255 255 255 / 8%); }
+  .session-card-divider { border-color: #2a2a2a; }
 }
+/* stylelint-enable selector-class-pattern, no-descending-specificity */
