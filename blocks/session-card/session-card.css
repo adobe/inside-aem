@@ -225,22 +225,20 @@
 /* stylelint-disable selector-class-pattern, no-descending-specificity */
 .session-card--no-image .session-card-play { display: none; }
 
-/* ── Brownbag variant — red OUTLINE on white ─────────────────────────────── */
+/* ── Brownbag variant — dark header, red OUTLINE labels ──────────────────── */
+
+/* Darker (near-black) media gives Brownbag a clear identity vs the Show & Tell
+ * red flood, while staying inside the red/black/white palette. */
 .session-card--brownbag .session-card-media {
-  background: #fff;
-  border-bottom: 1px solid var(--aicoc-border, #e5e5e7);
+  background: linear-gradient(160deg, #3a3a3f 0%, #1c1c1f 100%);
 }
 
-/* On a white media area, the title and badge flip to ink + red. */
-.session-card--brownbag .session-card-title { color: #000; }
+.session-card--brownbag .session-card-title { color: #fff; }
 
 .session-card--brownbag .session-card-ai-badge {
-  color: var(--card-red);
-  border-color: var(--card-red);
+  color: #fff;
+  border-color: #fff;
 }
-
-/* Image brownbag cards keep a scrim + white title for legibility. */
-.session-card--brownbag.session-card:not(.session-card--no-image) .session-card-title { color: #fff; }
 
 .session-card--brownbag .session-card-format {
   color: var(--card-red);
@@ -271,11 +269,9 @@
 
   .session-card-body { background: #141414; }
 
-  /* Show & Tell keeps the red flood; Brownbag media goes black with a red
-   * separator so the outline language still reads. */
+  /* Show & Tell keeps the red flood; Brownbag media stays dark. */
   .session-card--brownbag .session-card-media {
-    background: #141414;
-    border-bottom-color: var(--card-red);
+    background: linear-gradient(160deg, #242428 0%, #141414 100%);
   }
 
   .session-card--brownbag .session-card-format,
