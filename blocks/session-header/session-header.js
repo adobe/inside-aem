@@ -183,7 +183,14 @@ export default function decorate(block) {
   };
   const author = getMetadata('author');
   const description = getMetadata('description');
-  const tags = getMetadata('article:tag', true) || [];
+
+  // Format isn't a reliable tag — derive it from the title (same logic the
+  // cards use) so the pill always matches the session. Show it first (it's the
+  // emphasis pill), followed by the "AI CoC" community pill.
+  let format = '';
+  if (/brownbag/i.test(document.title)) format = 'Brownbag';
+  else if (/show\s*(?:&|and)\s*tell/i.test(document.title)) format = 'Show & Tell';
+  const pillTags = [format, 'AI CoC'].filter(Boolean);
 
   // Borrow the h1 from <main> so it doesn't render twice (the hero owns the
   // title). Any pictures in the doc stay where the author put them in the
@@ -231,7 +238,7 @@ export default function decorate(block) {
     'div',
     { class: 'session-header-inner' },
     breadcrumb,
-    buildPills(tags),
+    buildPills(pillTags),
     titleEl,
     description ? el('p', { class: 'session-header-description' }, description) : null,
     metaRow,
@@ -239,7 +246,7 @@ export default function decorate(block) {
   );
 
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
-  if (/brownbag/i.test(document.title)) hero.classList.add('session-header-hero--brownbag');
+  if (format === 'Brownbag') hero.classList.add('session-header-hero--brownbag');
 
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';

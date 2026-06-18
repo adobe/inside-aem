@@ -2,9 +2,9 @@
  * solid colours, no tints/frost/gradients).
  * Only renders on /en/aicoc/<slug> pages where body.aicoc-session is set.
  *
- * Format differentiation mirrors the cards (red FILL vs red OUTLINE):
+ * Format differentiation mirrors the cards:
  *   - Show & Tell (default): solid Adobe red flood hero, white text
- *   - Brownbag (--brownbag):  white hero, black text, red accents
+ *   - Brownbag (--brownbag):  dark charcoal hero, white text
  */
 
 main .session-header-container,
@@ -232,81 +232,13 @@ main .session-header .btn-tertiary:hover {
   }
 }
 
-/* ── Brownbag variant — white hero, black text, red accents ──────────────── */
-/* stylelint-disable selector-class-pattern, no-descending-specificity */
+/* ── Brownbag variant — dark charcoal hero ───────────────────────────────── */
+
+/* Mirrors the dark Brownbag card media. Everything else (white text, white
+ * outline pills, white format chip, white primary button) is inherited from
+ * the base hero, which already styles for a coloured background — so we only
+ * need to swap the background here. */
+/* stylelint-disable-next-line selector-class-pattern */
 .session-header-hero--brownbag {
-  background: #fff;
-  color: #000;
-  border: 1px solid var(--aicoc-border, #e5e5e7);
+  background: linear-gradient(160deg, #3a3a3f 0%, #1c1c1f 100%);
 }
-
-.session-header-hero--brownbag .session-header-pill {
-  border-color: var(--hd-red);
-  color: var(--hd-red);
-}
-
-/* On white, the format pill becomes the red-outline emphasis chip. */
-.session-header-hero--brownbag .session-header-pill-format {
-  background: #fff;
-  border-color: var(--hd-red);
-  color: var(--hd-red);
-}
-
-body.aicoc-session .session-header-hero--brownbag .session-header-breadcrumb a {
-  color: var(--hd-red);
-  text-decoration: none;
-}
-
-body.aicoc-session .session-header-hero--brownbag .session-header-breadcrumb a:hover {
-  color: #b30c00;
-  text-decoration: underline;
-}
-
-.session-header-hero--brownbag .session-header-breadcrumb-sep { color: #8e8e93; }
-.session-header-hero--brownbag .session-header-breadcrumb-current { color: #2c2c2e; }
-
-.session-header-hero--brownbag h1.session-header-title { color: #000; }
-.session-header-hero--brownbag .session-header-description { color: #2c2c2e; }
-.session-header-hero--brownbag .session-header-meta-row-inline { color: #2c2c2e; }
-
-.session-header-hero--brownbag .session-header-avatar {
-  background: transparent;
-  color: var(--hd-red);
-  border-color: var(--hd-red);
-}
-
-/* Buttons on white: primary = solid red, secondary/tertiary = red outline. */
-.session-header-hero--brownbag .btn-primary {
-  background: var(--hd-red);
-  color: #fff;
-}
-
-.session-header-hero--brownbag .btn-secondary,
-.session-header-hero--brownbag .btn-tertiary {
-  background: #fff;
-  color: var(--hd-red);
-  border-color: var(--hd-red);
-}
-
-.session-header-hero--brownbag .btn-secondary:hover,
-.session-header-hero--brownbag .btn-tertiary:hover {
-  background: var(--hd-red);
-  color: #fff;
-}
-
-/* ── Dark mode (true black) ──────────────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  .session-header-hero--brownbag {
-    background: #141414;
-    color: #fff;
-    border-color: #2a2a2a;
-  }
-
-  .session-header-hero--brownbag h1.session-header-title,
-  .session-header-hero--brownbag .session-header-description,
-  .session-header-hero--brownbag .session-header-meta-row-inline,
-  .session-header-hero--brownbag .session-header-breadcrumb-current {
-    color: #fff;
-  }
-}
-/* stylelint-enable selector-class-pattern, no-descending-specificity */
