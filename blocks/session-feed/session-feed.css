@@ -22,9 +22,9 @@ main .session-feed {
 
 @media (min-width: 720px) {
   .session-feed-controls {
-    /* Search + presenter sit on one row; count is on a second row, centered
-     * across the full width. */
-    grid-template-columns: 1fr 220px;
+    /* Search (wide) + presenter + format sit on one row; count is on a second
+     * row, centered across the full width. */
+    grid-template-columns: 1fr 200px 180px;
     align-items: center;
   }
 }
@@ -52,7 +52,7 @@ main .session-feed {
  * Vertical centring is done with matching top/bottom padding and a
  * consistent total height across both controls. */
 .session-feed-search input,
-.session-feed-presenter {
+.session-feed-select {
   box-sizing: border-box;
   width: 100%;
   min-height: 44px;
@@ -75,7 +75,7 @@ main .session-feed {
 .session-feed-search input::placeholder { color: #8a8a90; }
 
 /* Custom chevron for the native <select> so it lines up with the inputs. */
-.session-feed-presenter {
+.session-feed-select {
   padding-right: 38px;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%236e6e73' d='M6 8 0 0h12z'/></svg>");
   background-repeat: no-repeat;
@@ -84,7 +84,7 @@ main .session-feed {
 }
 
 .session-feed-search input:focus,
-.session-feed-presenter:focus {
+.session-feed-select:focus {
   outline: none;
   border-color: #EB1000;
   box-shadow: 0 0 0 3px rgb(235 16 0 / 12%);
