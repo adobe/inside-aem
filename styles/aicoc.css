@@ -179,8 +179,12 @@ body.aicoc-hub main hr {
   display: none;
 }
 
+/* When the author omits the "---" separator, the H1 + tagline + session-feed
+ * all land in ONE section that also contains the (hidden) hr. That section is
+ * the hero, so it must stay horizontally centred — use `0 auto`, not `0`, or
+ * the centring margins collapse and the whole 1200px box pins to the left. */
 body.aicoc-hub main > div:has(hr) {
-  margin: 0 !important;
+  margin: 0 auto !important;
   padding: 0 !important;
   min-height: 0 !important;
 }
