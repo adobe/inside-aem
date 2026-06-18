@@ -104,12 +104,13 @@ main .session-feed {
 
 /* auto-fill + a capped column width keeps each card a sensible size no
  * matter how many sessions there are — a single card no longer stretches
- * to fill a whole third of the page. justify-content: start packs the
- * cards to the left instead of spreading them. */
+ * to fill a whole third of the page. justify-content: center keeps the
+ * column block centred so leftover track space is split evenly on both
+ * sides instead of pooling on the right. */
 .session-feed-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
-  justify-content: start;
+  justify-content: center;
   gap: 24px;
 
   /* Each card sizes to its own content; no vertical stretching to match
