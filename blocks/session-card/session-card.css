@@ -230,7 +230,7 @@
 /* Darker (near-black) media gives Brownbag a clear identity vs the Show & Tell
  * red flood, while staying inside the red/black/white palette. */
 .session-card--brownbag .session-card-media {
-  background: linear-gradient(160deg, #3a3a3f 0%, #1c1c1f 100%);
+  background: linear-gradient(160deg, #6a6a70 0%, #45454b 100%);
 }
 
 .session-card--brownbag .session-card-title { color: #fff; }
