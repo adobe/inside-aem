@@ -116,8 +116,20 @@ body.aicoc-hub main > div:first-of-type h1 {
   line-height: 0.98;
   font-weight: 900;
   letter-spacing: -0.025em;
-  margin: 0 0 20px;
+  margin: 0 0 14px;
   color: #000;
+}
+
+/* Subhead (H2) under the headline — a touch larger than the tagline, and
+ * pulled up close to the H1 (EDS adds margin-top: 48px to headings, which
+ * leaves an oversized gap here). */
+body.aicoc-hub main > div:first-of-type h2 {
+  font-size: clamp(22px, 2.8vw, 30px);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--aicoc-ink);
+  margin: 0 0 16px;
 }
 
 /* "Eyebrow" pill above the H1 — solid Adobe red, white text. */
