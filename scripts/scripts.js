@@ -772,8 +772,25 @@ export function buildArticleCard(article, type = 'article', eager = false) {
       </p>
       <h3>${title}</h3>
       <p class="${type}-card-description">${description}</p>
-      <p class="${type}-card-date">${formatLocalCardDate(date)}<span class="${type}-card-read-time">${readTime}</span></p>
+      <p class="${type}-card-date">${formatLocalCardDate(date)}<span class="${type}-card-read-time">${readTime}</span><span class="${type}-card-claps card-claps" hidden></span></p>
     </div>`;
+
+  // Asynchronously fetch the clap count for this article and show it on the card.
+  // Uses the same applause service the article-page clap button writes to, keyed
+  // on the article path (window.location.pathname on the article page === card href).
+  const clapsEl = card.querySelector('.card-claps');
+  fetch(`https://applause.chabouis.fr/get-claps?url=${encodeURIComponent(path)}`)
+    .then((res) => (res.ok ? res.text() : null))
+    .then((text) => {
+      const count = parseInt(text, 10);
+      if (count > 0) {
+        clapsEl.textContent = `👏 ${count.toLocaleString()}`;
+        clapsEl.setAttribute('aria-label', `${count} claps`);
+        clapsEl.hidden = false;
+      }
+    })
+    .catch(() => { /* clap count is non-critical; ignore failures */ });
+
   return card;
 }
 
