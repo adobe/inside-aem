@@ -46,6 +46,18 @@ main .article-feed .article-card:hover {
   content: '· ';
 }
 
+/* Clap count badge */
+.card-claps {
+  display: inline-block;
+  font-size: var(--body-font-size-xxs);
+  color: var(--color-gray-500);
+  margin-left: 8px;
+}
+
+.card-claps::before {
+  content: '· ';
+}
+
 @media (min-width: 600px) {
   main .article-cards {
     padding-left: 0;
