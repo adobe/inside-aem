@@ -772,9 +772,9 @@
       // Load the independent AI CoC section (sessions + manual stats sheet).
       loadAiCoC();
 
-      // Auto-load page views if a domainkey is already saved in this browser,
-      // so the user doesn't have to click "Load page views" on every visit.
-      if (localStorage.getItem('rum-domainkey')) {
+      // Auto-load page views whenever a key is available — from the shared
+      // config sheet (set during init) or a key saved in this browser.
+      if (document.getElementById('rumKey').value.trim()) {
         loadPageViews();
       }
 
@@ -1400,14 +1400,34 @@
       document.getElementById('rumPanel').open = true;
     });
 
-    // Prefill RUM config; expand the settings only if no key is saved yet
-    document.getElementById('rumDomain').value = localStorage.getItem('rum-domain') || window.location.hostname;
-    document.getElementById('rumKey').value = localStorage.getItem('rum-domainkey') || '';
-    if (!localStorage.getItem('rum-domainkey')) {
-      document.getElementById('rumPanel').open = true;
+    // Shared RUM key: read from a published config sheet so every (SSO-authenticated)
+    // visitor gets data without entering the key. The secret lives in SharePoint behind
+    // the same login — never in this public repo. Falls back to a locally-saved key.
+    async function fetchDashboardConfig() {
+      try {
+        const res = await fetch('/en/dashboard-config.json');
+        if (!res.ok) return {};
+        const data = await res.json();
+        const row = (data.data || [])[0] || {};
+        return {
+          domainkey: row.domainkey || row.domainKey || row.rumdomainkey || '',
+          domain: row.domain || '',
+        };
+      } catch (e) {
+        return {};
+      }
     }
 
-    loadData();
+    (async function init() {
+      const cfg = await fetchDashboardConfig();
+      const domain = cfg.domain || localStorage.getItem('rum-domain') || window.location.hostname;
+      const key = cfg.domainkey || localStorage.getItem('rum-domainkey') || '';
+      document.getElementById('rumDomain').value = domain;
+      document.getElementById('rumKey').value = key;
+      // Only nag for manual entry when no key is available from anywhere.
+      if (!key) document.getElementById('rumPanel').open = true;
+      loadData();
+    }());
   </script>
 </body>
 </html>
