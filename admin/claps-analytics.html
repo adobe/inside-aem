@@ -501,9 +501,9 @@
         <div class="number" id="totalClaps">-</div>
         <div class="label">Total Claps</div>
       </div>
-      <div class="stat-card">
-        <div class="number" id="avgClaps">-</div>
-        <div class="label">Avg Claps / Article</div>
+      <div class="stat-card" title="Sessions (RUM): visits that started from outside the site. Counts sessions, not unique people.">
+        <div class="number" id="totalVisits">—</div>
+        <div class="label">Visits</div>
       </div>
       <div class="stat-card">
         <div class="number" id="totalViews">—</div>
@@ -895,9 +895,12 @@
             if (!p) return;
             const w = bundle.weight || 1;
             const s = statsByPath[p] || {
-              views: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
+              views: 0, visits: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
             };
             s.views += w;
+            // A bundle with an 'enter' checkpoint is a new session/visit (arrival
+            // from outside) rather than an internal page-to-page navigation.
+            if ((bundle.events || []).some((e) => e.checkpoint === 'enter')) s.visits += w;
             const dev = deviceClass(bundle);
             if (dev === 'mobile' || dev === 'desktop' || dev === 'bot') s[dev] += w;
             if (bundleEngaged(bundle)) s.engaged += w;
@@ -917,10 +920,11 @@
 
       // Attach per-article RUM stats and accumulate site-wide totals
       const site = {
-        views: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
+        views: 0, visits: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
       };
       Object.values(statsByPath).forEach((s) => {
         site.views += s.views;
+        site.visits += s.visits;
         site.mobile += s.mobile;
         site.desktop += s.desktop;
         site.bot += s.bot;
@@ -935,6 +939,7 @@
 
       document.getElementById('totalViews').textContent = Math.round(site.views).toLocaleString();
       document.getElementById('kpiViews').textContent = Math.round(site.views).toLocaleString();
+      document.getElementById('totalVisits').textContent = Math.round(site.visits).toLocaleString();
       renderAudience(site);
 
       // Share the RUM aggregate with the AI CoC section so its /en/aicoc/*
@@ -969,13 +974,6 @@
     }
 
     // ---------- Stats ----------
-    function median(nums) {
-      if (nums.length === 0) return 0;
-      const sorted = [...nums].sort((a, b) => a - b);
-      const mid = Math.floor(sorted.length / 2);
-      return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-    }
-
     function daysSince(date) {
       const d = toDate(date);
       if (!d) return null;
@@ -1003,13 +1001,10 @@
     function updateStats() {
       const totalArticles = articles.length;
       const totalClaps = articles.reduce((sum, a) => sum + (a.totalClaps || 0), 0);
-      const avg = totalArticles ? totalClaps / totalArticles : 0;
-      const med = median(articles.map((a) => a.totalClaps || 0));
       const authors = new Set(articles.map((a) => a.author).filter((x) => x && x !== 'Unknown'));
 
       document.getElementById('totalArticles').textContent = totalArticles.toLocaleString();
       document.getElementById('totalClaps').textContent = totalClaps.toLocaleString();
-      document.getElementById('avgClaps').textContent = `${avg.toFixed(1)} (med ${med})`;
       document.getElementById('totalAuthors').textContent = authors.size.toLocaleString();
 
       document.getElementById('kpiArticles').textContent = totalArticles.toLocaleString();
