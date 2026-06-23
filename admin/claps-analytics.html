@@ -525,6 +525,12 @@
       document.getElementById('loading').style.display = 'none';
       document.getElementById('articlesTable').style.display = 'table';
 
+      // Auto-load page views if a domainkey is already saved in this browser,
+      // so the user doesn't have to click "Load page views" on every visit.
+      if (localStorage.getItem('rum-domainkey')) {
+        loadPageViews();
+      }
+
       await fetchAllClaps();
     }
 
