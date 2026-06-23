@@ -306,6 +306,7 @@
     }
 
     .bar-fill {
+      display: block;
       background: #EB1000;
       height: 100%;
       border-radius: 6px;
@@ -322,6 +323,25 @@
       font-weight: bold;
       color: #EB1000;
       line-height: 1.1;
+    }
+
+    .section-divider {
+      border-top: 4px solid #EB1000;
+      margin: 50px 0 26px;
+      padding-top: 22px;
+    }
+
+    .section-divider h2 {
+      color: #2c2c2c;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .section-divider p {
+      color: #6e6e6e;
+      font-size: 1rem;
     }
 
     .loading {
@@ -486,6 +506,84 @@
       <p class="panel-hint">Articles published per month</p>
       <div id="cadenceBars"></div>
     </div>
+
+    <!-- ===================== AI CoC SESSIONS (independent section) ===================== -->
+    <div class="section-divider">
+      <h2>AI CoC Sessions</h2>
+      <p>Independent from the blog &mdash; sourced from the session index, RUM page views, and the published stats sheet.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="number" id="acSessions">-</div>
+        <div class="label">Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="acAvgAttendance">—</div>
+        <div class="label">Avg Attendance</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="acSlack">—</div>
+        <div class="label">Slack Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="acCommunity">—</div>
+        <div class="label">Community Group</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="acViews">—</div>
+        <div class="label">Session Page Views</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="rum-status" id="acStatsHint"></div>
+      <div id="acLoading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading AI CoC sessions...</p>
+      </div>
+      <table id="acTable" style="display: none;">
+        <thead>
+          <tr>
+            <th class="numeric">#</th>
+            <th>Date</th>
+            <th>Session</th>
+            <th>Presenter</th>
+            <th>Format</th>
+            <th class="numeric" title="Live attendance, from the published stats sheet (Teams)">Attendance</th>
+            <th class="numeric" title="Web page views of the session write-up (RUM) — distinct from live attendance">Page views</th>
+            <th>Links</th>
+          </tr>
+        </thead>
+        <tbody id="acBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panels-2col">
+      <div class="panel">
+        <h2>👥 Attendance per session</h2>
+        <p class="panel-hint">Live attendance from the stats sheet</p>
+        <div id="acAttendanceBars"></div>
+      </div>
+      <div class="panel">
+        <h2>💬 Slack community growth</h2>
+        <p class="panel-hint">Workspace members over time (stats sheet)</p>
+        <div id="acSlackBars"></div>
+      </div>
+    </div>
+
+    <div class="panels-2col">
+      <div class="panel">
+        <h2>🎤 Sessions by presenter</h2>
+        <p class="panel-hint">Count of sessions</p>
+        <div id="acPresenterBars"></div>
+      </div>
+      <div class="panel">
+        <h2>🗂️ Format split</h2>
+        <p class="panel-hint">Brownbag vs Show &amp; Tell</p>
+        <div id="acFormatBars"></div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -493,6 +591,11 @@
     let currentSort = 'date';
     let sortDirection = 'desc';
     let viewsLoaded = false;
+
+    // AI CoC section (independent from the blog)
+    let acSessions = [];
+    let acStats = null; // null = stats sheet not published yet
+    let rumStatsByPath = {}; // shared RUM aggregate, set once page views load
 
     // ---------- Claps ----------
     async function fetchClapsForArticle(articlePath) {
@@ -560,6 +663,9 @@
 
       document.getElementById('loading').style.display = 'none';
       document.getElementById('articlesTable').style.display = 'table';
+
+      // Load the independent AI CoC section (sessions + manual stats sheet).
+      loadAiCoC();
 
       // Auto-load page views if a domainkey is already saved in this browser,
       // so the user doesn't have to click "Load page views" on every visit.
@@ -733,6 +839,12 @@
 
       document.getElementById('totalViews').textContent = Math.round(site.views).toLocaleString();
       renderAudience(site);
+
+      // Share the RUM aggregate with the AI CoC section so its /en/aicoc/*
+      // page views populate from the same fetch (same domain + key).
+      rumStatsByPath = statsByPath;
+      attachAcViews();
+      renderAiCoC();
       const note = failed > 0 ? ` (${failed} day(s) failed)` : '';
       statusEl.className = 'rum-status';
       statusEl.textContent = `Loaded ~${Math.round(site.views).toLocaleString()} page views across ${days} days${note}. Views are sampled estimates.`;
@@ -901,6 +1013,176 @@
         .slice(-18)
         .map(([label, value]) => ({ label, value }));
       renderBars('cadenceBars', entries);
+    }
+
+    // ====================== AI CoC SECTION ======================
+    function numOrNull(v) {
+      if (v === null || v === undefined || v === '') return null;
+      const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[, ]/g, ''));
+      return Number.isNaN(n) ? null : n;
+    }
+
+    function dayKey(value) {
+      const d = toDate(value);
+      return d ? d.toISOString().slice(0, 10) : null;
+    }
+
+    function acFormatOf(session) {
+      const t = (session.title || '').toLowerCase();
+      if (t.includes('brownbag')) return 'Brownbag';
+      if (t.includes('show') && t.includes('tell')) return 'Show & Tell';
+      return session.tags[0] || 'Session';
+    }
+
+    async function fetchAcSessions() {
+      try {
+        const res = await fetch('/en/aicoc-index.json?limit=500');
+        if (!res.ok) return [];
+        const data = await res.json();
+        return (data.data || []).map((s) => ({
+          title: s.title || '(untitled)',
+          path: (s.path || '').replace('.html', ''),
+          presenter: s.presenter || s.author || 'Unknown',
+          date: s.sessionDate || s.date || s.lastModified || null,
+          tags: parseTags(s.tags),
+          recording: s.recording || '',
+          deck: s.deck || '',
+          blog: s.blog || '',
+          slack: s.slack || '',
+          views: null,
+        }));
+      } catch (e) {
+        console.error('AI CoC sessions fetch failed:', e);
+        return [];
+      }
+    }
+
+    // Manual numbers (attendance, Slack members, community group) come from a
+    // published AEM sheet. Header names are matched leniently so the existing
+    // spreadsheet column titles work too.
+    async function fetchAcStats() {
+      try {
+        const res = await fetch('/en/aicoc-stats.json');
+        if (!res.ok) return null; // sheet not published yet
+        const data = await res.json();
+        return (data.data || []).map((r) => ({
+          session: numOrNull(r.session ?? r['session number'] ?? r['Session number']),
+          date: r.date ?? r.Date ?? null,
+          attendance: numOrNull(r.attendance ?? r.Attendance),
+          slackMembers: numOrNull(r.slackMembers ?? r['Members in Slack'] ?? r['members in slack']),
+          communityGroup: numOrNull(r.communityGroup ?? r['GRP-GRP-AI-COC-COMMUNITY'] ?? r.community),
+        })).filter((r) => r.date || r.session != null);
+      } catch (e) {
+        console.error('AI CoC stats fetch failed:', e);
+        return null;
+      }
+    }
+
+    function acAttendanceFor(session) {
+      if (!acStats) return null;
+      const k = dayKey(session.date);
+      const row = acStats.find((r) => dayKey(r.date) === k);
+      return row ? row.attendance : null;
+    }
+
+    function attachAcViews() {
+      acSessions.forEach((s) => {
+        const key = s.path.replace(/\/$/, '') || '/';
+        const st = rumStatsByPath[key];
+        s.views = st ? st.views : null;
+      });
+    }
+
+    async function loadAiCoC() {
+      const [sessions, stats] = await Promise.all([fetchAcSessions(), fetchAcStats()]);
+      acSessions = sessions;
+      acStats = stats;
+      attachAcViews();
+      renderAiCoC();
+      document.getElementById('acLoading').style.display = 'none';
+
+      const hint = document.getElementById('acStatsHint');
+      if (sessions.length === 0) {
+        hint.className = 'rum-status error';
+        hint.textContent = 'No AI CoC sessions found (the /en/aicoc-index.json index may require sign-in when viewed here).';
+      } else if (!stats) {
+        hint.className = 'rum-status';
+        hint.textContent = 'Attendance & Slack numbers will appear once the stats sheet is published at /en/aicoc-stats.json.';
+      } else {
+        hint.className = 'rum-status';
+        hint.textContent = '';
+      }
+    }
+
+    function renderAiCoC() {
+      if (acSessions.length === 0) return;
+      const sessions = [...acSessions].sort((a, b) => (toDate(b.date) || new Date(0)) - (toDate(a.date) || new Date(0)));
+
+      // Summary cards
+      document.getElementById('acSessions').textContent = sessions.length.toLocaleString();
+      const attVals = (acStats || []).map((r) => r.attendance).filter((n) => n != null);
+      document.getElementById('acAvgAttendance').textContent = attVals.length
+        ? Math.round(attVals.reduce((s, n) => s + n, 0) / attVals.length).toLocaleString() : '—';
+      const latest = (key) => {
+        const rows = (acStats || []).filter((r) => r[key] != null)
+          .sort((a, b) => (toDate(b.date) || new Date(0)) - (toDate(a.date) || new Date(0)));
+        return rows.length ? rows[0][key] : null;
+      };
+      const slack = latest('slackMembers');
+      const community = latest('communityGroup');
+      document.getElementById('acSlack').textContent = slack != null ? slack.toLocaleString() : '—';
+      document.getElementById('acCommunity').textContent = community != null ? community.toLocaleString() : '—';
+      const totalViews = sessions.reduce((s, x) => s + (x.views || 0), 0);
+      document.getElementById('acViews').textContent = totalViews > 0 ? Math.round(totalViews).toLocaleString() : '—';
+
+      // Table
+      document.getElementById('acTable').style.display = 'table';
+      document.getElementById('acBody').innerHTML = sessions.map((s) => {
+        const att = acAttendanceFor(s);
+        const links = [
+          s.recording && `<a class="article-link" href="${s.recording}" target="_blank">Rec</a>`,
+          s.deck && `<a class="article-link" href="${s.deck}" target="_blank">Deck</a>`,
+          s.blog && `<a class="article-link" href="${s.blog}" target="_blank">Blog</a>`,
+          s.slack && `<a class="article-link" href="${s.slack}" target="_blank">Slack</a>`,
+        ].filter(Boolean).join(' · ');
+        const sessionRow = acStats && acStats.find((r) => dayKey(r.date) === dayKey(s.date));
+        const num = sessionRow && sessionRow.session != null ? sessionRow.session : '';
+        return `
+          <tr>
+            <td class="numeric">${num}</td>
+            <td><span class="muted">${formatDate(s.date)}</span></td>
+            <td><div class="article-title">${s.title}</div>
+              <a href="${s.path}" target="_blank" class="article-link">${s.path}</a></td>
+            <td>${s.presenter}</td>
+            <td>${acFormatOf(s)}</td>
+            <td class="numeric">${att != null ? att.toLocaleString() : '<span class="muted">—</span>'}</td>
+            <td class="numeric">${s.views == null ? '<span class="muted">—</span>' : Math.round(s.views).toLocaleString()}</td>
+            <td>${links || '<span class="muted">—</span>'}</td>
+          </tr>`;
+      }).join('');
+
+      // Attendance per session (chronological)
+      const attEntries = (acStats || []).filter((r) => r.attendance != null)
+        .sort((a, b) => (toDate(a.date) || 0) - (toDate(b.date) || 0))
+        .map((r) => ({ label: r.session != null ? `#${r.session}` : formatDate(r.date), value: r.attendance }));
+      renderBars('acAttendanceBars', attEntries);
+
+      // Slack members growth over time
+      const slackEntries = (acStats || []).filter((r) => r.slackMembers != null)
+        .sort((a, b) => (toDate(a.date) || 0) - (toDate(b.date) || 0))
+        .map((r) => ({ label: formatDate(r.date), value: r.slackMembers }));
+      renderBars('acSlackBars', slackEntries);
+
+      // Sessions by presenter
+      const byPres = {};
+      sessions.forEach((s) => { byPres[s.presenter] = (byPres[s.presenter] || 0) + 1; });
+      renderBars('acPresenterBars', Object.entries(byPres)
+        .map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value).slice(0, 10));
+
+      // Format split
+      const byFmt = {};
+      sessions.forEach((s) => { const f = acFormatOf(s); byFmt[f] = (byFmt[f] || 0) + 1; });
+      renderBars('acFormatBars', Object.entries(byFmt).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value));
     }
 
     function sortArticles(sortBy) {
