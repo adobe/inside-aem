@@ -373,12 +373,90 @@
       font-size: 1.1rem;
     }
 
+    /* Combined KPI strip */
+    .kpi-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 22px;
+      background: #000000;
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px 16px;
+    }
+
+    .kpi-group-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #EB1000;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .kpi {
+      font-size: 0.95rem;
+      color: #e6e6e6;
+      white-space: nowrap;
+    }
+
+    .kpi b {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .kpi-sep {
+      width: 1px;
+      align-self: stretch;
+      background: #333333;
+      margin: 2px 6px;
+    }
+
+    /* Section tabs */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e1e1e1;
+    }
+
+    .tab {
+      padding: 11px 26px;
+      border: none;
+      background: transparent;
+      color: #6e6e6e;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .tab:hover { color: #2c2c2c; }
+
+    .tab.active {
+      color: #EB1000;
+      border-bottom-color: #EB1000;
+    }
+
+    .tab-panel[hidden] { display: none; }
+
     @media (max-width: 768px) {
       .header h1 { font-size: 1.8rem; }
       .controls { flex-direction: column; align-items: stretch; }
       .search-box { width: 100%; }
       table { font-size: 0.9rem; }
       .bar-row { grid-template-columns: 110px 1fr 50px; }
+      .kpi-sep { display: none; }
+      .tab { padding: 10px 16px; font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -386,9 +464,34 @@
   <div class="container">
     <div class="header">
       <h1>📚 Articles Dashboard</h1>
-      <p>Engagement & publishing analytics for the blog</p>
+      <p>Blog &amp; AI CoC engagement and publishing analytics</p>
     </div>
 
+    <!-- Always-visible combined KPI strip (both sections at a glance) -->
+    <div class="kpi-strip">
+      <div class="kpi-group">
+        <span class="kpi-group-label">Blog</span>
+        <span class="kpi"><b id="kpiArticles">–</b> articles</span>
+        <span class="kpi"><b id="kpiClaps">–</b> claps</span>
+        <span class="kpi"><b id="kpiViews">–</b> views</span>
+      </div>
+      <div class="kpi-sep"></div>
+      <div class="kpi-group">
+        <span class="kpi-group-label">AI CoC</span>
+        <span class="kpi"><b id="kpiSessions">–</b> sessions</span>
+        <span class="kpi"><b id="kpiAttendance">–</b> avg attendance</span>
+        <span class="kpi"><b id="kpiSlack">–</b> Slack members</span>
+      </div>
+    </div>
+
+    <!-- Section tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="blog">Blog</button>
+      <button class="tab" data-tab="aicoc">AI CoC Sessions</button>
+    </div>
+
+    <!-- ===================== BLOG TAB ===================== -->
+    <div class="tab-panel" id="tab-blog">
     <div class="stats-grid">
       <div class="stat-card">
         <div class="number" id="totalArticles">-</div>
@@ -506,10 +609,11 @@
       <p class="panel-hint">Articles published per month</p>
       <div id="cadenceBars"></div>
     </div>
+    </div><!-- /tab-blog -->
 
-    <!-- ===================== AI CoC SESSIONS (independent section) ===================== -->
+    <!-- ===================== AI CoC TAB ===================== -->
+    <div class="tab-panel" id="tab-aicoc" hidden>
     <div class="section-divider">
-      <h2>AI CoC Sessions</h2>
       <p>Independent from the blog &mdash; sourced from the session index, RUM page views, and the published stats sheet.</p>
     </div>
 
@@ -584,6 +688,7 @@
         <div id="acFormatBars"></div>
       </div>
     </div>
+    </div><!-- /tab-aicoc -->
   </div>
 
   <script>
@@ -838,6 +943,7 @@
       viewsLoaded = true;
 
       document.getElementById('totalViews').textContent = Math.round(site.views).toLocaleString();
+      document.getElementById('kpiViews').textContent = Math.round(site.views).toLocaleString();
       renderAudience(site);
 
       // Share the RUM aggregate with the AI CoC section so its /en/aicoc/*
@@ -914,6 +1020,9 @@
       document.getElementById('totalClaps').textContent = totalClaps.toLocaleString();
       document.getElementById('avgClaps').textContent = `${avg.toFixed(1)} (med ${med})`;
       document.getElementById('totalAuthors').textContent = authors.size.toLocaleString();
+
+      document.getElementById('kpiArticles').textContent = totalArticles.toLocaleString();
+      document.getElementById('kpiClaps').textContent = totalClaps.toLocaleString();
     }
 
     // ---------- Rendering ----------
@@ -1138,6 +1247,12 @@
       const totalViews = sessions.reduce((s, x) => s + (x.views || 0), 0);
       document.getElementById('acViews').textContent = totalViews > 0 ? Math.round(totalViews).toLocaleString() : '—';
 
+      // Combined KPI strip (AI CoC side)
+      document.getElementById('kpiSessions').textContent = sessions.length.toLocaleString();
+      document.getElementById('kpiAttendance').textContent = attVals.length
+        ? Math.round(attVals.reduce((s, n) => s + n, 0) / attVals.length).toLocaleString() : '–';
+      document.getElementById('kpiSlack').textContent = slack != null ? slack.toLocaleString() : '–';
+
       // Table
       document.getElementById('acTable').style.display = 'table';
       document.getElementById('acBody').innerHTML = sessions.map((s) => {
@@ -1264,6 +1379,16 @@
 
     document.querySelectorAll('th[data-sort]').forEach((th) => {
       th.addEventListener('click', () => sortArticles(th.dataset.sort));
+    });
+
+    // Tab switching between Blog and AI CoC sections
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === tab));
+        document.getElementById('tab-blog').hidden = tab.dataset.tab !== 'blog';
+        document.getElementById('tab-aicoc').hidden = tab.dataset.tab !== 'aicoc';
+        window.scrollTo(0, 0);
+      });
     });
 
     document.getElementById('loadRumBtn').addEventListener('click', loadPageViews);
