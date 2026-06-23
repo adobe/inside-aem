@@ -554,7 +554,8 @@
 
     // ---------- Page views (AEM RUM) ----------
     function rumUrl(domain, year, month, day, key) {
-      return `https://rum.hlx.page/bundles/${domain}/${year}/${month}/${day}?domainkey=${encodeURIComponent(key)}`;
+      // AEM RUM bundler (same endpoint the official RUM Explorer uses)
+      return `https://bundles.aem.page/bundles/${domain}/${year}/${month}/${day}?domainkey=${encodeURIComponent(key)}`;
     }
 
     async function fetchRumDay(domain, key, d) {
