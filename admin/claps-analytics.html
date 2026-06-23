@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog &amp; AI CoC Dashboard</title>
+  <!-- Site styles so the shared header (gnav) and footer render correctly.
+       Loaded before the dashboard's own styles below, so the dashboard wins on conflicts. -->
+  <link rel="stylesheet" href="/styles/styles.css"/>
   <style>
     * {
       margin: 0;
@@ -12,6 +15,9 @@
     }
 
     body {
+      /* styles.css hides the body until the full boilerplate adds .appear;
+         we don't run that pipeline, so reveal it here. */
+      display: block;
       font-family: 'Adobe Clean', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f5f5;
       min-height: 100vh;
@@ -461,6 +467,7 @@
   </style>
 </head>
 <body>
+  <header></header>
   <div class="container">
     <div class="header">
       <h1>📚 Blog &amp; AI CoC Dashboard</h1>
@@ -1411,6 +1418,24 @@
       }
       loadData();
     }());
+  </script>
+
+  <footer></footer>
+
+  <!-- Load the site's shared header (gnav) and footer, exactly as regular pages do,
+       without running the full page pipeline (which would re-decorate the dashboard). -->
+  <script type="module">
+    import { loadBlock, loadFooter } from '/scripts/lib-franklin.js';
+    // styles.css hides the body until '.appear' is added by the boilerplate; reveal it.
+    document.body.classList.add('appear');
+    document.body.style.display = 'block';
+    window.hlx = window.hlx || {};
+    if (window.hlx.codeBasePath === undefined) window.hlx.codeBasePath = '';
+    const header = document.querySelector('header');
+    header.setAttribute('data-block-name', 'gnav');
+    header.setAttribute('data-gnav-source', '/en/gnav');
+    loadBlock(header);
+    loadFooter(document.querySelector('footer'));
   </script>
 </body>
 </html>
