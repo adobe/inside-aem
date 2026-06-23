@@ -302,6 +302,13 @@
       font-weight: 600;
     }
 
+    .big-metric {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #667eea;
+      line-height: 1.1;
+    }
+
     .loading {
       text-align: center;
       padding: 50px;
@@ -422,6 +429,8 @@
             <th class="numeric" data-sort="velocity">Claps/day<span class="sort-indicator"></span></th>
             <th class="numeric" data-sort="views">Views<span class="sort-indicator"></span></th>
             <th class="numeric" data-sort="engagement">Claps/1k views<span class="sort-indicator"></span></th>
+            <th class="numeric" data-sort="mobile">Mobile %<span class="sort-indicator"></span></th>
+            <th class="numeric" data-sort="engaged">Engaged %<span class="sort-indicator"></span></th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -442,6 +451,19 @@
         <h2>🏷️ Top topics</h2>
         <p class="panel-hint">By total claps across tagged articles</p>
         <div id="topicBars"></div>
+      </div>
+    </div>
+
+    <div class="panels-2col" id="audiencePanel" style="display: none;">
+      <div class="panel">
+        <h2>📱 Device split</h2>
+        <p class="panel-hint">Share of human page views by device (RUM)</p>
+        <div id="deviceBars"></div>
+      </div>
+      <div class="panel">
+        <h2>🎯 Engagement</h2>
+        <p class="panel-hint">Visits with a click or multiple content views (RUM)</p>
+        <div id="engagementSummary"></div>
       </div>
     </div>
 
@@ -584,6 +606,29 @@
       }
     }
 
+    // RUM classifies the client into a device bucket via the userAgent field
+    // (e.g. "desktop:windows", "mobile:ios", "bot:...").
+    function deviceClass(bundle) {
+      const ua = (bundle.userAgent || '').toLowerCase();
+      if (ua.startsWith('mobile')) return 'mobile';
+      if (ua.startsWith('desktop')) return 'desktop';
+      if (ua.startsWith('bot')) return 'bot';
+      return 'other';
+    }
+
+    // A visit is "engaged" if the reader interacted (a click) or viewed
+    // multiple content blocks/media — matching AEM's RUM engagement definition.
+    // Everything else is effectively a bounce.
+    function bundleEngaged(bundle) {
+      let clicks = 0;
+      let contentViews = 0;
+      (bundle.events || []).forEach((e) => {
+        if (e.checkpoint === 'click') clicks += 1;
+        if (e.checkpoint === 'viewblock' || e.checkpoint === 'viewmedia') contentViews += 1;
+      });
+      return clicks > 0 || contentViews > 1;
+    }
+
     async function loadPageViews() {
       const statusEl = document.getElementById('rumStatus');
       const domain = document.getElementById('rumDomain').value.trim();
@@ -599,7 +644,7 @@
       localStorage.setItem('rum-domain', domain);
 
       statusEl.className = 'rum-status';
-      const viewsByPath = {};
+      const statsByPath = {};
       let processed = 0;
       let failed = 0;
       const today = new Date();
@@ -632,7 +677,15 @@
           r.value.forEach((bundle) => {
             const p = pathFromUrl(bundle.url);
             if (!p) return;
-            viewsByPath[p] = (viewsByPath[p] || 0) + (bundle.weight || 1);
+            const w = bundle.weight || 1;
+            const s = statsByPath[p] || {
+              views: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
+            };
+            s.views += w;
+            const dev = deviceClass(bundle);
+            if (dev === 'mobile' || dev === 'desktop' || dev === 'bot') s[dev] += w;
+            if (bundleEngaged(bundle)) s.engaged += w;
+            statsByPath[p] = s;
           });
         });
       }
@@ -646,20 +699,50 @@
         return;
       }
 
-      // Attach views to articles
-      let totalSiteViews = 0;
-      Object.values(viewsByPath).forEach((v) => { totalSiteViews += v; });
+      // Attach per-article RUM stats and accumulate site-wide totals
+      const site = {
+        views: 0, mobile: 0, desktop: 0, bot: 0, engaged: 0,
+      };
+      Object.values(statsByPath).forEach((s) => {
+        site.views += s.views;
+        site.mobile += s.mobile;
+        site.desktop += s.desktop;
+        site.bot += s.bot;
+        site.engaged += s.engaged;
+      });
       articles.forEach((a) => {
         const key2 = a.path.replace(/\/$/, '') || '/';
-        a.views = viewsByPath[key2] || 0;
+        a.rum = statsByPath[key2] || null;
+        a.views = a.rum ? a.rum.views : 0;
       });
       viewsLoaded = true;
 
-      document.getElementById('totalViews').textContent = Math.round(totalSiteViews).toLocaleString();
+      document.getElementById('totalViews').textContent = Math.round(site.views).toLocaleString();
+      renderAudience(site);
       const note = failed > 0 ? ` (${failed} day(s) failed)` : '';
       statusEl.className = 'rum-status';
-      statusEl.textContent = `Loaded ~${Math.round(totalSiteViews).toLocaleString()} page views across ${days} days${note}. Views are sampled estimates.`;
+      statusEl.textContent = `Loaded ~${Math.round(site.views).toLocaleString()} page views across ${days} days${note}. Views are sampled estimates.`;
       renderTable();
+    }
+
+    // Render the site-wide audience (device split) & engagement panel
+    function renderAudience(site) {
+      const human = site.mobile + site.desktop;
+      const pct = (n, d) => (d > 0 ? (n / d) * 100 : 0);
+      document.getElementById('audiencePanel').style.display = 'block';
+      document.getElementById('deviceBars').innerHTML = [
+        { label: 'Desktop', value: Math.round(pct(site.desktop, human)) },
+        { label: 'Mobile', value: Math.round(pct(site.mobile, human)) },
+      ].map((e) => `
+        <div class="bar-row">
+          <span class="bar-label">${e.label}</span>
+          <span class="bar-track"><span class="bar-fill" style="width:${Math.max(2, e.value)}%"></span></span>
+          <span class="bar-value">${e.value}%</span>
+        </div>`).join('') + `<p class="muted" style="margin-top:8px">Excludes ~${Math.round(pct(site.bot, site.views))}% bot traffic.</p>`;
+      const engRate = Math.round(pct(site.engaged, site.views));
+      document.getElementById('engagementSummary').innerHTML = `
+        <div class="big-metric">${engRate}%</div>
+        <p class="muted">of visits were engaged (a click or multiple content views). The rest (~${100 - engRate}%) bounced.</p>`;
     }
 
     // ---------- Stats ----------
@@ -685,6 +768,18 @@
     function engagementOf(article) {
       if (!article.views || article.views <= 0) return null;
       return (article.totalClaps / article.views) * 1000;
+    }
+
+    function mobilePctOf(article) {
+      if (!article.rum) return null;
+      const human = article.rum.mobile + article.rum.desktop;
+      if (human <= 0) return null;
+      return (article.rum.mobile / human) * 100;
+    }
+
+    function engagedPctOf(article) {
+      if (!article.rum || article.rum.views <= 0) return null;
+      return (article.rum.engaged / article.rum.views) * 100;
     }
 
     function updateStats() {
@@ -810,6 +905,8 @@
         else if (currentSort === 'velocity') { av = velocityOf(a); bv = velocityOf(b); }
         else if (currentSort === 'engagement') { av = engagementOf(a) || -1; bv = engagementOf(b) || -1; }
         else if (currentSort === 'views') { av = a.views || -1; bv = b.views || -1; }
+        else if (currentSort === 'mobile') { av = mobilePctOf(a) ?? -1; bv = mobilePctOf(b) ?? -1; }
+        else if (currentSort === 'engaged') { av = engagedPctOf(a) ?? -1; bv = engagedPctOf(b) ?? -1; }
         else if (currentSort === 'totalClaps') { av = a.totalClaps || 0; bv = b.totalClaps || 0; }
         else if (currentSort === 'author') { return dir * String(a.author).localeCompare(String(b.author)); }
         else { return dir * String(a.title).localeCompare(String(b.title)); }
@@ -830,8 +927,12 @@
 
       tbody.innerHTML = rows.map((a) => {
         const eng = engagementOf(a);
+        const mob = mobilePctOf(a);
+        const engaged = engagedPctOf(a);
         const viewsCell = a.views === null ? '<span class="muted">—</span>' : Math.round(a.views).toLocaleString();
         const engCell = eng === null ? '<span class="muted">—</span>' : eng.toFixed(1);
+        const mobCell = mob === null ? '<span class="muted">—</span>' : `${mob.toFixed(0)}%`;
+        const engagedCell = engaged === null ? '<span class="muted">—</span>' : `${engaged.toFixed(0)}%`;
         const tagsHtml = a.tags.slice(0, 3).map((t) => `<span class="tag">${t}</span>`).join('');
         return `
           <tr>
@@ -846,6 +947,8 @@
             <td class="numeric">${velocityOf(a).toFixed(2)}</td>
             <td class="numeric">${viewsCell}</td>
             <td class="numeric">${engCell}</td>
+            <td class="numeric">${mobCell}</td>
+            <td class="numeric">${engagedCell}</td>
           </tr>`;
       }).join('');
 
