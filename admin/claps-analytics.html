@@ -1039,18 +1039,21 @@
         const res = await fetch('/en/aicoc-index.json?limit=500');
         if (!res.ok) return [];
         const data = await res.json();
-        return (data.data || []).map((s) => ({
-          title: s.title || '(untitled)',
-          path: (s.path || '').replace('.html', ''),
-          presenter: s.presenter || s.author || 'Unknown',
-          date: s.sessionDate || s.date || s.lastModified || null,
-          tags: parseTags(s.tags),
-          recording: s.recording || '',
-          deck: s.deck || '',
-          blog: s.blog || '',
-          slack: s.slack || '',
-          views: null,
-        }));
+        return (data.data || [])
+          // The stats sheet lives under /en/aicoc/ too — keep it out of the session list.
+          .filter((s) => !(s.path || '').includes('aicoc-stats'))
+          .map((s) => ({
+            title: s.title || '(untitled)',
+            path: (s.path || '').replace('.html', ''),
+            presenter: s.presenter || s.author || 'Unknown',
+            date: s.sessionDate || s.date || s.lastModified || null,
+            tags: parseTags(s.tags),
+            recording: s.recording || '',
+            deck: s.deck || '',
+            blog: s.blog || '',
+            slack: s.slack || '',
+            views: null,
+          }));
       } catch (e) {
         console.error('AI CoC sessions fetch failed:', e);
         return [];
@@ -1062,7 +1065,7 @@
     // spreadsheet column titles work too.
     async function fetchAcStats() {
       try {
-        const res = await fetch('/en/aicoc-stats.json');
+        const res = await fetch('/en/aicoc/aicoc-stats.json');
         if (!res.ok) return null; // sheet not published yet
         const data = await res.json();
         return (data.data || []).map((r) => ({
@@ -1107,7 +1110,7 @@
         hint.textContent = 'No AI CoC sessions found (the /en/aicoc-index.json index may require sign-in when viewed here).';
       } else if (!stats) {
         hint.className = 'rum-status';
-        hint.textContent = 'Attendance & Slack numbers will appear once the stats sheet is published at /en/aicoc-stats.json.';
+        hint.textContent = 'Attendance & Slack numbers will appear once the stats sheet is published at /en/aicoc/aicoc-stats.json.';
       } else {
         hint.className = 'rum-status';
         hint.textContent = '';
