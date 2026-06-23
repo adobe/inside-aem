@@ -515,23 +515,14 @@
       </div>
     </div>
 
-    <!-- Page views (RUM) configuration -->
+    <!-- Page views (RUM) controls -->
     <details class="panel" id="rumPanel">
       <summary>Page views settings (AEM RUM)</summary>
       <p class="panel-hint">
-        Real page-view data comes from AEM's built-in Real User Monitoring. It needs the domain's
-        <strong>RUM domainkey</strong> (a secret) &mdash; it is stored only in this browser (localStorage), never sent anywhere except the RUM API.
-        Views are weighted/sampled estimates. Once the key is saved you can leave this collapsed; views load automatically.
+        Page views come from AEM Real User Monitoring (weighted/sampled estimates). The RUM domainkey is
+        configured centrally in <code>/en/dashboard-config.json</code>, so views load automatically for everyone.
       </p>
       <div class="rum-config">
-        <div class="field">
-          <label for="rumDomain">Domain</label>
-          <input type="text" id="rumDomain" style="width: 260px;">
-        </div>
-        <div class="field">
-          <label for="rumKey">Domainkey</label>
-          <input type="password" id="rumKey" placeholder="paste domainkey" style="width: 260px;">
-        </div>
         <div class="field">
           <label for="rumRange">Range</label>
           <select id="rumRange">
@@ -540,8 +531,7 @@
             <option value="90">Last 90 days</option>
           </select>
         </div>
-        <button class="btn" id="loadRumBtn">Load page views</button>
-        <button class="btn secondary" id="forgetKeyBtn">Forget key</button>
+        <button class="btn" id="loadRumBtn">Refresh</button>
       </div>
       <div class="rum-status" id="rumStatus"></div>
     </details>
@@ -697,6 +687,10 @@
     let sortDirection = 'desc';
     let viewsLoaded = false;
 
+    // RUM domainkey/domain, resolved once at init from the config sheet.
+    let cfgKey = '';
+    let cfgDomain = '';
+
     // AI CoC section (independent from the blog)
     let acSessions = [];
     let acStats = null; // null = stats sheet not published yet
@@ -772,9 +766,8 @@
       // Load the independent AI CoC section (sessions + manual stats sheet).
       loadAiCoC();
 
-      // Auto-load page views whenever a key is available — from the shared
-      // config sheet (set during init) or a key saved in this browser.
-      if (document.getElementById('rumKey').value.trim()) {
+      // Auto-load page views whenever a key is available from the config sheet.
+      if (cfgKey) {
         loadPageViews();
       }
 
@@ -856,17 +849,15 @@
 
     async function loadPageViews() {
       const statusEl = document.getElementById('rumStatus');
-      const domain = document.getElementById('rumDomain').value.trim();
-      const key = document.getElementById('rumKey').value.trim();
+      const domain = cfgDomain;
+      const key = cfgKey;
       const days = parseInt(document.getElementById('rumRange').value, 10);
 
       if (!domain || !key) {
         statusEl.className = 'rum-status error';
-        statusEl.textContent = 'Please provide both a domain and a domainkey.';
+        statusEl.textContent = 'No RUM domainkey configured. Publish it at /en/dashboard-config.json (column: domainkey).';
         return;
       }
-      localStorage.setItem('rum-domainkey', key);
-      localStorage.setItem('rum-domain', domain);
 
       statusEl.className = 'rum-status';
       const statsByPath = {};
@@ -1391,18 +1382,13 @@
       });
     });
 
+    // "Refresh" re-fetches page views (e.g. after changing the range)
     document.getElementById('loadRumBtn').addEventListener('click', loadPageViews);
-    document.getElementById('forgetKeyBtn').addEventListener('click', () => {
-      localStorage.removeItem('rum-domainkey');
-      document.getElementById('rumKey').value = '';
-      document.getElementById('rumStatus').textContent = 'Domainkey cleared from this browser.';
-      document.getElementById('rumStatus').className = 'rum-status';
-      document.getElementById('rumPanel').open = true;
-    });
+    document.getElementById('rumRange').addEventListener('change', () => { if (cfgKey) loadPageViews(); });
 
-    // Shared RUM key: read from a published config sheet so every (SSO-authenticated)
-    // visitor gets data without entering the key. The secret lives in SharePoint behind
-    // the same login — never in this public repo. Falls back to a locally-saved key.
+    // Shared RUM key: read once from a published config sheet so every (SSO-authenticated)
+    // visitor gets data automatically. The secret lives in SharePoint behind the same login,
+    // never in this public repo, and is no longer entered through the UI.
     async function fetchDashboardConfig() {
       try {
         const res = await fetch('/en/dashboard-config.json');
@@ -1420,12 +1406,14 @@
 
     (async function init() {
       const cfg = await fetchDashboardConfig();
-      const domain = cfg.domain || localStorage.getItem('rum-domain') || window.location.hostname;
-      const key = cfg.domainkey || localStorage.getItem('rum-domainkey') || '';
-      document.getElementById('rumDomain').value = domain;
-      document.getElementById('rumKey').value = key;
-      // Only nag for manual entry when no key is available from anywhere.
-      if (!key) document.getElementById('rumPanel').open = true;
+      cfgDomain = cfg.domain || window.location.hostname;
+      cfgKey = cfg.domainkey || '';
+      if (!cfgKey) {
+        // No central key configured — show how to fix it, don't offer key entry.
+        document.getElementById('rumPanel').open = true;
+        document.getElementById('rumStatus').className = 'rum-status error';
+        document.getElementById('rumStatus').textContent = 'No RUM domainkey configured. Publish it at /en/dashboard-config.json (column: domainkey).';
+      }
       loadData();
     }());
   </script>
