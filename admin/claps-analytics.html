@@ -651,6 +651,7 @@
         </thead>
         <tbody id="acBody"></tbody>
       </table>
+      <p class="panel-hint" id="acViewsHint">Page views come from AEM RUM (loaded on the Blog tab) and are heavily sampled. Session write-ups get very little direct web traffic, so a “—” here means no traffic was sampled for that page — it is not an error, and it is separate from live attendance.</p>
     </div>
 
     <div class="panels-2col">
@@ -1183,6 +1184,17 @@
       return row ? row.attendance : null;
     }
 
+    // Page-views cell for a session, distinguishing "RUM not loaded yet" from
+    // "loaded, but this write-up had no sampled traffic" so an empty value never
+    // looks like a bug.
+    function acViewsCell(s) {
+      if (s.views != null) return Math.round(s.views).toLocaleString();
+      const title = viewsLoaded
+        ? 'No RUM page-view data for this write-up. Session pages get little direct web traffic and fall below RUM’s sampling threshold — not an error, and separate from live attendance.'
+        : 'Page views load with the RUM data on the Blog tab. Open the Blog tab (or set the range there) to populate this column.';
+      return `<span class="muted" title="${title}">—</span>`;
+    }
+
     function attachAcViews() {
       acSessions.forEach((s) => {
         const key = s.path.replace(/\/$/, '') || '/';
@@ -1231,7 +1243,12 @@
       document.getElementById('acSlack').textContent = slack != null ? slack.toLocaleString() : '—';
       document.getElementById('acCommunity').textContent = community != null ? community.toLocaleString() : '—';
       const totalViews = sessions.reduce((s, x) => s + (x.views || 0), 0);
-      document.getElementById('acViews').textContent = totalViews > 0 ? Math.round(totalViews).toLocaleString() : '—';
+      const acViewsEl = document.getElementById('acViews');
+      acViewsEl.textContent = totalViews > 0 ? Math.round(totalViews).toLocaleString() : '—';
+      acViewsEl.closest('.stat-card').title = totalViews > 0 ? ''
+        : (viewsLoaded
+          ? 'No RUM page views sampled for the session write-ups. These pages get little direct web traffic — separate from live attendance.'
+          : 'Loads with the RUM page-view data on the Blog tab.');
 
       // Combined KPI strip (AI CoC side)
       document.getElementById('kpiSessions').textContent = sessions.length.toLocaleString();
@@ -1260,7 +1277,7 @@
             <td>${s.presenter}</td>
             <td>${acFormatOf(s)}</td>
             <td class="numeric">${att != null ? att.toLocaleString() : '<span class="muted">—</span>'}</td>
-            <td class="numeric">${s.views == null ? '<span class="muted">—</span>' : Math.round(s.views).toLocaleString()}</td>
+            <td class="numeric">${acViewsCell(s)}</td>
             <td>${links || '<span class="muted">—</span>'}</td>
           </tr>`;
       }).join('');
@@ -1368,14 +1385,30 @@
     });
 
     // Tab switching between Blog and AI CoC sections
+    function activateTab(name) {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
+      document.getElementById('tab-blog').hidden = name !== 'blog';
+      document.getElementById('tab-aicoc').hidden = name !== 'aicoc';
+    }
+
     document.querySelectorAll('.tab').forEach((tab) => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === tab));
-        document.getElementById('tab-blog').hidden = tab.dataset.tab !== 'blog';
-        document.getElementById('tab-aicoc').hidden = tab.dataset.tab !== 'aicoc';
+        activateTab(tab.dataset.tab);
+        // Reflect the active tab in the URL so it can be shared/bookmarked
+        // (e.g. …/claps-analytics.html#aicoc opens straight to AI CoC).
+        if (window.history.replaceState) window.history.replaceState(null, '', `#${tab.dataset.tab}`);
+        else window.location.hash = tab.dataset.tab;
         window.scrollTo(0, 0);
       });
     });
+
+    // Deep-link support: open the tab named in the URL hash (#blog / #aicoc).
+    function applyHashTab() {
+      const name = (window.location.hash || '').replace('#', '');
+      if (name === 'blog' || name === 'aicoc') activateTab(name);
+    }
+    window.addEventListener('hashchange', applyHashTab);
+    applyHashTab();
 
     // "Refresh" re-fetches page views (e.g. after changing the range)
     document.getElementById('loadRumBtn').addEventListener('click', loadPageViews);
