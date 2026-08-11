@@ -2,7 +2,7 @@
 
 **Status:** Concept / pre-POC — no implementation started.
 **Owner:** Dominik Steinacher
-**Last updated:** 2026-08-04
+**Last updated:** 2026-08-05
 
 ## 1. Goal
 
@@ -35,8 +35,7 @@ EDS static site (this repo)
 ```
 
 - Invocation: FluffyPack via the stream API, identified by UUID (not display name).
-- API auth patterns available: user-token, service-token, browser/session, OBO (on-behalf-of). Service tokens must never be exposed in client-side JS.
-- **No official anonymous/public mode is documented.** FluffyJaws is described as an internal, Adobe-SSO-gated service. See open question in §7.
+- **Auth model (confirmed):** the whole site is already Adobe-SSO-gated, same as the blog today — there is no anonymous/public audience to support. This means the **browser/session** auth pattern applies directly: the search UI calls the FluffyJaws API straight from the browser using the visitor's existing Adobe SSO session. No backend proxy, no server-held secret, no Edge Function middleware needed. This is what makes the build self-contained — it's the same kind of client-side block already used elsewhere in this repo (e.g. `session-feed.js`, `article-feed.js`).
 
 ## 4. Content sources — confirmed by direct inspection
 
@@ -59,7 +58,9 @@ All content lives in SharePoint, at the same site this repo's `fstab.yaml` alrea
 
 ## 5. Scoping strategy (Blog / AI CoC / Both)
 
-Query-time dynamic filtering of a single configured pack is **not confirmed** to exist. Recommendation: three separate FluffyPacks with deterministic boundaries.
+**This is a backend detail, invisible to the end user.** Whoever's searching still only ever sees one search field on the homepage and one (fuller) search field on the AI CoC hub — nothing about this changes what they see or how many places they search.
+
+Query-time dynamic filtering of a single configured pack is **not confirmed** to exist — we don't yet know if FluffyJaws can take one combined knowledge base and filter it to "AI CoC only" at query time. Until that's confirmed, the safer default is three separate FluffyPacks with deterministic boundaries:
 
 | Pack | Sources | Used by |
 |---|---|---|
@@ -67,7 +68,7 @@ Query-time dynamic filtering of a single configured pack is **not confirmed** to
 | `inside-aem-blog` | Blog only | Homepage "Blog" scope |
 | `inside-aem-aicoc` | AI CoC only | Homepage "AI CoC" scope, AI CoC Hub field |
 
-Avoid relying on prompt-level instructions ("only answer from AI CoC sessions") as the sole enforcement mechanism for production — treat that as an experiment, not a guarantee.
+This is provisional: if the platform team confirms a real query-time source filter exists (see §11, question 3), we collapse this down to a single pack — simpler to maintain, same user experience either way. Avoid relying on prompt-level instructions ("only answer from AI CoC sessions") as the sole enforcement mechanism for production — treat that as an experiment, not a guarantee.
 
 ## 6. Phase 2 candidate: session transcripts
 
@@ -89,16 +90,11 @@ This gives the model an explicit, visible signal to surface that URL when answer
 
 Transcripts are excluded from the v1 FluffyPack sources; they're added once renamed and annotated with the canonical-URL line.
 
-## 7. Open blocker: authenticated vs. anonymous audience
+## 7. Audience and auth — resolved
 
-FluffyJaws today is documented as an internal, SSO-gated service with no anonymous/public mode. This is a direct tension with "visible directly on the main page" if that page's audience includes visitors without Adobe SSO.
+**Decision (confirmed):** the homepage and hub audience is Adobe-authenticated only, same as the rest of the site today. There is no anonymous/public visitor requirement to design around.
 
-**Decision needed:** is re-think.adobe.com / culture-tecture.adobe.com's homepage audience exclusively Adobe-authenticated employees, or does it need to serve anonymous/external visitors?
-
-- If **authenticated-only**: proceed as designed — FluffyJaws powers both placements directly.
-- If **anonymous access is required**: FluffyJaws (as currently documented) cannot be the public-facing engine without an explicit platform exception, an Adobe-approved proxy/serverless relay that protects the service token, or a separate public search layer running alongside an internal FluffyJaws-powered experience.
-
-This is the single highest-leverage question to resolve before committing to a final architecture.
+This was the single highest-leverage open question in the whole concept, and resolving it in favor of "authenticated-only" is what keeps this buildable in-house: FluffyJaws's browser/session auth pattern applies directly (see §3), with no need for a backend proxy, an Adobe platform exception, or a separate public-facing search layer. That removes the main reason a developer or another team would have needed to be involved.
 
 ## 8. Citations & UX
 
@@ -123,7 +119,7 @@ Natural home for this: extend the existing [admin/claps-analytics.html](../admin
 - A FluffyPack can be created and assigned the intended (folder-scoped) content sources.
 - Blog-only, AI CoC-only, and combined scopes produce acceptably different results.
 - The API can be called from an Adobe-hosted architecture without exposing a secret client-side.
-- Authentication works for the intended audience (pending §7).
+- Authentication works for the intended (Adobe-SSO) audience via browser/session auth (§7).
 - Answers expose usable, clickable source URLs — including transcript-sourced answers citing the write-up URL, not the transcript file.
 - Citations can be rendered in Inside AEM's brand style.
 - The same pack works from both the homepage and hub placements.
@@ -138,13 +134,11 @@ Natural home for this: extend the existing [admin/claps-analytics.html](../admin
 3. Should Blog-only / AI CoC-only / Combined be three separate FluffyPacks, or is there a query-time source filter we're missing?
 4. What is the exact request/response schema for invoking a FluffyPack via the stream API — specifically, does it return structured citations (title, URL, type, snippet)?
 5. Is browser/session authentication supported from an Edge Delivery Services page, and what CORS/origin config is required?
-6. Is anonymous public access supported in any form? If not, is there an Adobe-approved proxy/serverless relay pattern to protect a service token from an EDS page?
-7. What usage metrics/exports exist beyond aggregate volume (searches, unique users, no-result queries, citation clicks)?
-8. What are current rate limits, latency expectations, and any cost/chargeback model?
+6. What usage metrics/exports exist beyond aggregate volume (searches, unique users, no-result queries, citation clicks)?
+7. What are current rate limits, latency expectations, and any cost/chargeback model?
 
 ## 12. Open decisions for discussion
 
-- **Audience/auth (§7)** — the one blocking architectural decision.
 - **Timeline** — confirm which Q4 (year) and any interim checkpoint.
 - **Transcripts phase 2 timing** — fold in at v1 launch, or genuinely phase 2 after the core hub ships?
 - **Ownership of the FluffyPack(s)** and who's the point of contact for platform-team follow-ups.

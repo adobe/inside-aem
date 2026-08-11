@@ -1,25 +1,24 @@
 # Discussion prompt: AI-Searchable Knowledge Hub (Goal 4)
 
-Use this to open the conversation — it's the short version of the full spec, framed around the decisions we actually need to make together.
+Use this to open the conversation — it's the short version of the full spec, framed around the decisions still left to make.
 
 ---
 
 **The goal:** make every blog post and AI CoC session write-up searchable in one place, powered by FluffyJaws, surfaced on the re-think/culture-tecture homepage and on the AI CoC Hub. Live by Q4, tracked by monthly searches/users and a drop in time spent hunting for old content.
 
-**Where this stands:** I've already validated the hard part most concepts skip — the actual content plumbing:
+**Where this stands:** the hard groundwork is done —
 
-- Blog posts and AI CoC session write-ups both live in clean, well-scoped SharePoint folders (`content/en/publish/` and `content/en/aicoc/`) that map 1:1 to what's already published on the site. No custom crawler or mirroring hack needed — SharePoint is a documented FluffyJaws source type.
-- I went a step further and cleaned + fully mapped the AI CoC session transcripts folder too (deduped, stripped internal-only meeting notes and a blank template, matched every remaining transcript to its published write-up). That's a phase-2-ready source, not phase 1.
-- FluffyJaws has no drop-in website widget — we'd build our own search UI against its production API, using a FluffyPack (or three: all / blog-only / AI CoC-only) as the knowledge source.
+- Blog posts and AI CoC write-ups both live in clean, well-scoped SharePoint folders (`content/en/publish/` and `content/en/aicoc/`) that map 1:1 to what's already published. No custom crawler or mirroring hack needed.
+- The AI CoC session transcripts folder is cleaned and fully mapped to its corresponding write-ups — ready as a phase-2 source once we decide to bring it in.
+- **Audience is confirmed:** Adobe SSO only, same as the blog today. That means FluffyJaws can be called directly from the browser using the visitor's existing session — no backend proxy, no other team's infrastructure needed. This is what makes the build fully self-contained.
+- FluffyJaws has no drop-in website widget, so we build our own search UI against its production API — same pattern as the other custom blocks already in this codebase.
 
-**The one real blocker:** FluffyJaws is documented as an internal, Adobe-SSO-gated service with no anonymous/public mode. If the homepage needs to serve visitors without Adobe SSO, FluffyJaws can't be the whole answer as-is — we'd need a platform exception, an approved proxy, or a second public-facing layer alongside an internal FluffyJaws experience.
+**What's left:**
 
-**Decisions to land in this conversation:**
-
-1. **Audience:** is re-think/culture-tecture homepage audience Adobe-authenticated only, or does it need to work for anonymous/external visitors? This decides the whole architecture.
-2. **Scope for v1:** blog + AI CoC write-ups only, with transcripts explicitly deferred to phase 2 — agreed?
-3. **Who owns the platform-team ask** (`#fluffyjaws-enablement`) — I have the specific questions ready to send (folder-scoped SharePoint ingestion, citation schema, auth model, rate limits).
-4. **Timeline:** confirm which Q4 and whether there's an interim checkpoint before then.
-5. **Analytics:** fold usage tracking into the existing Blog & AI CoC dashboard as a third section, or stand up something separate?
+1. **Send the platform-team questions** to `#fluffyjaws-enablement` — SharePoint folder-scoping, refresh cadence, whether a single knowledge base can be filtered by content type at query time (or if we need three separate FluffyPacks), citation schema, and rate limits.
+2. **Build two small UI pieces:** a compact search field on the homepage (searches everything by default) and a fuller search experience on the AI CoC hub (scoped to sessions). Both are in-house work, no developer from outside the team needed.
+3. **Validate before calling it live:** citations link to the right page, transcript-sourced answers cite the write-up (not the raw transcript), scoped search actually returns different results per scope, and freshness/rate-limits are measured.
+4. **Wire up usage tracking** — FluffyJaws only gives aggregate numbers, so query-level analytics (searches, no-result rate, citation clicks) get added to the existing Blog & AI CoC dashboard.
+5. **Confirm timing:** which Q4, any interim checkpoint, and whether transcripts ship at launch or genuinely as a phase 2.
 
 Full spec is attached for the details behind each of these.
