@@ -13,6 +13,21 @@ main .section-wrapper .article-header {
   max-width: unset;
 }
 
+/* halve the gap between the feature image and the body copy that follows it */
+main .section.article-header-container {
+  padding-bottom: 32px;
+}
+
+main .article-header-container + .section {
+  margin-top: 32px;
+}
+
+@media (min-width: 600px) {
+  main .article-header-container + .section {
+    padding-top: 32px;
+  }
+}
+
 @media (min-width: 700px) {
   main .article-header {
     margin-left: auto;
