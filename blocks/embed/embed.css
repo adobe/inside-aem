@@ -1,64 +1,62 @@
-/*
-* Copyright 2021 Adobe. All rights reserved.
-* This file is licensed to you under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License. You may obtain a copy
-* of the License at http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software distributed under
-* the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-* OF ANY KIND, either express or implied. See the License for the specific language
-* governing permissions and limitations under the License.
-*/
-
-main .embed {
-  max-height: 600px;
+.embed {
   width: unset;
   text-align: center;
   max-width: 800px;
-  margin: 0 auto 64px;
+  margin: 32px auto;
 }
 
-main .embed img {
-  max-width: 100%;
+.embed > div {
+  display: flex;
+  justify-content: center;
 }
 
-main .embed > div > div p a {
-  visibility: hidden;
-  word-break: break-word;
-}
-
-main .embed.embed-instagram {
-  max-width: fit-content;
-}
-
-main .embed.embed-instagram iframe.instagram-media {
-  border: 1px solid var(--color-gray-200);
-  background: white;
-  border-radius: 4px;
-  height: 462px;
-  width: 320px;
-}
-
-@media (min-width: 600px) {
-    main .embed.embed-instagram {
-        max-height: unset; 
-    }
-
-    main .embed.embed-instagram iframe.instagram-media {
-        width: 550px;
-        height: 758px;
-    }
-}
-
-main .embed.embed-twitter {
-  max-height: unset;
-}
-
-main .embed.embed-tiktok {
-  max-height: unset;
-}
-
-main .embed.embed-twitter .twitter-tweet-rendered {
+.embed.embed-twitter .twitter-tweet-rendered {
   margin-left: auto;
   margin-right: auto;
+}
+
+.embed .embed-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
+}
+
+.embed .embed-placeholder > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+}
+
+.embed .embed-placeholder picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.embed .embed-placeholder-play button {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(3);
+  width: 22px;
+  height: 22px;
+  border: 2px solid;
+  border-radius: 20px;
+  padding: 0;
+}
+
+.embed .embed-placeholder-play button::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 0;
+  height: 10px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid;
+  top: 4px;
+  left: 7px;
 }
