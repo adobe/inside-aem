@@ -1,0 +1,135 @@
+/* Homepage compact knowledge-hub search.
+ * Uses the site's own indigo accent (--color-info-accent), not the AI CoC
+ * hub's red — that palette is scoped to /en/aicochub, see the fuller
+ * hub-search block for that variant. Submit button intentionally has no
+ * custom styling: it inherits the site-wide `button` pill style.
+ */
+
+.knowledge-search {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.knowledge-search-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .knowledge-search-form {
+    grid-template-columns: 1fr 140px auto;
+    align-items: center;
+  }
+}
+
+.knowledge-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.knowledge-search-field svg {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  fill: var(--color-gray-500);
+  pointer-events: none;
+}
+
+.knowledge-search-field input,
+.knowledge-search-scope {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--body-color);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
+}
+
+.knowledge-search-field input { padding-left: 42px; }
+
+.knowledge-search-scope {
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23909090' d='M6 8 0 0h12z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.knowledge-search-field input:focus,
+.knowledge-search-scope:focus {
+  outline: none;
+  border-color: var(--color-info-accent);
+  box-shadow: 0 0 0 3px rgb(92 92 224 / 15%);
+}
+
+.knowledge-search-form button[type="submit"] {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.knowledge-search-status {
+  margin: 10px 2px 0;
+  min-height: 1.2em;
+  font-size: 13px;
+  color: var(--color-gray-600);
+}
+
+.knowledge-search-answer {
+  margin-top: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: 12px;
+  background: var(--color-gray-100);
+}
+
+.knowledge-search-answer-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.knowledge-search-sources-toggle {
+  margin: 12px 0 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-info-accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.knowledge-search-sources-toggle:hover,
+.knowledge-search-sources-toggle:focus {
+  background: none;
+  color: var(--color-info-accent-hover);
+  text-decoration: underline;
+}
+
+.knowledge-search-sources {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.knowledge-search-sources li {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

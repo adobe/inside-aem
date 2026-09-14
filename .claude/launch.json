@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "inside-aem",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "source ~/.nvm/nvm.sh && nvm use 20 && npx @adobe/aem-cli up --port 3000"],
+      "port": 3000
+    },
+    {
+      "name": "static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8753"],
+      "port": 8753
+    }
+  ]
+}
