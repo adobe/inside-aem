@@ -8,7 +8,20 @@
 .knowledge-search {
   max-width: 720px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 12px 16px;
+}
+
+/* The site-wide `main .section { margin-top: 64px; }` default (styles.css)
+ * applies both above this block's own section AND above whatever section
+ * follows it, making the gap around a lone, compact block like this one
+ * look oversized. Halved on both sides, scoped to just this block's
+ * section (and the one right after it) rather than the sitewide default. */
+main .section:has(.knowledge-search) {
+  margin-top: 32px;
+}
+
+main .section:has(.knowledge-search) + .section {
+  margin-top: 32px;
 }
 
 .knowledge-search-form {
