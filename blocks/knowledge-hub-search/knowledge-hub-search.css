@@ -25,6 +25,8 @@
 }
 
 .khs-scope-label {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-gray-600);
@@ -35,6 +37,7 @@
  * height + line-height combo tried here previously didn't render
  * consistently for the native <select> control (2026-09-14). */
 .khs-scope {
+  flex-shrink: 0;
   box-sizing: border-box;
   min-height: 46px;
   margin: 0;
