@@ -134,6 +134,19 @@ main .section.knowledge-search-container + .section {
   font-weight: 700;
 }
 
+/* The "One search. Every blog post and AI CoC session!" heading typed
+ * directly into index.docx above the block table — it's a sibling of the
+ * block in the same section, not inside .knowledge-search itself, so it
+ * gets the site's default left-aligned heading style unless centered here. */
+main .section.knowledge-search-container h1,
+main .section.knowledge-search-container h2,
+main .section.knowledge-search-container h3,
+main .section.knowledge-search-container h4,
+main .section.knowledge-search-container h5,
+main .section.knowledge-search-container h6 {
+  text-align: center;
+}
+
 .knowledge-search-answer-text p { margin: 0 0 12px; }
 
 .knowledge-search-answer-text ul {
