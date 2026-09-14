@@ -78,11 +78,30 @@
   background: var(--color-gray-100);
 }
 
+/* Answer text is rendered from Markdown (see scripts/markdown.js) — headers,
+ * bold/italic, links, and bullet lists, not just plain text. */
 .khs-answer-text {
-  margin: 0;
   font-size: 15px;
   line-height: 1.6;
-  white-space: pre-wrap;
+}
+
+.khs-answer-text > :first-child { margin-top: 0; }
+.khs-answer-text > :last-child { margin-bottom: 0; }
+
+.khs-answer-text h1,
+.khs-answer-text h2,
+.khs-answer-text h3,
+.khs-answer-text h4 {
+  margin: 16px 0 8px;
+  font-size: 1em;
+  font-weight: 700;
+}
+
+.khs-answer-text p { margin: 0 0 12px; }
+
+.khs-answer-text ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
 }
 
 .khs-sources-toggle {
@@ -112,6 +131,10 @@
   gap: 8px;
 }
 
+.khs-answer-text a {
+  color: var(--khs-red);
+}
+
 .khs-source-card a {
   display: flex;
   flex-direction: column;
@@ -128,6 +151,10 @@
 
 .khs-source-card a:hover {
   border-color: var(--khs-red);
+}
+
+.khs-answer-text a:hover {
+  color: #b30c00;
 }
 
 .khs-source-kind {

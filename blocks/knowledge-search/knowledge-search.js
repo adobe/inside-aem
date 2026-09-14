@@ -10,6 +10,7 @@
 import { getAccessToken, isAuthenticated } from '../../scripts/fluffyjaws-auth.js';
 import streamFluffyJawsQuery, { isRateLimited } from '../../scripts/fluffyjaws-client.js';
 import resolveCitations from '../../scripts/fluffyjaws-citations.js';
+import markdownToHtml from '../../scripts/markdown.js';
 
 const PACK_BY_SCOPE = {
   '': 'inside-aem-all',
@@ -78,7 +79,7 @@ export default function decorate(block) {
   answerWrap.className = 'knowledge-search-answer';
   answerWrap.hidden = true;
 
-  const answerText = document.createElement('p');
+  const answerText = document.createElement('div');
   answerText.className = 'knowledge-search-answer-text';
 
   const sourcesToggle = document.createElement('button');
@@ -147,7 +148,7 @@ export default function decorate(block) {
           // Field name confirmed against a real captured stream —
           // see docs/goal4-checklist.md, Phase 3.
           fullText += event.delta ?? event.text ?? '';
-          answerText.textContent = fullText;
+          answerText.innerHTML = markdownToHtml(fullText);
           status.textContent = '';
         }
       }

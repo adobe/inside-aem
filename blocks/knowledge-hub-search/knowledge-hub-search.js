@@ -12,6 +12,7 @@
 import { getAccessToken, isAuthenticated } from '../../scripts/fluffyjaws-auth.js';
 import streamFluffyJawsQuery, { isRateLimited } from '../../scripts/fluffyjaws-client.js';
 import resolveCitations from '../../scripts/fluffyjaws-citations.js';
+import markdownToHtml from '../../scripts/markdown.js';
 
 const PACK_BY_SCOPE = {
   aicoc: 'inside-aem-aicoc',
@@ -106,7 +107,7 @@ export default function decorate(block) {
 
     const answer = document.createElement('div');
     answer.className = 'khs-answer';
-    const answerText = document.createElement('p');
+    const answerText = document.createElement('div');
     answerText.className = 'khs-answer-text';
     const sourcesToggle = document.createElement('button');
     sourcesToggle.type = 'button';
@@ -180,7 +181,7 @@ export default function decorate(block) {
           // Field name confirmed against a real captured stream —
           // see docs/goal4-checklist.md, Phase 3.
           fullText += event.delta ?? event.text ?? '';
-          answerText.textContent = fullText;
+          answerText.innerHTML = markdownToHtml(fullText);
           status.textContent = '';
         }
       }
@@ -245,7 +246,7 @@ export default function decorate(block) {
         const assistantMsg = restored.history[i + 1];
         if (!userMsg || !assistantMsg) break;
         const refs = appendTurn(userMsg.content);
-        refs.answerText.textContent = assistantMsg.content;
+        refs.answerText.innerHTML = markdownToHtml(assistantMsg.content);
         history = [...history, userMsg, assistantMsg];
         // eslint-disable-next-line no-loop-func
         finalizeSources(assistantMsg.content, refs.sourcesToggle, refs.sourcesList);
