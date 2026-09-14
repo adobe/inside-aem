@@ -11,21 +11,24 @@
   padding: 12px 16px;
 }
 
-/* The site-wide `main .section { margin-top: 64px; }` default (styles.css)
- * applies both above this block's own section AND above whatever section
- * follows it, making the gap around a lone, compact block like this one
- * look oversized. Halved on both sides, scoped to just this block's
- * section (and the one right after it) rather than the sitewide default.
- * Targets the "<blockname>-container" class EDS generates on the section
- * wrapper directly, rather than :has(.knowledge-search) — confirmed via
- * live DOM inspection 2026-09-14 that the :has()-based version wasn't
- * taking effect (verify this one the same way before assuming it works). */
+/* Two sitewide defaults (styles.css) both add space around every section:
+ * `main .section { margin-top: 64px; }` (all widths) and, at wider
+ * viewports, `main .section { padding: 64px 32px; }` — the earlier
+ * margin-top-only fix left the padding untouched, which is why the gap
+ * below this block didn't visibly shrink. Halved here, on both this
+ * section and the one right after it, scoped via the "<blockname>-container"
+ * class EDS generates on the section wrapper (confirmed via live DOM
+ * inspection 2026-09-14 — a :has(.knowledge-search)-based version of this
+ * silently didn't take effect, don't reintroduce that approach). */
 main .section.knowledge-search-container {
   margin-top: 32px;
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
 main .section.knowledge-search-container + .section {
   margin-top: 32px;
+  padding-top: 32px;
 }
 
 .knowledge-search-form {
