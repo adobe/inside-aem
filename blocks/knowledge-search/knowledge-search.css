@@ -15,12 +15,16 @@
  * applies both above this block's own section AND above whatever section
  * follows it, making the gap around a lone, compact block like this one
  * look oversized. Halved on both sides, scoped to just this block's
- * section (and the one right after it) rather than the sitewide default. */
-main .section:has(.knowledge-search) {
+ * section (and the one right after it) rather than the sitewide default.
+ * Targets the "<blockname>-container" class EDS generates on the section
+ * wrapper directly, rather than :has(.knowledge-search) — confirmed via
+ * live DOM inspection 2026-09-14 that the :has()-based version wasn't
+ * taking effect (verify this one the same way before assuming it works). */
+main .section.knowledge-search-container {
   margin-top: 32px;
 }
 
-main .section:has(.knowledge-search) + .section {
+main .section.knowledge-search-container + .section {
   margin-top: 32px;
 }
 
