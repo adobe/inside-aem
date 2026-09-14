@@ -15,11 +15,13 @@
 }
 
 /* ── scope selector ──────────────────────────────────────────────────── */
+
+/* Sits as the first item in .khs-form's row, not on its own line above it. */
 .khs-scope-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .khs-scope-label {
@@ -175,6 +177,7 @@
 /* ── input form ───────────────────────────────────────────────────────── */
 .khs-form {
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 

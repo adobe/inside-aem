@@ -86,13 +86,15 @@ export default function decorate(block) {
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
   submitBtn.textContent = 'Ask';
-  form.append(input, submitBtn);
+  // Scope selector sits in the same row as the question input, not on its
+  // own line above it.
+  form.append(scopeWrap, input, submitBtn);
 
   const status = document.createElement('p');
   status.className = 'khs-status';
   status.setAttribute('aria-live', 'polite');
 
-  block.append(scopeWrap, transcript, form, status);
+  block.append(transcript, form, status);
 
   let history = [];
   let activeAbort = null;
