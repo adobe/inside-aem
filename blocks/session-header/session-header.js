@@ -1,4 +1,5 @@
 import { getMetadata, decorateIcons } from '../../scripts/lib-franklin.js';
+import { detectSessionFormat, sessionFormatModifier } from '../../scripts/session-format.js';
 
 // Icon markers — replaced with inline SVG by decorateIcons() at end of decorate.
 // SVG sources live in /icons/<name>.svg.
@@ -184,20 +185,22 @@ export default function decorate(block) {
   const author = getMetadata('author');
   const description = getMetadata('description');
 
-  // Format isn't a reliable tag — derive it from the title (same logic the
-  // cards use) so the pill always matches the session. Show it first (it's the
-  // emphasis pill), followed by the "AI CoC" community pill.
-  let format = '';
-  if (/brownbag/i.test(document.title)) format = 'Brownbag';
-  else if (/outside\s*voices/i.test(document.title)) format = 'Outside Voices';
-  else if (/show\s*(?:&|and)\s*tell/i.test(document.title)) format = 'Show & Tell';
-  const pillTags = [format, 'AI CoC'].filter(Boolean);
-
   // Borrow the h1 from <main> so it doesn't render twice (the hero owns the
   // title). Any pictures in the doc stay where the author put them in the
   // body — the hero doesn't pull them in.
   const main = block.closest('main') || document.querySelector('main');
   const h1 = main.querySelector('h1');
+
+  // Format isn't a reliable single field — the Metadata Title, the H1 and the
+  // Tags don't always agree, so check all three (same helper the cards use)
+  // and the pill always matches the session. Show it first (it's the emphasis
+  // pill), followed by the "AI CoC" community pill.
+  const format = detectSessionFormat(
+    document.title,
+    h1 ? h1.textContent : '',
+    getMetadata('article:tag', true),
+  );
+  const pillTags = [format, 'AI CoC'].filter(Boolean);
 
   // Fall back to author when presenter wasn't filled in.
   const presenterText = meta.presenter || author || '';
@@ -247,8 +250,7 @@ export default function decorate(block) {
   );
 
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
-  if (format === 'Brownbag') hero.classList.add('session-header-hero--brownbag');
-  if (format === 'Outside Voices') hero.classList.add('session-header-hero--outside-voices');
+  if (format) hero.classList.add(`session-header-hero--${sessionFormatModifier(format)}`);
 
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';

@@ -1,5 +1,6 @@
 import { loadCSS, decorateIcons } from '../../scripts/lib-franklin.js';
 import { buildSessionCard } from '../session-card/session-card.js';
+import { detectSessionFormat, SESSION_FORMATS } from '../../scripts/session-format.js';
 
 const INDEX_URL = '/en/aicoc-index.json';
 const PAGE_SIZE = 12;
@@ -80,15 +81,12 @@ async function fetchAllSessions() {
 // ─────────────────────────────────────────────────────────────────────────
 
 /**
- * Session format lives in the title (there are no usable tags): titles read
- * like "[AI CoC] AI Assisted Brownbag - …", "[AI CoC] Show & Tell - …" or
- * "[AI CoC] Outside Voices - …".
+ * Session format lives in the title (titles read like "[AI CoC] AI Assisted
+ * Brownbag - …", "[AI CoC] Show & Tell - …" or "[AI CoC] Outside Voices - …"),
+ * with Tags as a fallback.
  */
 function sessionFormat(s) {
-  if (/brownbag/i.test(s.title)) return 'Brownbag';
-  if (/outside\s*voices/i.test(s.title)) return 'Outside Voices';
-  if (/show\s*(?:&|and)\s*tell/i.test(s.title)) return 'Show & Tell';
-  return '';
+  return detectSessionFormat(s.title, s.tags);
 }
 
 function applyFilters(sessions, { q, presenter, format }) {
@@ -201,15 +199,13 @@ export default async function decorate(block) {
   presenterSelect.className = 'session-feed-presenter session-feed-select';
   presenterSelect.setAttribute('aria-label', 'Filter by presenter');
 
-  // Format dropdown (Show & Tell / Brownbag / Outside Voices).
+  // Format dropdown — one option per known session format.
   const formatSelect = document.createElement('select');
   formatSelect.className = 'session-feed-format session-feed-select';
   formatSelect.setAttribute('aria-label', 'Filter by format');
   [
     ['', 'All formats'],
-    ['Show & Tell', 'Show & Tell'],
-    ['Brownbag', 'Brownbag'],
-    ['Outside Voices', 'Outside Voices'],
+    ...SESSION_FORMATS.map((f) => [f, f]),
   ].forEach(([value, label]) => {
     const opt = document.createElement('option');
     opt.value = value;

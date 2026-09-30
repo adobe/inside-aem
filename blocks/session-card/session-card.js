@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { detectSessionFormat, sessionFormatModifier } from '../../scripts/session-format.js';
 
 /**
  * Format whatever the index gives us for sessionDate into a short,
@@ -22,20 +23,6 @@ function formatSessionDate(raw) {
   return d.toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
   });
-}
-
-/**
- * Session format is derived from the title — there are no usable tags.
- * Titles read like "[AI CoC] AI Assisted Brownbag - …",
- * "[AI CoC] Show & Tell - …" or "[AI CoC] Outside Voices - …".
- * Keep this in sync with `sessionFormat` in session-feed.js and the
- * format detection in session-header.js.
- */
-function formatFromTitle(title) {
-  const t = title || '';
-  if (/brownbag/i.test(t)) return 'Brownbag';
-  if (/outside\s*voices/i.test(t)) return 'Outside Voices';
-  return 'Show & Tell';
 }
 
 /**
@@ -78,9 +65,10 @@ export function buildSessionCard(session, eager = false) {
   // Tag image-less cards so the CSS can collapse the empty 16:9 media area
   // to a compact pill strip — otherwise it's just dead space above the title.
   if (!image) card.classList.add('session-card--no-image');
-  const cardFormat = formatFromTitle(title);
-  if (cardFormat === 'Brownbag') card.classList.add('session-card--brownbag');
-  if (cardFormat === 'Outside Voices') card.classList.add('session-card--outside-voices');
+  // Format comes from the title, with Tags as a fallback for sessions whose
+  // H1 doesn't spell the format out. Show & Tell is the house default.
+  const cardFormat = detectSessionFormat(title, tags) || 'Show & Tell';
+  card.classList.add(`session-card--${sessionFormatModifier(cardFormat)}`);
   card.href = path;
 
   // ── media (dark area) ────────────────────────────────────────────────
@@ -122,13 +110,10 @@ export function buildSessionCard(session, eager = false) {
   // Format badge + date row
   const formatRow = document.createElement('div');
   formatRow.className = 'session-card-format-row';
-  const format = tags[0];
-  if (format) {
-    const badge = document.createElement('span');
-    badge.className = 'session-card-format';
-    badge.textContent = cardFormat;
-    formatRow.append(badge);
-  }
+  const badge = document.createElement('span');
+  badge.className = 'session-card-format';
+  badge.textContent = cardFormat;
+  formatRow.append(badge);
   const dateText = formatSessionDate(sessionDate);
   if (dateText) {
     const dateEl = document.createElement('span');
