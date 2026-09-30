@@ -682,7 +682,7 @@
       </div>
       <div class="panel">
         <h2>🗂️ Format split</h2>
-        <p class="panel-hint">Brownbag vs Show &amp; Tell</p>
+        <p class="panel-hint">Brownbag vs Show &amp; Tell vs Outside Voices</p>
         <div id="acFormatBars"></div>
       </div>
     </div>
@@ -1131,8 +1131,9 @@
     }
 
     function acFormatOf(session) {
-      const t = (session.title || '').toLowerCase();
+      const t = `${session.title || ''} ${(session.tags || []).join(' ')}`.toLowerCase();
       if (t.includes('brownbag')) return 'Brownbag';
+      if (t.includes('outside') && t.includes('voices')) return 'Outside Voices';
       if (t.includes('show') && t.includes('tell')) return 'Show & Tell';
       return session.tags[0] || 'Session';
     }
