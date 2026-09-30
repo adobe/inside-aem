@@ -81,10 +81,12 @@ async function fetchAllSessions() {
 
 /**
  * Session format lives in the title (there are no usable tags): titles read
- * like "[AI CoC] AI Assisted Brownbag - …" or "[AI CoC] Show & Tell - …".
+ * like "[AI CoC] AI Assisted Brownbag - …", "[AI CoC] Show & Tell - …" or
+ * "[AI CoC] Outside Voices - …".
  */
 function sessionFormat(s) {
   if (/brownbag/i.test(s.title)) return 'Brownbag';
+  if (/outside\s*voices/i.test(s.title)) return 'Outside Voices';
   if (/show\s*(?:&|and)\s*tell/i.test(s.title)) return 'Show & Tell';
   return '';
 }
@@ -199,7 +201,7 @@ export default async function decorate(block) {
   presenterSelect.className = 'session-feed-presenter session-feed-select';
   presenterSelect.setAttribute('aria-label', 'Filter by presenter');
 
-  // Format dropdown (Show & Tell / Brownbag).
+  // Format dropdown (Show & Tell / Brownbag / Outside Voices).
   const formatSelect = document.createElement('select');
   formatSelect.className = 'session-feed-format session-feed-select';
   formatSelect.setAttribute('aria-label', 'Filter by format');
@@ -207,6 +209,7 @@ export default async function decorate(block) {
     ['', 'All formats'],
     ['Show & Tell', 'Show & Tell'],
     ['Brownbag', 'Brownbag'],
+    ['Outside Voices', 'Outside Voices'],
   ].forEach(([value, label]) => {
     const opt = document.createElement('option');
     opt.value = value;

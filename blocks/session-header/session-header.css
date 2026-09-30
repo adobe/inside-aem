@@ -5,6 +5,7 @@
  * Format differentiation mirrors the cards:
  *   - Show & Tell (default): solid Adobe red flood hero, white text
  *   - Brownbag (--brownbag):  dark charcoal hero, white text
+ *   - Outside Voices (--outside-voices): Adobe blue hero, white text
  */
 
 main .session-header-container,
@@ -241,4 +242,17 @@ main .session-header .btn-tertiary:hover {
 /* stylelint-disable-next-line selector-class-pattern */
 .session-header-hero--brownbag {
   background: linear-gradient(160deg, #3a3a3f 0%, #1c1c1f 100%);
+}
+
+/* ── Outside Voices variant — Adobe blue hero ────────────────────────────── */
+
+/* Mirrors the blue Outside Voices card media. The base hero already styles
+ * for a coloured background (white text, white outline pills, white format
+ * chip, white primary button), so only the accent colour is swapped — the
+ * --hd-red override keeps the white button's label blue instead of red. */
+/* stylelint-disable-next-line selector-class-pattern */
+.session-header-hero--outside-voices {
+  --hd-red: #1473e6;
+
+  background: #1473e6;
 }

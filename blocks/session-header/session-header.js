@@ -189,6 +189,7 @@ export default function decorate(block) {
   // emphasis pill), followed by the "AI CoC" community pill.
   let format = '';
   if (/brownbag/i.test(document.title)) format = 'Brownbag';
+  else if (/outside\s*voices/i.test(document.title)) format = 'Outside Voices';
   else if (/show\s*(?:&|and)\s*tell/i.test(document.title)) format = 'Show & Tell';
   const pillTags = [format, 'AI CoC'].filter(Boolean);
 
@@ -247,6 +248,7 @@ export default function decorate(block) {
 
   const hero = el('div', { class: 'session-header-hero' }, heroInner);
   if (format === 'Brownbag') hero.classList.add('session-header-hero--brownbag');
+  if (format === 'Outside Voices') hero.classList.add('session-header-hero--outside-voices');
 
   // ── Final assembly ────────────────────────────────────────────────────
   block.innerHTML = '';

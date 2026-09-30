@@ -4,6 +4,8 @@
  * Format differentiation = red FILL vs red OUTLINE:
  *   - Show & Tell (default): solid Adobe red media + red-fill label/avatar
  *   - Brownbag (--brownbag):  white media + red-OUTLINE label/avatar
+ *   - Outside Voices (--outside-voices): solid Adobe blue media + blue-fill
+ *     label/avatar
  *
  * Layout:
  *   - .session-card-media  — header area (red flood or image): AI CoC + title
@@ -14,6 +16,7 @@
 .session-card {
   --card-red: #eb1000;
   --card-red-deep: #b30c00;
+  --card-blue: #1473e6;
 
   display: flex;
   flex-direction: column;
@@ -256,6 +259,28 @@
 .session-card--brownbag .session-card-play svg {
   color: var(--card-red);
   fill: var(--card-red);
+}
+
+/* ── Outside Voices variant — blue flood, blue-fill labels ───────────────── */
+
+/* External/guest speakers get the Adobe blue accent so they read as clearly
+ * "from outside" next to the red Show & Tell and dark Brownbag cards. */
+.session-card--outside-voices .session-card-media {
+  background: var(--card-blue);
+}
+
+.session-card--outside-voices .session-card-title { color: #fff; }
+
+.session-card--outside-voices .session-card-format {
+  color: #fff;
+  background: var(--card-blue);
+  border-color: var(--card-blue);
+}
+
+.session-card--outside-voices .session-card-avatar {
+  color: #fff;
+  background: var(--card-blue);
+  border-color: var(--card-blue);
 }
 /* stylelint-enable selector-class-pattern, no-descending-specificity */
 

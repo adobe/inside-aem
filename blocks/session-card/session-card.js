@@ -25,6 +25,20 @@ function formatSessionDate(raw) {
 }
 
 /**
+ * Session format is derived from the title — there are no usable tags.
+ * Titles read like "[AI CoC] AI Assisted Brownbag - …",
+ * "[AI CoC] Show & Tell - …" or "[AI CoC] Outside Voices - …".
+ * Keep this in sync with `sessionFormat` in session-feed.js and the
+ * format detection in session-header.js.
+ */
+function formatFromTitle(title) {
+  const t = title || '';
+  if (/brownbag/i.test(t)) return 'Brownbag';
+  if (/outside\s*voices/i.test(t)) return 'Outside Voices';
+  return 'Show & Tell';
+}
+
+/**
  * Build a session card.
  *
  * Used inside `session-feed` to render each row from /en/aicoc-index.json.
@@ -64,7 +78,9 @@ export function buildSessionCard(session, eager = false) {
   // Tag image-less cards so the CSS can collapse the empty 16:9 media area
   // to a compact pill strip — otherwise it's just dead space above the title.
   if (!image) card.classList.add('session-card--no-image');
-  if (/brownbag/i.test(title)) card.classList.add('session-card--brownbag');
+  const cardFormat = formatFromTitle(title);
+  if (cardFormat === 'Brownbag') card.classList.add('session-card--brownbag');
+  if (cardFormat === 'Outside Voices') card.classList.add('session-card--outside-voices');
   card.href = path;
 
   // ── media (dark area) ────────────────────────────────────────────────
@@ -110,7 +126,7 @@ export function buildSessionCard(session, eager = false) {
   if (format) {
     const badge = document.createElement('span');
     badge.className = 'session-card-format';
-    badge.textContent = /brownbag/i.test(title) ? 'Brownbag' : 'Show & Tell';
+    badge.textContent = cardFormat;
     formatRow.append(badge);
   }
   const dateText = formatSessionDate(sessionDate);
