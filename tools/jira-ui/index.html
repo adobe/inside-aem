@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIRA Issue Creator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="login-section" class="section">
+            <div class="card">
+                <h1>JIRA Issue Creator</h1>
+                <p class="subtitle">Please log in with your corporate JIRA credentials</p>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="jira-url">JIRA Instance URL</label>
+                        <input type="url" id="jira-url" name="jira-url" required 
+                               value="https://spycher.atlassian.net"
+                               placeholder="https://your-company.atlassian.net" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username (Email)</label>
+                        <input type="text" id="username" name="username" required 
+                               value="subscription@spycher.one"
+                               placeholder="Enter your email address" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">API Token</label>
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Enter your Atlassian API token" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-key">Default Project Key</label>
+                        <input type="text" id="project-key" name="project-key" required 
+                               value="KAN"
+                               placeholder="e.g., PROJ" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                </form>
+                
+                <div class="demo-section">
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+                    <button type="button" id="demo-btn" class="btn btn-demo">
+                        🎯 Try Demo Mode
+                    </button>
+                    <p class="demo-description">
+                        Explore the interface without connecting to JIRA. No data will be sent or stored.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issue Creation Section -->
+        <div id="issue-section" class="section hidden">
+            <div class="card">
+                <div class="header">
+                    <h1>Create New Issue</h1>
+                    <div class="header-actions">
+                        <div id="demo-indicator" class="demo-indicator hidden">
+                            🎯 Demo Mode - No data will be sent
+                        </div>
+                        <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+                
+                <div id="success-message" class="success-message hidden"></div>
+                <div id="error-message" class="error-message hidden"></div>
+                
+                <form id="issue-form">
+                    <!-- Issue Type Selection -->
+                    <div class="form-group">
+                        <label for="issue-type">Issue Type *</label>
+                        <select id="issue-type" name="issue-type" required>
+                            <option value="">Select Issue Type</option>
+                            <option value="Co-Innovation">Co-Innovation</option>
+                            <option value="Experiment">Experiment</option>
+                        </select>
+                    </div>
+                    
+                    <!-- General Fields -->
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" name="title" required 
+                               placeholder="Enter issue title" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" required 
+                                  placeholder="Enter issue description" rows="5"></textarea>
+                    </div>
+                    
+                    <!-- Co-Innovation Specific Fields -->
+                    <div id="co-innovation-fields" class="conditional-fields hidden">
+                        <div class="form-group">
+                            <label for="customer-names">Customer Names *</label>
+                            <input type="text" id="customer-names" name="customer-names" 
+                                   placeholder="Enter customer names (comma separated)" />
+                            <small class="field-help">List the customers involved in this co-innovation project</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Experiment Specific Fields -->
+                    <div id="experiment-fields" class="conditional-fields hidden">
+                        <div class="form-group">
+                            <label for="hypothesis">Hypothesis</label>
+                            <textarea id="hypothesis" name="hypothesis" 
+                                      placeholder="Describe the hypothesis being tested" rows="3"></textarea>
+                            <small class="field-help">What do you expect to learn or prove?</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="success-criteria">Success Criteria</label>
+                            <textarea id="success-criteria" name="success-criteria" 
+                                      placeholder="Define what success looks like" rows="3"></textarea>
+                            <small class="field-help">How will you measure the success of this experiment?</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Labels Field -->
+                    <div class="form-group">
+                        <label for="labels">Labels (Optional)</label>
+                        <div id="labels-container" class="labels-container">
+                            <div class="label-option" data-label="Hypothesis">Hypothesis</div>
+                            <div class="label-option" data-label="Learn">Learn</div>
+                            <div class="label-option" data-label="Understand">Understand</div>
+                            <div class="label-option" data-label="Unknown">Unknown</div>
+                            <div class="label-option" data-label="Automated">Automated</div>
+                            <div class="label-option" data-label="Sites">Sites</div>
+                            <div class="label-option" data-label="Assets">Assets</div>
+                            <div class="label-option" data-label="Forms">Forms</div>
+                            <div class="label-option" data-label="Foundation">Foundation</div>
+                            <div class="label-option" data-label="AMS">AMS</div>
+                        </div>
+                        <input type="hidden" id="selected-labels" name="selected-labels" />
+                        <div id="selected-labels-display" class="selected-labels-display"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-large">Create Issue</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+        
+        <!-- Issue Details Modal -->
+        <div id="issue-details-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Issue Created Successfully</h2>
+                    <button id="close-modal" class="close-modal" title="Close">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="issue-link-section">
+                        <div class="issue-key-display">
+                            <span class="issue-key" id="created-issue-key">DEMO-123</span>
+                            <a id="jira-issue-link" href="#" target="_blank" class="btn btn-primary btn-small">
+                                View in JIRA
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="issue-details-section">
+                        <h3>Issue Details</h3>
+                        <div id="issue-fields-container" class="fields-container">
+                            <!-- Dynamic field display will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button id="create-another" class="btn btn-primary">Create Another Issue</button>
+                    <button id="close-modal-footer" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
